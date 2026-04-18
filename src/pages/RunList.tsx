@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Game, RuleSet, Run } from '../types';
-import { GAME_NAMES } from '../types';
+import { GAME_NAMES, GAME_GENERATIONS } from '../types';
 import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
 
@@ -9,6 +9,33 @@ interface RunListProps {
   runs: Run[];
   onCreateRun: (name: string, game: Game, rules: RuleSet) => Run;
   onDeleteRun: (id: string) => void;
+}
+
+const GENERATION_LABELS: Record<number, string> = {
+  1: 'Gen I',
+  2: 'Gen II',
+  3: 'Gen III',
+  4: 'Gen IV',
+  5: 'Gen V',
+  6: 'Gen VI',
+  7: 'Gen VII',
+  8: 'Gen VIII',
+  9: 'Gen IX',
+};
+
+function getGamesByGeneration(): { gen: number; label: string; games: Game[] }[] {
+  const genMap = new Map<number, Game[]>();
+  for (const [game, gen] of Object.entries(GAME_GENERATIONS)) {
+    if (!genMap.has(gen)) genMap.set(gen, []);
+    genMap.get(gen)!.push(game as Game);
+  }
+  return Array.from(genMap.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([gen, games]) => ({
+      gen,
+      label: GENERATION_LABELS[gen] || `Gen ${gen}`,
+      games,
+    }));
 }
 
 export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
@@ -22,6 +49,16 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
     levelCap: false,
   });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [expandedGens, setExpandedGens] = useState<Set<number>>(() => new Set([GAME_GENERATIONS[game]]));
+
+  const toggleGen = (gen: number) => {
+    setExpandedGens((prev) => {
+      const next = new Set(prev);
+      if (next.has(gen)) next.delete(gen);
+      else next.add(gen);
+      return next;
+    });
+  };
 
   const handleCreate = () => {
     if (!name.trim()) return;
@@ -30,6 +67,8 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
     setName('');
     navigate(`/run/${run.id}`);
   };
+
+  const generationGroups = getGamesByGeneration();
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -116,7 +155,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                       </div>
                       <p className="text-sm text-zinc-400">{GAME_NAMES[run.game]}</p>
                       <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
-                        <span>{badgeCount}/8 badges</span>
+                        <span>{badgeCount}/{run.badges.length} badges</span>
                         <span className="text-emerald-500">{aliveCount} alive</span>
                         {deadCount > 0 && (
                           <span className="text-red-500">{deadCount} dead</span>
@@ -173,19 +212,43 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-2">Game</label>
-            <div className="grid grid-cols-1 gap-2">
-              {(Object.keys(GAME_NAMES) as Game[]).map((g) => (
-                <button
-                  key={g}
-                  onClick={() => setGame(g)}
-                  className={`rounded-lg px-4 py-3 text-left font-medium transition-all ${
-                    game === g
-                      ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
-                      : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
-                  }`}
-                >
-                  {GAME_NAMES[g]}
-                </button>
+            <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
+              {generationGroups.map(({ gen, label, games }) => (
+                <div key={gen}>
+                  <button
+                    type="button"
+                    onClick={() => toggleGen(gen)}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-zinc-700/50 hover:bg-zinc-700 transition-colors text-sm font-semibold text-zinc-300"
+                  >
+                    <span>{label}</span>
+                    <svg
+                      className={`w-4 h-4 text-zinc-500 transition-transform ${expandedGens.has(gen) ? 'rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  {expandedGens.has(gen) && (
+                    <div className="mt-1 space-y-1 pl-2">
+                      {games.map((g) => (
+                        <button
+                          key={g}
+                          onClick={() => setGame(g)}
+                          className={`w-full rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
+                            game === g
+                              ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
+                              : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
+                          }`}
+                        >
+                          {GAME_NAMES[g]}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

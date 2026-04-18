@@ -9,7 +9,7 @@ export async function loadPokemonList(): Promise<{ id: number; name: string }[]>
   if (listLoaded) return pokemonList;
 
   try {
-    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=386&offset=0');
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
     const data = await res.json();
     pokemonList = data.results.map((p: { name: string }, i: number) => ({
       id: i + 1,

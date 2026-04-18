@@ -15,7 +15,7 @@ export function BadgeBar({ game, badges, onToggle }: BadgeBarProps) {
     <div className="bg-zinc-800/80 backdrop-blur-sm border-b border-zinc-700 px-4 py-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Badges</span>
-        <span className="text-xs text-zinc-500">{earnedCount}/8</span>
+        <span className="text-xs text-zinc-500">{earnedCount}/{names.length}</span>
       </div>
       <div className="flex gap-2 justify-between">
         {badges.map((earned, i) => (
