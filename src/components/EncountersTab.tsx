@@ -4,6 +4,7 @@ import { LEVEL_CAPS } from '../types';
 import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
+import { BossPrepButton } from './BossPrep';
 import { getCustomGame, loadCustomGames, saveCustomGames } from '../utils/storage';
 import { generateId } from '../utils/id';
 
@@ -104,11 +105,14 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">
               {segment}
             </h3>
-            {run.rules.levelCap && LEVEL_CAPS[run.game]?.[segment] && (
-              <span className="text-xs font-bold text-amber-400/80">
-                Cap: Lv.{LEVEL_CAPS[run.game][segment]}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              <BossPrepButton game={run.game} segment={segment} />
+              {run.rules.levelCap && LEVEL_CAPS[run.game]?.[segment] && (
+                <span className="text-xs font-bold text-amber-400/80">
+                  Cap: Lv.{LEVEL_CAPS[run.game][segment]}
+                </span>
+              )}
+            </div>
           </div>
           <div className="divide-y divide-zinc-800/50">
             {segRoutes.map((route) => {
