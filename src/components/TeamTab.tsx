@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
-import type { Run, Encounter, PokemonData } from '../types';
-import { getSpriteUrl, fetchPokemonData } from '../utils/pokeapi';
+import { useState, useEffect, useCallback } from 'react';
+import type { Run, Encounter, PokemonData, MoveData, PokemonType } from '../types';
+import { ALL_TYPES, GAME_GENERATIONS } from '../types';
+import { getSpriteUrl, fetchPokemonData, fetchMoveData } from '../utils/pokeapi';
 import { moveToParty, moveToBox, markDead, updateEncounter } from '../hooks/useRuns';
+import { getDefensiveMultiplier } from '../data/typeChart';
 import { TypeBadge } from './TypeBadge';
 import { Modal } from './Modal';
+import { getCustomGame } from '../utils/storage';
 
 interface TeamTabProps {
   run: Run;
@@ -58,12 +61,58 @@ function PokemonCard({
   );
 }
 
+function StatBar({ label, value }: { label: string; value: number }) {
+  const maxStat = 255;
+  const percent = Math.min(100, Math.round((value / maxStat) * 100));
+  let color = 'bg-red-500';
+  if (value >= 120) color = 'bg-blue-500';
+  else if (value >= 100) color = 'bg-green-500';
+  else if (value >= 80) color = 'bg-yellow-500';
+  else if (value >= 50) color = 'bg-orange-500';
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] text-zinc-400 w-8 text-right uppercase font-semibold">{label}</span>
+      <span className="text-xs text-zinc-200 w-8 text-right font-bold">{value}</span>
+      <div className="flex-1 h-2.5 bg-zinc-700 rounded-full overflow-hidden">
+        <div className={`h-full rounded-full ${color}`} style={{ width: `${percent}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function TypeMatchupRow({ type, multiplier }: { type: string; multiplier: number }) {
+  if (multiplier === 1) return null;
+  let label = '';
+  let textColor = '';
+  if (multiplier === 0) { label = '0x'; textColor = 'text-zinc-500'; }
+  else if (multiplier === 0.25) { label = '\u00BCx'; textColor = 'text-emerald-400'; }
+  else if (multiplier === 0.5) { label = '\u00BDx'; textColor = 'text-emerald-400'; }
+  else if (multiplier === 2) { label = '2x'; textColor = 'text-red-400'; }
+  else if (multiplier === 4) { label = '4x'; textColor = 'text-red-300 font-bold'; }
+  else { label = `${multiplier}x`; textColor = 'text-zinc-400'; }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <TypeBadge type={type} small />
+      <span className={`text-xs font-semibold ${textColor}`}>{label}</span>
+    </div>
+  );
+}
+
 export function TeamTab({ run, onUpdate }: TeamTabProps) {
   const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<'team' | 'box'>('team');
   const [showDeathModal, setShowDeathModal] = useState(false);
   const [causeOfDeath, setCauseOfDeath] = useState('');
   const [editLevel, setEditLevel] = useState(0);
+  const [detailData, setDetailData] = useState<PokemonData | null>(null);
+  const [moveInputs, setMoveInputs] = useState<string[]>(['', '', '', '']);
+  const [moveDataMap, setMoveDataMap] = useState<Map<string, MoveData>>(new Map());
+
+  const gen = run.game === 'CUSTOM'
+    ? (run.customGameId ? getCustomGame(run.customGameId)?.generation ?? 6 : 6)
+    : GAME_GENERATIONS[run.game];
 
   const teamEncounters = run.team
     .map((id) => run.encounters.find((e) => e.id === id))
@@ -72,6 +121,36 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
   const boxEncounters = run.box
     .map((id) => run.encounters.find((e) => e.id === id))
     .filter((e): e is Encounter => !!e);
+
+  // Fetch detail data when a pokemon is selected
+  useEffect(() => {
+    if (!selectedEncounter) {
+      setDetailData(null);
+      return;
+    }
+    fetchPokemonData(selectedEncounter.pokemonId).then((data) => {
+      if (data) setDetailData(data);
+    });
+    // Load moves from encounter
+    const moves = selectedEncounter.moves ?? ['', '', '', ''];
+    setMoveInputs([moves[0] ?? '', moves[1] ?? '', moves[2] ?? '', moves[3] ?? '']);
+  }, [selectedEncounter?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch move type data when move inputs change
+  useEffect(() => {
+    const fetchMoves = async () => {
+      const newMap = new Map(moveDataMap);
+      for (const name of moveInputs) {
+        if (!name.trim()) continue;
+        const key = name.trim().toLowerCase().replace(/\s+/g, '-');
+        if (newMap.has(key)) continue;
+        const data = await fetchMoveData(name);
+        if (data) newMap.set(key, data);
+      }
+      setMoveDataMap(newMap);
+    };
+    fetchMoves();
+  }, [moveInputs]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectPokemon = (enc: Encounter, location: 'team' | 'box') => {
     setSelectedEncounter(enc);
@@ -94,7 +173,8 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
   const handleUpdateLevel = () => {
     if (!selectedEncounter) return;
     onUpdate((r) => updateEncounter(r, selectedEncounter.id, { level: editLevel }));
-    setSelectedEncounter(null);
+    // Update local state too
+    setSelectedEncounter({ ...selectedEncounter, level: editLevel });
   };
 
   const handleMarkDead = () => {
@@ -104,6 +184,40 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     setCauseOfDeath('');
     setSelectedEncounter(null);
   };
+
+  const handleSaveMoves = useCallback(() => {
+    if (!selectedEncounter) return;
+    const filtered = moveInputs.map((m) => m.trim());
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { moves: filtered }));
+  }, [selectedEncounter, moveInputs, onUpdate]);
+
+  const handleMoveInput = (index: number, value: string) => {
+    const next = [...moveInputs];
+    next[index] = value;
+    setMoveInputs(next);
+  };
+
+  // Calculate type matchups
+  const matchups = detailData
+    ? ALL_TYPES.map((type) => ({
+        type,
+        multiplier: getDefensiveMultiplier(type as PokemonType, detailData.types, gen),
+      }))
+    : [];
+
+  const weaknesses = matchups.filter((m) => m.multiplier > 1);
+  const resistances = matchups.filter((m) => m.multiplier > 0 && m.multiplier < 1);
+  const immunities = matchups.filter((m) => m.multiplier === 0);
+
+  const bst = detailData
+    ? detailData.stats.hp + detailData.stats.atk + detailData.stats.def +
+      detailData.stats.spa + detailData.stats.spd + detailData.stats.spe
+    : 0;
+
+  // Evolution readiness check
+  const canEvolve = detailData?.evolvesTo?.some(
+    (evo) => evo.level && selectedEncounter && selectedEncounter.level >= evo.level
+  );
 
   return (
     <div className="tab-content p-4 pb-20 space-y-6">
@@ -160,16 +274,169 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
         title={selectedEncounter?.nickname ?? 'Pokemon'}
       >
         {selectedEncounter && (
-          <div className="space-y-4">
+          <div className="space-y-5">
+            {/* Header */}
             <div className="flex items-center gap-4">
-              <img
-                src={getSpriteUrl(selectedEncounter.pokemonId, selectedEncounter.isShiny)}
-                alt={selectedEncounter.nickname}
-                className="w-20 h-20 pixelated"
-              />
-              <div>
+              <div className="relative">
+                <img
+                  src={getSpriteUrl(selectedEncounter.pokemonId, selectedEncounter.isShiny)}
+                  alt={selectedEncounter.nickname}
+                  className="w-20 h-20 pixelated"
+                />
+                {canEvolve && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse" title="Ready to evolve!">
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
                 <p className="font-bold text-lg">{selectedEncounter.nickname}</p>
-                <p className="text-zinc-400">Lv.{selectedEncounter.level}</p>
+                <p className="text-zinc-400 text-sm capitalize">{detailData?.name ?? ''}</p>
+                <p className="text-zinc-500 text-sm">Lv.{selectedEncounter.level}</p>
+                {detailData && (
+                  <div className="flex gap-1 mt-1">
+                    {detailData.types.map((t) => (
+                      <TypeBadge key={t} type={t} small />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Base Stats */}
+            {detailData && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">Base Stats</h4>
+                  <span className="text-xs font-bold text-zinc-300">BST: {bst}</span>
+                </div>
+                <div className="space-y-1.5">
+                  <StatBar label="HP" value={detailData.stats.hp} />
+                  <StatBar label="Atk" value={detailData.stats.atk} />
+                  <StatBar label="Def" value={detailData.stats.def} />
+                  <StatBar label="SpA" value={detailData.stats.spa} />
+                  <StatBar label="SpD" value={detailData.stats.spd} />
+                  <StatBar label="Spe" value={detailData.stats.spe} />
+                </div>
+              </div>
+            )}
+
+            {/* Type Matchups */}
+            {detailData && (
+              <div>
+                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Type Matchups</h4>
+                {weaknesses.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-[10px] text-red-400 font-semibold uppercase mb-1">Weak to</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {weaknesses.map((m) => (
+                        <TypeMatchupRow key={m.type} type={m.type} multiplier={m.multiplier} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {resistances.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-[10px] text-emerald-400 font-semibold uppercase mb-1">Resists</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {resistances.map((m) => (
+                        <TypeMatchupRow key={m.type} type={m.type} multiplier={m.multiplier} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {immunities.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-[10px] text-zinc-400 font-semibold uppercase mb-1">Immune to</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {immunities.map((m) => (
+                        <TypeMatchupRow key={m.type} type={m.type} multiplier={m.multiplier} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Abilities */}
+            {detailData?.abilities && detailData.abilities.length > 0 && (
+              <div>
+                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Abilities</h4>
+                <div className="flex flex-wrap gap-2">
+                  {detailData.abilities.map((a) => (
+                    <span
+                      key={a}
+                      className="px-2.5 py-1 rounded-lg bg-zinc-700 text-xs font-medium text-zinc-200 capitalize"
+                    >
+                      {a.replace(/-/g, ' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Evolution */}
+            {detailData?.evolvesTo && detailData.evolvesTo.length > 0 && (
+              <div>
+                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Evolution</h4>
+                <div className="space-y-2">
+                  {detailData.evolvesTo.map((evo) => (
+                    <div
+                      key={evo.name}
+                      className={`flex items-center gap-3 p-2 rounded-lg ${
+                        evo.level && selectedEncounter.level >= evo.level
+                          ? 'bg-emerald-900/30 border border-emerald-700/40'
+                          : 'bg-zinc-700/50'
+                      }`}
+                    >
+                      <img
+                        src={getSpriteUrl(evo.id)}
+                        alt={evo.name}
+                        className="w-10 h-10 pixelated"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold capitalize">{evo.name.replace(/-/g, ' ')}</p>
+                        <p className="text-xs text-zinc-400">{evo.method}</p>
+                      </div>
+                      {evo.level && selectedEncounter.level >= evo.level && (
+                        <span className="text-[10px] font-bold text-emerald-400 uppercase">Ready</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Moves */}
+            <div>
+              <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Moves</h4>
+              <div className="space-y-2">
+                {[0, 1, 2, 3].map((i) => {
+                  const key = moveInputs[i]?.trim().toLowerCase().replace(/\s+/g, '-');
+                  const moveData = key ? moveDataMap.get(key) : null;
+                  return (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={moveInputs[i]}
+                        onChange={(e) => handleMoveInput(i, e.target.value)}
+                        onBlur={handleSaveMoves}
+                        placeholder={`Move ${i + 1}`}
+                        className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                      {moveData && (
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <TypeBadge type={moveData.type} small />
+                          {moveData.power && (
+                            <span className="text-[10px] text-zinc-400">{moveData.power}pw</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
