@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Modal } from './Modal';
 import { PokemonSearch } from './PokemonSearch';
-import type { PokemonData, Encounter } from '../types';
+import type { PokemonData, Encounter, Game } from '../types';
 import { generateId } from '../utils/id';
+import { ENCOUNTER_TABLES } from '../data/encounters';
+import { getSpriteUrl, fetchPokemonData, loadPokemonList } from '../utils/pokeapi';
+import { TypeBadge } from './TypeBadge';
 
 interface EncounterModalProps {
   open: boolean;
   onClose: () => void;
   routeName: string;
   routeKey: string;
+  game: Game;
   existingEncounter?: Encounter;
   onSave: (encounter: Encounter) => void;
 }
@@ -18,6 +22,7 @@ export function EncounterModal({
   onClose,
   routeName,
   routeKey,
+  game,
   existingEncounter,
   onSave,
 }: EncounterModalProps) {
@@ -27,6 +32,46 @@ export function EncounterModal({
   const [status, setStatus] = useState<'alive' | 'missed'>(
     existingEncounter?.status === 'missed' ? 'missed' : 'alive'
   );
+  const [showManualSearch, setShowManualSearch] = useState(false);
+  const [encounterNames, setEncounterNames] = useState<Map<number, string>>(new Map());
+  const [encounterTypes, setEncounterTypes] = useState<Map<number, string[]>>(new Map());
+
+  const routeEncounters = ENCOUNTER_TABLES[game]?.[routeKey] ?? [];
+
+  // Load pokemon names for the encounter list
+  useEffect(() => {
+    if (routeEncounters.length === 0) return;
+    loadPokemonList().then((list) => {
+      const nameMap = new Map<number, string>();
+      for (const id of routeEncounters) {
+        const found = list.find((p) => p.id === id);
+        if (found) nameMap.set(id, found.name);
+      }
+      setEncounterNames(nameMap);
+    });
+  }, [routeKey, game]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Load types for encounter list pokemon
+  useEffect(() => {
+    if (routeEncounters.length === 0) return;
+    const loadTypes = async () => {
+      const typeMap = new Map<number, string[]>();
+      for (const id of routeEncounters) {
+        const data = await fetchPokemonData(id);
+        if (data) typeMap.set(id, data.types);
+      }
+      setEncounterTypes(typeMap);
+    };
+    loadTypes();
+  }, [routeKey, game]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleQuickSelect = useCallback(async (pokemonId: number) => {
+    const data = await fetchPokemonData(pokemonId);
+    if (data) {
+      setSelectedPokemon(data);
+      setShowManualSearch(false);
+    }
+  }, []);
 
   const handleSave = () => {
     const pokemonId = selectedPokemon?.id ?? existingEncounter?.pokemonId;
@@ -53,7 +98,95 @@ export function EncounterModal({
         {!existingEncounter && (
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Pokemon</label>
-            <PokemonSearch onSelect={setSelectedPokemon} />
+
+            {/* Selected pokemon preview */}
+            {selectedPokemon && !showManualSearch && (
+              <div className="flex items-center gap-3 rounded-lg bg-zinc-700/50 p-3 mb-3">
+                <img
+                  src={selectedPokemon.sprite || getSpriteUrl(selectedPokemon.id)}
+                  alt={selectedPokemon.name}
+                  className="w-14 h-14 pixelated"
+                />
+                <div className="flex-1">
+                  <p className="font-bold capitalize text-lg">{selectedPokemon.name}</p>
+                  <div className="flex gap-1.5 mt-1">
+                    {selectedPokemon.types.map((t) => (
+                      <TypeBadge key={t} type={t} small />
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedPokemon(null)}
+                  className="text-zinc-400 hover:text-white p-1"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* Route encounter suggestions */}
+            {!selectedPokemon && routeEncounters.length > 0 && !showManualSearch && (
+              <div className="rounded-lg bg-zinc-700/30 border border-zinc-700 max-h-64 overflow-y-auto mb-2">
+                {routeEncounters.map((id) => {
+                  const name = encounterNames.get(id) ?? `#${id}`;
+                  const types = encounterTypes.get(id) ?? [];
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => handleQuickSelect(id)}
+                      className="flex items-center gap-3 w-full px-3 py-2 hover:bg-zinc-600/50 transition-colors text-left border-b border-zinc-700/50 last:border-b-0"
+                    >
+                      <img
+                        src={getSpriteUrl(id)}
+                        alt={name}
+                        className="w-10 h-10 pixelated"
+                        loading="lazy"
+                      />
+                      <span className="capitalize font-medium flex-1">{name}</span>
+                      <div className="flex gap-1">
+                        {types.map((t) => (
+                          <TypeBadge key={t} type={t} small />
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Manual search toggle / fallback */}
+            {!selectedPokemon && (
+              <>
+                {showManualSearch ? (
+                  <div>
+                    {routeEncounters.length > 0 && (
+                      <button
+                        onClick={() => setShowManualSearch(false)}
+                        className="text-xs text-emerald-400 hover:text-emerald-300 mb-2 flex items-center gap-1"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to route encounters
+                      </button>
+                    )}
+                    <PokemonSearch onSelect={(p) => { setSelectedPokemon(p); setShowManualSearch(false); }} />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowManualSearch(true)}
+                    className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-zinc-600 py-2.5 text-sm text-zinc-400 hover:border-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Search manually
+                  </button>
+                )}
+              </>
+            )}
           </div>
         )}
 

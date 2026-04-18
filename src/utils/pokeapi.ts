@@ -47,7 +47,9 @@ export async function fetchPokemonData(idOrName: number | string): Promise<Pokem
       id: data.id,
       name: data.name,
       types: data.types.map((t: { type: { name: string } }) => t.type.name),
-      sprite: data.sprites.front_default ?? '',
+      sprite: data.sprites?.versions?.['generation-iii']?.['firered-leafgreen']?.front_default
+        ?? data.sprites.front_default
+        ?? '',
       stats: {
         hp: data.stats[0].base_stat,
         atk: data.stats[1].base_stat,
@@ -66,5 +68,5 @@ export async function fetchPokemonData(idOrName: number | string): Promise<Pokem
 }
 
 export function getSpriteUrl(pokemonId: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`;
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iii/firered-leafgreen/${pokemonId}.png`;
 }

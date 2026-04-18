@@ -152,6 +152,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           }}
           routeName={modalRoute.name}
           routeKey={modalRoute.key}
+          game={run.game}
           existingEncounter={editingEncounter}
           onSave={handleSaveEncounter}
         />
