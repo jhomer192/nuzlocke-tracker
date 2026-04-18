@@ -16,7 +16,8 @@ export type Game =
   | 'SWORD_SHIELD'
   | 'BRILLIANT_DIAMOND_SHINING_PEARL'
   | 'LEGENDS_ARCEUS'
-  | 'SCARLET_VIOLET';
+  | 'SCARLET_VIOLET'
+  | 'CUSTOM';
 
 export interface RuleSet {
   duplicateClause: boolean;
@@ -28,6 +29,7 @@ export interface Run {
   id: string;
   name: string;
   game: Game;
+  customGameId?: string; // references a CustomGameDef when game === 'CUSTOM'
   rules: RuleSet;
   status: 'active' | 'won' | 'wiped';
   startedAt: string;
@@ -49,6 +51,7 @@ export interface Encounter {
   causeOfDeath?: string;
   caughtAt: string;
   diedAt?: string;
+  moves?: string[]; // up to 4 move names
 }
 
 // Level caps per gym for each game (ace Pokemon level)
@@ -250,6 +253,7 @@ export const LEVEL_CAPS: Record<Game, Record<string, number>> = {
     'Pre-Grusha': 48,
     'Pre-Elite Four': 62,
   },
+  CUSTOM: {},
 };
 
 export interface PokemonData {
@@ -265,6 +269,25 @@ export interface PokemonData {
     spd: number;
     spe: number;
   };
+  abilities?: string[];
+  evolvesTo?: { name: string; id: number; method: string; level?: number }[];
+}
+
+export interface MoveData {
+  name: string;
+  type: string;
+  power: number | null;
+  accuracy: number | null;
+  damageClass: 'physical' | 'special' | 'status';
+}
+
+export interface CustomGameDef {
+  id: string;
+  name: string;
+  generation: number;
+  badgeCount: number;
+  badgeNames: string[];
+  routes: GameLocation[];
 }
 
 export interface GameLocation {
@@ -292,6 +315,7 @@ export const GAME_NAMES: Record<Game, string> = {
   BRILLIANT_DIAMOND_SHINING_PEARL: 'Brilliant Diamond / Shining Pearl',
   LEGENDS_ARCEUS: 'Legends: Arceus',
   SCARLET_VIOLET: 'Scarlet / Violet',
+  CUSTOM: 'Custom / Fan Game',
 };
 
 export const GAME_GENERATIONS: Record<Game, number> = {
@@ -313,6 +337,7 @@ export const GAME_GENERATIONS: Record<Game, number> = {
   BRILLIANT_DIAMOND_SHINING_PEARL: 8,
   LEGENDS_ARCEUS: 8,
   SCARLET_VIOLET: 9,
+  CUSTOM: 6, // default to gen 6 for custom; overridden by CustomGameDef.generation
 };
 
 export const ALL_TYPES = [

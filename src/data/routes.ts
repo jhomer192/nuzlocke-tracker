@@ -849,6 +849,7 @@ const SCARLET_VIOLET_ROUTES: GameLocation[] = [
 ];
 
 export const GAME_ROUTES: Record<Game, GameLocation[]> = {
+  CUSTOM: [], // populated from CustomGameDef at runtime
   RED_BLUE: RED_BLUE_ROUTES,
   GOLD_SILVER: GOLD_SILVER_ROUTES,
   RUBY_SAPPHIRE: RUBY_SAPPHIRE_ROUTES,
@@ -870,6 +871,7 @@ export const GAME_ROUTES: Record<Game, GameLocation[]> = {
 };
 
 export const BADGE_NAMES: Record<Game, string[]> = {
+  CUSTOM: [], // populated from CustomGameDef at runtime
   RED_BLUE: ['Boulder', 'Cascade', 'Thunder', 'Rainbow', 'Soul', 'Marsh', 'Volcano', 'Earth'],
   GOLD_SILVER: ['Zephyr', 'Hive', 'Plain', 'Fog', 'Storm', 'Mineral', 'Glacier', 'Rising'],
   RUBY_SAPPHIRE: ['Stone', 'Knuckle', 'Dynamo', 'Heat', 'Balance', 'Feather', 'Mind', 'Rain'],

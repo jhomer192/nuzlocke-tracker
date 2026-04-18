@@ -1,5 +1,5 @@
-import type { PokemonData } from '../types';
-import { getCachedPokemon, savePokemonToCache } from './storage';
+import type { PokemonData, MoveData } from '../types';
+import { getCachedPokemon, savePokemonToCache, getCachedMove, saveMoveToCache } from './storage';
 
 // Full list of Gen 1-3 Pokemon names for autocomplete (national dex 1-386)
 let pokemonList: { id: number; name: string }[] = [];
@@ -58,7 +58,29 @@ export async function fetchPokemonData(idOrName: number | string): Promise<Pokem
         spd: data.stats[4].base_stat,
         spe: data.stats[5].base_stat,
       },
+      abilities: data.abilities.map(
+        (a: { ability: { name: string }; is_hidden: boolean }) =>
+          a.is_hidden ? `${a.ability.name} (Hidden)` : a.ability.name
+      ),
     };
+
+    // Fetch evolution data
+    try {
+      const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${data.id}`);
+      if (speciesRes.ok) {
+        const speciesData = await speciesRes.json();
+        const evoChainUrl = speciesData.evolution_chain?.url;
+        if (evoChainUrl) {
+          const evoRes = await fetch(evoChainUrl);
+          if (evoRes.ok) {
+            const evoData = await evoRes.json();
+            pokemon.evolvesTo = findEvolutions(evoData.chain, data.name);
+          }
+        }
+      }
+    } catch {
+      // Evolution data is nice-to-have, not critical
+    }
 
     savePokemonToCache(pokemon);
     return pokemon;
@@ -87,4 +109,98 @@ export function getSpriteUrl(pokemonId: number, shiny = false): string {
     return `${base}/versions/generation-iii/emerald/${pokemonId}.png`;
   }
   return `${base}/${pokemonId}.png`;
+}
+
+/** Parse an evolution chain to find what the given Pokemon evolves into */
+function findEvolutions(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  chain: any,
+  currentName: string
+): PokemonData['evolvesTo'] {
+  // BFS through the chain to find the current pokemon, then return its evolvesTo
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queue: any[] = [chain];
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    if (node.species.name === currentName) {
+      if (!node.evolves_to || node.evolves_to.length === 0) return undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return node.evolves_to.map((evo: any) => {
+        const detail = evo.evolution_details?.[0];
+        let method = 'Unknown';
+        let level: number | undefined;
+
+        if (detail) {
+          if (detail.trigger?.name === 'level-up') {
+            if (detail.min_level) {
+              method = `Level ${detail.min_level}`;
+              level = detail.min_level;
+            } else if (detail.min_happiness) {
+              method = 'Friendship';
+            } else if (detail.known_move) {
+              method = `Knows ${detail.known_move.name}`;
+            } else if (detail.time_of_day) {
+              method = `Level up (${detail.time_of_day})`;
+            } else {
+              method = 'Level up';
+            }
+          } else if (detail.trigger?.name === 'use-item') {
+            const itemName = detail.item?.name?.replace(/-/g, ' ') ?? 'item';
+            method = itemName.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+          } else if (detail.trigger?.name === 'trade') {
+            method = detail.held_item
+              ? `Trade holding ${detail.held_item.name.replace(/-/g, ' ')}`
+              : 'Trade';
+          } else if (detail.trigger?.name) {
+            method = detail.trigger.name.replace(/-/g, ' ');
+          }
+        }
+
+        // Extract dex ID from species URL
+        const urlParts = evo.species.url.split('/').filter(Boolean);
+        const speciesId = parseInt(urlParts[urlParts.length - 1], 10);
+
+        return {
+          name: evo.species.name,
+          id: speciesId,
+          method,
+          level,
+        };
+      });
+    }
+    if (node.evolves_to) {
+      queue.push(...node.evolves_to);
+    }
+  }
+  return undefined;
+}
+
+/** Fetch move data from PokeAPI with localStorage caching */
+export async function fetchMoveData(name: string): Promise<MoveData | null> {
+  if (!name.trim()) return null;
+
+  const normalized = name.trim().toLowerCase().replace(/\s+/g, '-');
+
+  // Check cache
+  const cached = getCachedMove(normalized);
+  if (cached) return cached;
+
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/move/${normalized}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+
+    const move: MoveData = {
+      name: data.name,
+      type: data.type.name,
+      power: data.power,
+      accuracy: data.accuracy,
+      damageClass: data.damage_class.name as MoveData['damageClass'],
+    };
+
+    saveMoveToCache(move);
+    return move;
+  } catch {
+    return null;
+  }
 }
