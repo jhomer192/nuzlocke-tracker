@@ -32,10 +32,10 @@ export function searchPokemon(query: string): { id: number; name: string }[] {
 }
 
 export async function fetchPokemonData(idOrName: number | string): Promise<PokemonData | null> {
-  // Check cache first
+  // Check cache first (re-fetch if missing new fields like abilities)
   if (typeof idOrName === 'number') {
     const cached = getCachedPokemon(idOrName);
-    if (cached) return cached;
+    if (cached && cached.abilities) return cached;
   }
 
   try {
