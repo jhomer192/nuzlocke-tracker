@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { Run, GameLocation, Encounter } from '../types';
+import { LEVEL_CAPS } from '../types';
 import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
@@ -66,10 +67,15 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
     <div className="tab-content pb-20">
       {segments.map(({ segment, routes: segRoutes }) => (
         <div key={segment} className="mb-6">
-          <div className="sticky top-0 z-10 bg-zinc-900/95 backdrop-blur-sm px-4 py-2 border-b border-zinc-800">
+          <div className="sticky top-0 z-10 bg-zinc-900/95 backdrop-blur-sm px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">
               {segment}
             </h3>
+            {run.rules.levelCap && LEVEL_CAPS[run.game]?.[segment] && (
+              <span className="text-xs font-bold text-amber-400/80">
+                Cap: Lv.{LEVEL_CAPS[run.game][segment]}
+              </span>
+            )}
           </div>
           <div className="divide-y divide-zinc-800/50">
             {segRoutes.map((route) => {
@@ -121,7 +127,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                               : 'text-amber-400'
                         }`}
                       >
-                        {enc.nickname} · Lv.{enc.level}
+                        {enc.isShiny && <span className="text-yellow-400">✨</span>}{enc.nickname} · Lv.{enc.level}
                       </p>
                     )}
                   </div>

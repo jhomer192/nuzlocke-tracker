@@ -29,6 +29,7 @@ export function EncounterModal({
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
   const [nickname, setNickname] = useState(existingEncounter?.nickname ?? '');
   const [level, setLevel] = useState(existingEncounter?.level ?? 5);
+  const [isShiny, setIsShiny] = useState(existingEncounter?.isShiny ?? false);
   const [status, setStatus] = useState<'alive' | 'missed'>(
     existingEncounter?.status === 'missed' ? 'missed' : 'alive'
   );
@@ -84,6 +85,7 @@ export function EncounterModal({
       nickname: nickname || selectedPokemon?.name || '',
       status,
       level,
+      isShiny,
       caughtAt: existingEncounter?.caughtAt ?? new Date().toISOString(),
     };
     onSave(encounter);
@@ -212,6 +214,18 @@ export function EncounterModal({
             className="w-24 rounded-lg bg-zinc-700 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
+
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={isShiny}
+            onChange={(e) => setIsShiny(e.target.checked)}
+            className="w-5 h-5 rounded bg-zinc-700 border-zinc-600 text-yellow-400 focus:ring-yellow-400 focus:ring-offset-0 cursor-pointer"
+          />
+          <span className="text-sm font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">
+            ✨ Shiny
+          </span>
+        </label>
 
         <div>
           <label className="block text-sm font-medium text-zinc-400 mb-2">Status</label>

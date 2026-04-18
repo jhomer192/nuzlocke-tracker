@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Run } from '../types';
-import { GAME_NAMES } from '../types';
+import { GAME_NAMES, LEVEL_CAPS } from '../types';
 import { BadgeBar } from '../components/BadgeBar';
 import { EncountersTab } from '../components/EncountersTab';
 import { TeamTab } from '../components/TeamTab';
@@ -112,6 +112,24 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
           </span>
         </div>
       </div>
+
+      {/* Level cap indicator */}
+      {run.rules.levelCap && (() => {
+        const caps = LEVEL_CAPS[run.game];
+        const segments = Object.keys(caps);
+        const badgeCount = run.badges.filter(Boolean).length;
+        const currentSegment = segments[Math.min(badgeCount, segments.length - 1)];
+        const currentCap = caps[currentSegment];
+        return (
+          <div className="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Level Cap</span>
+              <span className="text-amber-300 font-bold text-lg">{currentCap}</span>
+            </div>
+            <span className="text-amber-400/60 text-xs">{currentSegment}</span>
+          </div>
+        );
+      })()}
 
       {/* Badge bar */}
       <BadgeBar
