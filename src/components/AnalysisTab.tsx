@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Run, Encounter, PokemonData, PokemonType } from '../types';
-import { ALL_TYPES } from '../types';
-import { fetchPokemonData, getSpriteUrl } from '../utils/pokeapi';
-import { getDefensiveMultiplier } from '../data/typeChart';
+import type { Run, Encounter, PokemonData, PokemonType, MoveData } from '../types';
+import { ALL_TYPES, GAME_GENERATIONS } from '../types';
+import { fetchPokemonData, getSpriteUrl, fetchMoveData } from '../utils/pokeapi';
+import { getDefensiveMultiplier, getTypesForGen } from '../data/typeChart';
+import { getCustomGame } from '../utils/storage';
 
 interface AnalysisTabProps {
   run: Run;
@@ -78,6 +79,13 @@ function TeamWeaknessCell({ value, isGap }: { value: number; isGap: boolean }) {
 export function AnalysisTab({ run }: AnalysisTabProps) {
   const [mode, setMode] = useState<MatrixMode>('defensive');
   const [pokemonDataMap, setPokemonDataMap] = useState<Map<number, PokemonData>>(new Map());
+  const [moveDataMap, setMoveDataMap] = useState<Map<string, MoveData>>(new Map());
+
+  const gen = run.game === 'CUSTOM'
+    ? (run.customGameId ? getCustomGame(run.customGameId)?.generation ?? 6 : 6)
+    : GAME_GENERATIONS[run.game];
+
+  const relevantTypes = getTypesForGen(gen);
 
   const teamEncounters = run.team
     .map((id) => run.encounters.find((e) => e.id === id))
@@ -97,17 +105,50 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run.team.join(',')]);
 
+  // Fetch move data for team members' moves
+  useEffect(() => {
+    const fetchAll = async () => {
+      const newMap = new Map(moveDataMap);
+      let changed = false;
+      for (const enc of teamEncounters) {
+        const moves = enc.moves ?? [];
+        for (const moveName of moves) {
+          if (!moveName.trim()) continue;
+          const key = moveName.trim().toLowerCase().replace(/\s+/g, '-');
+          if (newMap.has(key)) continue;
+          const data = await fetchMoveData(moveName);
+          if (data) {
+            newMap.set(key, data);
+            changed = true;
+          }
+        }
+      }
+      if (changed) setMoveDataMap(newMap);
+    };
+    fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [run.encounters]);
+
   // Calculate the matrix
-  const { matrix, netScores, gaps } = useMemo(() => {
+  const { matrix, netScores, gaps, offensiveGaps } = useMemo(() => {
     const mat: number[][] = [];
     const net: number[] = [];
     const gapSet = new Set<number>();
+    const offGapSet = new Set<number>();
 
     for (let typeIdx = 0; typeIdx < ALL_TYPES.length; typeIdx++) {
       const attackingType = ALL_TYPES[typeIdx];
+      // Skip types that don't exist in this gen
+      if (!relevantTypes.includes(attackingType)) {
+        mat.push(teamEncounters.map(() => 1));
+        net.push(0);
+        continue;
+      }
+
       const row: number[] = [];
       let netScore = 0;
       let hasResist = false;
+      let hasSEOffense = false;
 
       for (const enc of teamEncounters) {
         const data = pokemonDataMap.get(enc.pokemonId);
@@ -117,7 +158,7 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
         }
 
         if (mode === 'defensive') {
-          const mult = getDefensiveMultiplier(attackingType, data.types);
+          const mult = getDefensiveMultiplier(attackingType, data.types, gen);
           row.push(mult);
           if (mult > 1) netScore++;
           if (mult < 1) {
@@ -126,20 +167,37 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
           }
           if (mult === 0) hasResist = true;
         } else {
-          // Offensive: how well does this team member's STAB types hit this defending type
+          // Offensive: use actual moves if available, otherwise STAB types
+          const moves = enc.moves?.filter((m) => m.trim()) ?? [];
           let bestMult = 1;
-          for (const stabType of data.types) {
-            const mult = getDefensiveMultiplier(
-              stabType as PokemonType,
-              [attackingType]
-            );
-            // This is actually: stabType attacking against attackingType defending
-            // We want: does our mon's STAB hit this type super-effectively?
-            if (mult > bestMult) bestMult = mult;
-            if (mult < bestMult && bestMult === 1) bestMult = mult;
+
+          if (moves.length > 0) {
+            // Use actual move types
+            for (const moveName of moves) {
+              const key = moveName.trim().toLowerCase().replace(/\s+/g, '-');
+              const moveData = moveDataMap.get(key);
+              if (!moveData || moveData.damageClass === 'status') continue;
+              const mult = getDefensiveMultiplier(
+                moveData.type as PokemonType,
+                [attackingType],
+                gen
+              );
+              if (mult > bestMult) bestMult = mult;
+            }
+          } else {
+            // Fallback: STAB types
+            for (const stabType of data.types) {
+              const mult = getDefensiveMultiplier(
+                stabType as PokemonType,
+                [attackingType],
+                gen
+              );
+              if (mult > bestMult) bestMult = mult;
+            }
           }
+
           row.push(bestMult);
-          if (bestMult > 1) hasResist = true;
+          if (bestMult > 1) hasSEOffense = true;
         }
       }
 
@@ -149,10 +207,13 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
       if (mode === 'defensive' && !hasResist && teamEncounters.length > 0) {
         gapSet.add(typeIdx);
       }
+      if (mode === 'offensive' && !hasSEOffense && teamEncounters.length > 0) {
+        offGapSet.add(typeIdx);
+      }
     }
 
-    return { matrix: mat, netScores: net, gaps: gapSet };
-  }, [teamEncounters, pokemonDataMap, mode]);
+    return { matrix: mat, netScores: net, gaps: gapSet, offensiveGaps: offGapSet };
+  }, [teamEncounters, pokemonDataMap, moveDataMap, mode, gen, relevantTypes]);
 
   if (teamEncounters.length === 0) {
     return (
@@ -197,10 +258,24 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
       {/* Gap warnings */}
       {gaps.size > 0 && mode === 'defensive' && (
         <div className="mb-4 rounded-lg bg-red-900/20 border border-red-800/30 p-3">
-          <p className="text-sm text-red-400 font-medium mb-1">Coverage Gaps</p>
+          <p className="text-sm text-red-400 font-medium mb-1">Defensive Gaps</p>
           <p className="text-xs text-red-400/70">
             No team member resists:{' '}
             {Array.from(gaps)
+              .filter((i) => relevantTypes.includes(ALL_TYPES[i]))
+              .map((i) => ALL_TYPES[i])
+              .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+              .join(', ')}
+          </p>
+        </div>
+      )}
+      {offensiveGaps.size > 0 && mode === 'offensive' && (
+        <div className="mb-4 rounded-lg bg-amber-900/20 border border-amber-800/30 p-3">
+          <p className="text-sm text-amber-400 font-medium mb-1">Offensive Gaps</p>
+          <p className="text-xs text-amber-400/70">
+            No super-effective coverage against:{' '}
+            {Array.from(offensiveGaps)
+              .filter((i) => relevantTypes.includes(ALL_TYPES[i]))
               .map((i) => ALL_TYPES[i])
               .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
               .join(', ')}
@@ -232,7 +307,9 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
           </div>
 
           {/* Type rows */}
-          {ALL_TYPES.map((type, typeIdx) => (
+          {ALL_TYPES.filter((t) => relevantTypes.includes(t)).map((type) => {
+            const typeIdx = ALL_TYPES.indexOf(type);
+            return (
             <div
               key={type}
               className="grid gap-1 mb-1"
@@ -253,10 +330,11 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
               {/* Net score */}
               <TeamWeaknessCell
                 value={netScores[typeIdx]}
-                isGap={gaps.has(typeIdx)}
+                isGap={mode === 'defensive' ? gaps.has(typeIdx) : offensiveGaps.has(typeIdx)}
               />
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
