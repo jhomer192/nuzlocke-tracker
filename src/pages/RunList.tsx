@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Game, RuleSet, Run } from '../types';
+import type { Game, RuleSet, Run, CustomGameDef, GameLocation } from '../types';
 import { GAME_NAMES, GAME_GENERATIONS } from '../types';
 import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
+import { loadCustomGames, saveCustomGames } from '../utils/storage';
+import { generateId } from '../utils/id';
 
 interface RunListProps {
   runs: Run[];
-  onCreateRun: (name: string, game: Game, rules: RuleSet) => Run;
+  onCreateRun: (name: string, game: Game, rules: RuleSet, customGameId?: string) => Run;
   onDeleteRun: (id: string) => void;
 }
 
@@ -51,6 +53,22 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [expandedGens, setExpandedGens] = useState<Set<number>>(() => new Set([GAME_GENERATIONS[game]]));
 
+  // Custom game state
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const [customGames, setCustomGames] = useState<CustomGameDef[]>([]);
+  const [customName, setCustomName] = useState('');
+  const [customGen, setCustomGen] = useState(6);
+  const [customBadgeCount, setCustomBadgeCount] = useState(8);
+  const [customBadgeNames, setCustomBadgeNames] = useState<string[]>([]);
+  const [customRoutes, setCustomRoutes] = useState<{ name: string; segment: string }[]>([]);
+  const [newRouteName, setNewRouteName] = useState('');
+  const [newRouteSegment, setNewRouteSegment] = useState('');
+  const [selectedCustomGameId, setSelectedCustomGameId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCustomGames(loadCustomGames());
+  }, []);
+
   const toggleGen = (gen: number) => {
     setExpandedGens((prev) => {
       const next = new Set(prev);
@@ -60,9 +78,66 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
     });
   };
 
+  const handleSaveCustomGame = () => {
+    if (!customName.trim()) return;
+    const badgeNames: string[] = [];
+    for (let i = 0; i < customBadgeCount; i++) {
+      badgeNames.push(customBadgeNames[i] || `Badge ${i + 1}`);
+    }
+    const routes: GameLocation[] = customRoutes.map((r, i) => ({
+      key: `custom-${i}-${r.name.toLowerCase().replace(/\s+/g, '-')}`,
+      name: r.name,
+      segment: r.segment || 'Main',
+    }));
+    const def: CustomGameDef = {
+      id: generateId(),
+      name: customName.trim(),
+      generation: customGen,
+      badgeCount: customBadgeCount,
+      badgeNames,
+      routes,
+    };
+    const updated = [...customGames, def];
+    setCustomGames(updated);
+    saveCustomGames(updated);
+    setSelectedCustomGameId(def.id);
+    setGame('CUSTOM');
+    setShowCustomForm(false);
+    resetCustomForm();
+  };
+
+  const resetCustomForm = () => {
+    setCustomName('');
+    setCustomGen(6);
+    setCustomBadgeCount(8);
+    setCustomBadgeNames([]);
+    setCustomRoutes([]);
+    setNewRouteName('');
+    setNewRouteSegment('');
+  };
+
+  const handleDeleteCustomGame = (id: string) => {
+    const updated = customGames.filter((g) => g.id !== id);
+    setCustomGames(updated);
+    saveCustomGames(updated);
+    if (selectedCustomGameId === id) {
+      setSelectedCustomGameId(null);
+      setGame('RED_BLUE');
+    }
+  };
+
+  const handleAddRoute = () => {
+    if (!newRouteName.trim()) return;
+    setCustomRoutes([...customRoutes, {
+      name: newRouteName.trim(),
+      segment: newRouteSegment.trim() || 'Main',
+    }]);
+    setNewRouteName('');
+  };
+
   const handleCreate = () => {
     if (!name.trim()) return;
-    const run = onCreateRun(name.trim(), game, rules);
+    const run = onCreateRun(name.trim(), game, rules, selectedCustomGameId ?? undefined);
     setShowModal(false);
     setName('');
     navigate(`/run/${run.id}`);
@@ -153,7 +228,11 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                           {run.status}
                         </span>
                       </div>
-                      <p className="text-sm text-zinc-400">{GAME_NAMES[run.game]}</p>
+                      <p className="text-sm text-zinc-400">
+                        {run.game === 'CUSTOM' && run.customGameId
+                          ? loadCustomGames().find((g) => g.id === run.customGameId)?.name ?? 'Custom Game'
+                          : GAME_NAMES[run.game]}
+                      </p>
                       <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
                         <span>{badgeCount}/{run.badges.length} badges</span>
                         <span className="text-emerald-500">{aliveCount} alive</span>
@@ -233,12 +312,12 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                   </button>
                   {expandedGens.has(gen) && (
                     <div className="mt-1 space-y-1 pl-2">
-                      {games.map((g) => (
+                      {games.filter((g) => g !== 'CUSTOM').map((g) => (
                         <button
                           key={g}
-                          onClick={() => setGame(g)}
+                          onClick={() => { setGame(g); setSelectedCustomGameId(null); }}
                           className={`w-full rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
-                            game === g
+                            game === g && !selectedCustomGameId
                               ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
                               : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
                           }`}
@@ -250,6 +329,60 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                   )}
                 </div>
               ))}
+
+              {/* Custom / Fan Game section */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => toggleGen(0)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-purple-900/30 hover:bg-purple-900/40 transition-colors text-sm font-semibold text-purple-300"
+                >
+                  <span>Custom / Fan Games</span>
+                  <svg
+                    className={`w-4 h-4 text-purple-400 transition-transform ${expandedGens.has(0) ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {expandedGens.has(0) && (
+                  <div className="mt-1 space-y-1 pl-2">
+                    {customGames.map((cg) => (
+                      <div key={cg.id} className="flex gap-1">
+                        <button
+                          onClick={() => { setGame('CUSTOM'); setSelectedCustomGameId(cg.id); }}
+                          className={`flex-1 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
+                            game === 'CUSTOM' && selectedCustomGameId === cg.id
+                              ? 'bg-purple-600/20 border-2 border-purple-500 text-purple-400'
+                              : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
+                          }`}
+                        >
+                          {cg.name}
+                          <span className="text-xs text-zinc-500 ml-2">Gen {cg.generation}</span>
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCustomGame(cg.id)}
+                          className="px-2 rounded-lg bg-zinc-700 text-zinc-500 hover:text-red-400 hover:bg-red-600/20 transition-colors"
+                          title="Delete custom game"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => setShowCustomForm(true)}
+                      className="w-full rounded-lg px-4 py-2.5 text-left text-sm font-medium bg-zinc-700/50 border-2 border-dashed border-zinc-600 text-zinc-400 hover:border-purple-500/50 hover:text-purple-300 transition-all"
+                    >
+                      + Create Custom Game
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -294,7 +427,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
           <button
             onClick={handleCreate}
-            disabled={!name.trim()}
+            disabled={!name.trim() || (game === 'CUSTOM' && !selectedCustomGameId)}
             className="w-full rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
           >
             Start Run
@@ -331,6 +464,130 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
               Delete
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Custom Game Creation Modal */}
+      <Modal
+        open={showCustomForm}
+        onClose={() => { setShowCustomForm(false); resetCustomForm(); }}
+        title="Create Custom Game"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Game Name</label>
+            <input
+              type="text"
+              value={customName}
+              onChange={(e) => setCustomName(e.target.value)}
+              placeholder="e.g., Pokemon Radical Red"
+              className="w-full rounded-lg bg-zinc-700 px-4 py-3 text-white placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-purple-500"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Generation (for type chart)</label>
+            <select
+              value={customGen}
+              onChange={(e) => setCustomGen(Number(e.target.value))}
+              className="w-full rounded-lg bg-zinc-700 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value={1}>Gen 1 (no Dark/Steel/Fairy)</option>
+              <option value={2}>Gen 2-5 (no Fairy, Steel resists Ghost/Dark)</option>
+              <option value={6}>Gen 6+ (modern type chart)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Number of Badges</label>
+            <input
+              type="number"
+              value={customBadgeCount}
+              onChange={(e) => setCustomBadgeCount(Math.max(0, Math.min(16, Number(e.target.value))))}
+              min={0}
+              max={16}
+              className="w-24 rounded-lg bg-zinc-700 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          {customBadgeCount > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Badge Names (optional)</label>
+              <div className="grid grid-cols-2 gap-2">
+                {Array.from({ length: customBadgeCount }).map((_, i) => (
+                  <input
+                    key={i}
+                    type="text"
+                    value={customBadgeNames[i] ?? ''}
+                    onChange={(e) => {
+                      const next = [...customBadgeNames];
+                      next[i] = e.target.value;
+                      setCustomBadgeNames(next);
+                    }}
+                    placeholder={`Badge ${i + 1}`}
+                    className="rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Routes</label>
+            {customRoutes.length > 0 && (
+              <div className="mb-2 space-y-1 max-h-32 overflow-y-auto">
+                {customRoutes.map((r, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm bg-zinc-700/50 rounded-lg px-3 py-1.5">
+                    <span className="flex-1 text-zinc-200">{r.name}</span>
+                    <span className="text-xs text-zinc-500">{r.segment}</span>
+                    <button
+                      onClick={() => setCustomRoutes(customRoutes.filter((_, j) => j !== i))}
+                      className="text-zinc-500 hover:text-red-400 transition-colors"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newRouteName}
+                onChange={(e) => setNewRouteName(e.target.value)}
+                placeholder="Route name"
+                className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddRoute()}
+              />
+              <input
+                type="text"
+                value={newRouteSegment}
+                onChange={(e) => setNewRouteSegment(e.target.value)}
+                placeholder="Segment"
+                className="w-28 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddRoute()}
+              />
+              <button
+                onClick={handleAddRoute}
+                disabled={!newRouteName.trim()}
+                className="rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium hover:bg-purple-500 disabled:opacity-40 transition-colors"
+              >
+                +
+              </button>
+            </div>
+            <p className="text-[10px] text-zinc-500 mt-1">Routes can also be added later during the run</p>
+          </div>
+
+          <button
+            onClick={handleSaveCustomGame}
+            disabled={!customName.trim()}
+            className="w-full rounded-lg bg-purple-600 py-3 font-semibold text-white hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
+          >
+            Create Game
+          </button>
         </div>
       </Modal>
     </div>

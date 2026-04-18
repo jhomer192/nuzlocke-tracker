@@ -1,14 +1,18 @@
 import type { Game } from '../types';
 import { BADGE_NAMES } from '../data/routes';
+import { getCustomGame } from '../utils/storage';
 
 interface BadgeBarProps {
   game: Game;
   badges: boolean[];
   onToggle: (index: number) => void;
+  customGameId?: string;
 }
 
-export function BadgeBar({ game, badges, onToggle }: BadgeBarProps) {
-  const names = BADGE_NAMES[game];
+export function BadgeBar({ game, badges, onToggle, customGameId }: BadgeBarProps) {
+  const names = game === 'CUSTOM' && customGameId
+    ? getCustomGame(customGameId)?.badgeNames ?? badges.map((_, i) => `Badge ${i + 1}`)
+    : BADGE_NAMES[game];
   const earnedCount = badges.filter(Boolean).length;
 
   return (

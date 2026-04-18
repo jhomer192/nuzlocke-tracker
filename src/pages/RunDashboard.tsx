@@ -8,6 +8,7 @@ import { TeamTab } from '../components/TeamTab';
 import { AnalysisTab } from '../components/AnalysisTab';
 import { GraveyardTab } from '../components/GraveyardTab';
 import { toggleBadge } from '../hooks/useRuns';
+import { getCustomGame } from '../utils/storage';
 
 type Tab = 'encounters' | 'team' | 'analysis' | 'graveyard';
 
@@ -97,7 +98,11 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="font-bold text-lg truncate">{run.name}</h1>
-            <p className="text-xs text-zinc-500">{GAME_NAMES[run.game]}</p>
+            <p className="text-xs text-zinc-500">
+              {run.game === 'CUSTOM' && run.customGameId
+                ? getCustomGame(run.customGameId)?.name ?? 'Custom Game'
+                : GAME_NAMES[run.game]}
+            </p>
           </div>
           <span
             className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase ${
@@ -114,7 +119,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
       </div>
 
       {/* Level cap indicator */}
-      {run.rules.levelCap && (() => {
+      {run.rules.levelCap && run.game !== 'CUSTOM' && (() => {
         const caps = LEVEL_CAPS[run.game];
         const segments = Object.keys(caps);
         const badgeCount = run.badges.filter(Boolean).length;
@@ -136,6 +141,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
         game={run.game}
         badges={run.badges}
         onToggle={(i) => handleUpdate((r) => toggleBadge(r, i))}
+        customGameId={run.customGameId}
       />
 
       {/* Tab content */}

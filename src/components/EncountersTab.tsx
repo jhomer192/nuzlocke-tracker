@@ -1,9 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import type { Run, GameLocation, Encounter } from '../types';
 import { LEVEL_CAPS } from '../types';
 import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
+import { getCustomGame, loadCustomGames, saveCustomGames } from '../utils/storage';
+import { generateId } from '../utils/id';
 
 interface EncountersTabProps {
   run: Run;
@@ -13,8 +15,13 @@ interface EncountersTabProps {
 export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
   const [modalRoute, setModalRoute] = useState<GameLocation | null>(null);
   const [editingEncounter, setEditingEncounter] = useState<Encounter | undefined>();
+  const [showAddRoute, setShowAddRoute] = useState(false);
+  const [newRouteName, setNewRouteName] = useState('');
+  const [newRouteSegment, setNewRouteSegment] = useState('');
 
-  const routes = GAME_ROUTES[run.game];
+  const isCustom = run.game === 'CUSTOM';
+  const customDef = isCustom && run.customGameId ? getCustomGame(run.customGameId) : null;
+  const routes = isCustom ? (customDef?.routes ?? []) : GAME_ROUTES[run.game];
   const encounterByRoute = useMemo(() => {
     const map = new Map<string, Encounter>();
     for (const enc of run.encounters) {
@@ -42,6 +49,32 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
     setEditingEncounter(existing);
     setModalRoute(route);
   };
+
+  const handleAddCustomRoute = useCallback(() => {
+    if (!newRouteName.trim() || !run.customGameId) return;
+    const customDef = getCustomGame(run.customGameId);
+    if (!customDef) return;
+
+    const newRoute: GameLocation = {
+      key: `custom-${generateId()}-${newRouteName.trim().toLowerCase().replace(/\s+/g, '-')}`,
+      name: newRouteName.trim(),
+      segment: newRouteSegment.trim() || 'Main',
+    };
+
+    // Update the custom game definition in localStorage
+    const games = loadCustomGames();
+    const idx = games.findIndex((g) => g.id === run.customGameId);
+    if (idx >= 0) {
+      games[idx].routes = [...games[idx].routes, newRoute];
+      saveCustomGames(games);
+    }
+
+    setNewRouteName('');
+    setNewRouteSegment('');
+    setShowAddRoute(false);
+    // Force re-render by triggering a no-op update
+    onUpdate((r) => ({ ...r }));
+  }, [newRouteName, newRouteSegment, run.customGameId, onUpdate]);
 
   const handleSaveEncounter = (encounter: Encounter) => {
     onUpdate((r) => {
@@ -148,6 +181,53 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           </div>
         </div>
       ))}
+
+      {/* Add route button for custom games */}
+      {isCustom && (
+        <div className="px-4 py-3">
+          {showAddRoute ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newRouteName}
+                onChange={(e) => setNewRouteName(e.target.value)}
+                placeholder="Route name"
+                className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomRoute()}
+              />
+              <input
+                type="text"
+                value={newRouteSegment}
+                onChange={(e) => setNewRouteSegment(e.target.value)}
+                placeholder="Segment"
+                className="w-28 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustomRoute()}
+              />
+              <button
+                onClick={handleAddCustomRoute}
+                disabled={!newRouteName.trim()}
+                className="rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium hover:bg-purple-500 disabled:opacity-40 transition-colors"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => { setShowAddRoute(false); setNewRouteName(''); setNewRouteSegment(''); }}
+                className="rounded-lg bg-zinc-700 px-3 py-2 text-sm text-zinc-400 hover:bg-zinc-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAddRoute(true)}
+              className="w-full rounded-lg border-2 border-dashed border-zinc-600 py-2.5 text-sm text-zinc-400 hover:border-purple-500/50 hover:text-purple-300 transition-all"
+            >
+              + Add Route
+            </button>
+          )}
+        </div>
+      )}
 
       {modalRoute && (
         <EncounterModal

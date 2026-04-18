@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Run, Game, RuleSet, Encounter } from '../types';
-import { loadRuns, saveRuns } from '../utils/storage';
+import { loadRuns, saveRuns, getCustomGame } from '../utils/storage';
 import { generateId } from '../utils/id';
 import { BADGE_NAMES } from '../data/routes';
 
@@ -13,12 +13,19 @@ export function useRuns() {
   }, []);
 
   const createRun = useCallback(
-    (name: string, game: Game, rules: RuleSet): Run => {
-      const badgeCount = BADGE_NAMES[game].length;
+    (name: string, game: Game, rules: RuleSet, customGameId?: string): Run => {
+      let badgeCount: number;
+      if (game === 'CUSTOM' && customGameId) {
+        const customDef = getCustomGame(customGameId);
+        badgeCount = customDef?.badgeCount ?? 8;
+      } else {
+        badgeCount = BADGE_NAMES[game].length;
+      }
       const run: Run = {
         id: generateId(),
         name,
         game,
+        customGameId,
         rules,
         status: 'active',
         startedAt: new Date().toISOString(),
