@@ -217,7 +217,7 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
             {teamEncounters.map((enc) => (
               <div key={enc.id} className="flex flex-col items-center">
                 <img
-                  src={getSpriteUrl(enc.pokemonId)}
+                  src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
                   alt={enc.nickname}
                   className="w-8 h-8 pixelated"
                 />

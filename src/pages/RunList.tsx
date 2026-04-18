@@ -86,7 +86,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                     <div className="w-14 h-14 flex-shrink-0 rounded-xl bg-zinc-700/50 flex items-center justify-center">
                       {teamLead ? (
                         <img
-                          src={getSpriteUrl(teamLead.pokemonId)}
+                          src={getSpriteUrl(teamLead.pokemonId, teamLead.isShiny)}
                           alt={teamLead.nickname}
                           className="w-12 h-12 pixelated"
                         />

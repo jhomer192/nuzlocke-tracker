@@ -103,7 +103,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                   <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
                     {enc ? (
                       <img
-                        src={getSpriteUrl(enc.pokemonId)}
+                        src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
                         alt={enc.nickname}
                         className={`w-10 h-10 pixelated ${
                           enc.status === 'dead' ? 'grayscale opacity-50' : ''

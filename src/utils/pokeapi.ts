@@ -69,14 +69,14 @@ export async function fetchPokemonData(idOrName: number | string): Promise<Pokem
 
 /**
  * Get the best pixel sprite URL for a Pokemon.
- * Uses generation-appropriate sprites:
- * - Gen 1 (1-151): FireRed/LeafGreen
- * - Gen 2 (152-251): Crystal
- * - Gen 3 (252-386): Emerald
- * Falls back to default front sprite if the generation sprite doesn't exist.
+ * Normal sprites use generation-appropriate pixel art.
+ * Shiny sprites use the default shiny set (available for all Pokemon).
  */
-export function getSpriteUrl(pokemonId: number): string {
+export function getSpriteUrl(pokemonId: number, shiny = false): string {
   const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
+  if (shiny) {
+    return `${base}/shiny/${pokemonId}.png`;
+  }
   if (pokemonId <= 151) {
     return `${base}/versions/generation-iii/firered-leafgreen/${pokemonId}.png`;
   }

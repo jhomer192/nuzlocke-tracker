@@ -39,7 +39,7 @@ function PokemonCard({
       }`}
     >
       <img
-        src={getSpriteUrl(encounter.pokemonId)}
+        src={getSpriteUrl(encounter.pokemonId, encounter.isShiny)}
         alt={encounter.nickname}
         className={`w-14 h-14 pixelated ${isDead ? 'grayscale' : ''}`}
       />
@@ -163,7 +163,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
               <img
-                src={getSpriteUrl(selectedEncounter.pokemonId)}
+                src={getSpriteUrl(selectedEncounter.pokemonId, selectedEncounter.isShiny)}
                 alt={selectedEncounter.nickname}
                 className="w-20 h-20 pixelated"
               />
