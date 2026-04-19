@@ -2363,6 +2363,134 @@ const LEGENDS_ARCEUS_BOSSES: BossEntry[] = [
 // ── Scarlet / Violet ──────────────────────────────────────────────────────
 
 const SCARLET_VIOLET_BOSSES: BossEntry[] = [
+  // Rival fights (assuming player chose Sprigatito, so Nemona has Quaxly line)
+  {
+    name: 'Nemona (Poco Path)',
+    segment: 'Pre-Katy',
+    pokemon: [
+      { name: 'Oshawott', id: 501, level: 4, types: ['water'], moves: ['Tackle', 'Leer'] },
+    ],
+  },
+  {
+    name: 'Nemona (Mesagoza)',
+    segment: 'Pre-Katy',
+    pokemon: [
+      { name: 'Quaxly', id: 912, level: 8, types: ['water'], moves: ['Water Gun', 'Pound', 'Growl'] },
+      { name: 'Pawmi', id: 921, level: 9, types: ['electric'], moves: ['Thunder Shock', 'Scratch', 'Nuzzle'] },
+    ],
+  },
+  {
+    name: 'Nemona (Artazon)',
+    segment: 'Pre-Brassius',
+    pokemon: [
+      { name: 'Rockruff', id: 744, level: 15, types: ['rock'], moves: ['Rock Throw', 'Bite', 'Leer'] },
+      { name: 'Pawmi', id: 921, level: 15, types: ['electric'], moves: ['Thunder Shock', 'Nuzzle', 'Quick Attack'] },
+      { name: 'Quaxly', id: 912, level: 16, types: ['water'], moves: ['Water Pulse', 'Wing Attack', 'Aqua Jet'] },
+    ],
+  },
+  {
+    name: 'Nemona (Levincia)',
+    segment: 'Pre-Iono',
+    pokemon: [
+      { name: 'Lycanroc', id: 745, level: 21, types: ['rock'], moves: ['Rock Throw', 'Bite', 'Accelerock'] },
+      { name: 'Pawmo', id: 922, level: 21, types: ['electric', 'fighting'], moves: ['Spark', 'Arm Thrust', 'Thunder Shock'] },
+      { name: 'Quaxwell', id: 913, level: 22, types: ['water'], moves: ['Water Pulse', 'Wing Attack', 'Aqua Jet'] },
+    ],
+  },
+  {
+    name: 'Nemona (Montenevera)',
+    segment: 'Pre-Ryme',
+    pokemon: [
+      { name: 'Lycanroc', id: 745, level: 36, types: ['rock'], moves: ['Rock Slide', 'Crunch', 'Accelerock'] },
+      { name: 'Pawmo', id: 922, level: 36, types: ['electric', 'fighting'], moves: ['Spark', 'Close Combat', 'Thunder Punch'] },
+      { name: 'Goodra', id: 706, level: 36, types: ['dragon'], moves: ['Dragon Pulse', 'Muddy Water', 'Sludge Bomb'] },
+      { name: 'Quaquaval', id: 914, level: 37, types: ['water', 'fighting'], moves: ['Aqua Step', 'Close Combat', 'Aqua Jet', 'Acrobatics'] },
+    ],
+  },
+  {
+    name: 'Nemona (Pokemon League)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Lycanroc', id: 745, level: 65, types: ['rock'], moves: ['Stone Edge', 'Crunch', 'Stealth Rock', 'Accelerock'] },
+      { name: 'Pawmot', id: 923, level: 65, types: ['electric', 'fighting'], moves: ['Close Combat', 'Wild Charge', 'Ice Punch'] },
+      { name: 'Goodra', id: 706, level: 65, types: ['dragon'], moves: ['Dragon Pulse', 'Muddy Water', 'Sludge Bomb', 'Power Whip'] },
+      { name: 'Dudunsparce', id: 982, level: 65, types: ['normal'], moves: ['Hyper Drill', 'Glare', 'Roost', 'Coil'] },
+      { name: 'Orthworm', id: 968, level: 65, types: ['steel'], moves: ['Iron Head', 'Body Press', 'Earthquake'] },
+      { name: 'Quaquaval', id: 914, level: 66, types: ['water', 'fighting'], moves: ['Aqua Step', 'Close Combat', 'Ice Spinner', 'Acrobatics'] },
+    ],
+  },
+  // Team Star bosses (Starfall Street)
+  {
+    name: 'Team Star: Mela (Fire Crew)',
+    segment: 'Pre-Katy',
+    pokemon: [
+      { name: 'Torkoal', id: 324, level: 27, types: ['fire'], moves: ['Fire Spin', 'Clear Smog', 'Body Slam'] },
+    ],
+  },
+  {
+    name: 'Team Star: Atticus (Poison Crew)',
+    segment: 'Pre-Kofu',
+    pokemon: [
+      { name: 'Revavroom', id: 966, level: 32, types: ['poison'], moves: ['Spin Out', 'Gunk Shot', 'Swagger'] },
+    ],
+  },
+  {
+    name: 'Team Star: Ortega (Fairy Crew)',
+    segment: 'Pre-Ryme',
+    pokemon: [
+      { name: 'Revavroom', id: 966, level: 50, types: ['fairy'], moves: ['Magical Torque', 'Play Rough', 'Spin Out'] },
+    ],
+  },
+  {
+    name: 'Team Star: Eri (Fighting Crew)',
+    segment: 'Pre-Grusha',
+    pokemon: [
+      { name: 'Revavroom', id: 966, level: 56, types: ['fighting'], moves: ['Combat Torque', 'Spin Out', 'Shift Gear'] },
+    ],
+  },
+  {
+    name: 'Team Star: Giacomo (Dark Crew)',
+    segment: 'Pre-Brassius',
+    pokemon: [
+      { name: 'Revavroom', id: 966, level: 21, types: ['dark'], moves: ['Wicked Torque', 'Spin Out', 'Leer'] },
+    ],
+  },
+  // Titan Pokemon (Path of Legends)
+  {
+    name: 'Titan: Klawf (Stony Cliff)',
+    segment: 'Pre-Katy',
+    pokemon: [
+      { name: 'Klawf', id: 950, level: 16, types: ['rock'], moves: ['Rock Smash', 'Rock Throw', 'Vise Grip'] },
+    ],
+  },
+  {
+    name: 'Titan: Bombirdier (Open Sky)',
+    segment: 'Pre-Iono',
+    pokemon: [
+      { name: 'Bombirdier', id: 962, level: 20, types: ['flying', 'dark'], moves: ['Pluck', 'Torment', 'Rock Throw'] },
+    ],
+  },
+  {
+    name: 'Titan: Orthworm (Lurking Steel)',
+    segment: 'Pre-Kofu',
+    pokemon: [
+      { name: 'Orthworm', id: 968, level: 29, types: ['steel'], moves: ['Iron Head', 'Mud-Slap', 'Dig'] },
+    ],
+  },
+  {
+    name: 'Titan: Great Tusk/Iron Treads (Quaking Earth)',
+    segment: 'Pre-Tulip',
+    pokemon: [
+      { name: 'Great Tusk', id: 984, level: 45, types: ['ground', 'fighting'], moves: ['Headlong Rush', 'Close Combat', 'Rapid Spin'] },
+    ],
+  },
+  {
+    name: 'Titan: Tatsugiri (False Dragon)',
+    segment: 'Pre-Grusha',
+    pokemon: [
+      { name: 'Dondozo', id: 977, level: 56, types: ['water'], moves: ['Order Up', 'Body Slam', 'Rain Dance', 'Wave Crash'] },
+    ],
+  },
   {
     name: 'Katy',
     segment: 'Pre-Katy',

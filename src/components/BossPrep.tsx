@@ -90,22 +90,42 @@ function BossPokemonCard({ mon, gen }: { mon: BossPokemon; gen: number }) {
   );
 }
 
-function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isDefeated: boolean }) {
+function BossCard({ boss, gen, isDefeated, startExpanded, onDefeat }: { boss: BossEntry; gen: number; isDefeated: boolean; startExpanded: boolean; onDefeat?: () => void }) {
+  const [expanded, setExpanded] = useState(startExpanded);
+
   return (
     <div className="mb-4">
-      <div className="flex items-center gap-2 mb-2">
-        <h3 className="text-base font-bold text-white">{boss.name}</h3>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={`flex items-center gap-2 mb-2 w-full text-left ${isDefeated ? 'opacity-60' : ''}`}
+      >
+        <h3 className="text-base font-bold text-white flex-1">{boss.name}</h3>
         {isDefeated && (
           <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
             Defeated
           </span>
         )}
-      </div>
-      <div className="flex flex-col gap-2">
-        {boss.pokemon.map((mon, i) => (
-          <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
-        ))}
-      </div>
+        <svg className={`w-4 h-4 text-zinc-400 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {expanded && (
+        <>
+          <div className="flex flex-col gap-2">
+            {boss.pokemon.map((mon, i) => (
+              <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
+            ))}
+          </div>
+          {!isDefeated && onDefeat && (
+            <button
+              onClick={onDefeat}
+              className="w-full mt-3 mb-2 rounded-xl bg-emerald-600 py-3.5 font-bold text-white text-base hover:bg-emerald-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-600/20"
+            >
+              Mark as Defeated
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -138,7 +158,7 @@ export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, custom
           e.stopPropagation();
           setOpen(true);
         }}
-        className={`text-xs font-bold transition-colors px-2 py-0.5 rounded flex items-center gap-1 ${
+        className={`text-xs font-bold transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1.5 min-h-[32px] ${
           allDefeated
             ? 'text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25'
             : 'text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20'
@@ -146,7 +166,7 @@ export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, custom
         title="View boss team"
       >
         {allDefeated && (
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
@@ -162,22 +182,24 @@ export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, custom
           </div>
         )}
 
-        {bosses.map((boss, i) => {
+        {(() => {
+          // Find the index of the first undefeated boss
+          const firstUndefeatedIdx = bosses.findIndex((b) => !defeated.includes(b.name));
+          return bosses.map((boss, i) => {
           const isDefeated = defeated.includes(boss.name);
+          const isNextBoss = i === firstUndefeatedIdx;
           return (
-            <div key={`${boss.name}-${i}`}>
-              <BossCard boss={boss} gen={gen} isDefeated={isDefeated} />
-              {!isDefeated && onDefeat && (
-                <button
-                  onClick={() => handleDefeat(boss.name)}
-                  className="w-full mb-4 rounded-lg bg-emerald-600 py-2.5 font-semibold text-white hover:bg-emerald-500 transition-colors"
-                >
-                  Mark as Defeated
-                </button>
-              )}
-            </div>
+            <BossCard
+              key={`${boss.name}-${i}`}
+              boss={boss}
+              gen={gen}
+              isDefeated={isDefeated}
+              startExpanded={isNextBoss}
+              onDefeat={onDefeat ? () => handleDefeat(boss.name) : undefined}
+            />
           );
-        })}
+        });
+        })()}
       </Modal>
     </>
   );

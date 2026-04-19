@@ -77,6 +77,9 @@ function PokemonCard({
         {soulLink && encounter.linkedNickname && (
           <p className="text-[10px] text-purple-400 mt-0.5 truncate">
             Linked: {encounter.linkedNickname}
+            {encounter.linkedOnPartnerTeam && (
+              <span className="ml-1 text-purple-300">(team)</span>
+            )}
           </p>
         )}
       </div>
@@ -245,6 +248,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
   const [showRipMessage, setShowRipMessage] = useState<string | null>(null);
   const [editLevel, setEditLevel] = useState(0);
   const [detailData, setDetailData] = useState<PokemonData | null>(null);
+  const [linkedDetailData, setLinkedDetailData] = useState<PokemonData | null>(null);
   const [moveInputs, setMoveInputs] = useState<string[]>(['', '', '', '']);
   const [moveDataMap, setMoveDataMap] = useState<Map<string, MoveData>>(new Map());
 
@@ -264,15 +268,24 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
   useEffect(() => {
     if (!selectedEncounter) {
       setDetailData(null);
+      setLinkedDetailData(null);
       return;
     }
     fetchPokemonData(selectedEncounter.pokemonId).then((data) => {
       if (data) setDetailData(data);
     });
+    // Fetch linked pokemon data for soul link
+    if (selectedEncounter.linkedPokemonId) {
+      fetchPokemonData(selectedEncounter.linkedPokemonId).then((data) => {
+        if (data) setLinkedDetailData(data);
+      });
+    } else {
+      setLinkedDetailData(null);
+    }
     // Load moves from encounter
     const moves = selectedEncounter.moves ?? ['', '', '', ''];
     setMoveInputs([moves[0] ?? '', moves[1] ?? '', moves[2] ?? '', moves[3] ?? '']);
-  }, [selectedEncounter?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedEncounter?.id, selectedEncounter?.pokemonId, selectedEncounter?.linkedPokemonId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch move type data when move inputs change
   useEffect(() => {
@@ -332,11 +345,40 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     setTimeout(() => setShowRipMessage(null), 2000);
   };
 
+  const handleEvolve = async (evoId: number) => {
+    if (!selectedEncounter) return;
+    const evoData = await fetchPokemonData(evoId);
+    if (!evoData) return;
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { pokemonId: evoId }));
+    setSelectedEncounter({ ...selectedEncounter, pokemonId: evoId });
+    setDetailData(evoData);
+  };
+
+  const handleEvolveLinked = async (evoId: number) => {
+    if (!selectedEncounter) return;
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedPokemonId: evoId }));
+    const evoData = await fetchPokemonData(evoId);
+    if (evoData) setLinkedDetailData(evoData);
+    setSelectedEncounter({ ...selectedEncounter, linkedPokemonId: evoId });
+  };
+
   const handleMoveInput = (index: number, value: string) => {
     const next = [...moveInputs];
     next[index] = value;
     setMoveInputs(next);
   };
+
+  // Soul link type duplicate check
+  const soulLinkTypeWarning = (() => {
+    if (!run.rules.soulLink || !selectedEncounter || !detailData || !linkedDetailData) return null;
+    const myTypes = new Set(detailData.types);
+    const partnerTypes = new Set(linkedDetailData.types);
+    const shared = [...myTypes].filter((t) => partnerTypes.has(t));
+    if (shared.length > 0) {
+      return `Both share ${shared.join('/')} type. Soul link pairs should be different types.`;
+    }
+    return null;
+  })();
 
   // Calculate type matchups
   const matchups = detailData
@@ -451,6 +493,20 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   <p className="text-[10px] text-purple-400 mt-0.5">
                     {selectedEncounter.linkedNickname ?? 'Partner'}
                   </p>
+                  <button
+                    onClick={() => {
+                      const newVal = !selectedEncounter.linkedOnPartnerTeam;
+                      onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedOnPartnerTeam: newVal }));
+                      setSelectedEncounter({ ...selectedEncounter, linkedOnPartnerTeam: newVal });
+                    }}
+                    className={`mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium transition-colors ${
+                      selectedEncounter.linkedOnPartnerTeam
+                        ? 'bg-purple-500/30 text-purple-300 border border-purple-500/50'
+                        : 'bg-zinc-700 text-zinc-500 border border-zinc-600'
+                    }`}
+                  >
+                    {selectedEncounter.linkedOnPartnerTeam ? 'On their team' : 'In their box'}
+                  </button>
                 </div>
               )}
               <div className="flex-1">
@@ -544,30 +600,78 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
               <div>
                 <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Evolution</h4>
                 <div className="space-y-2">
-                  {detailData.evolvesTo.map((evo) => (
-                    <div
-                      key={evo.name}
-                      className={`flex items-center gap-3 p-2 rounded-lg ${
-                        evo.level && selectedEncounter.level >= evo.level
-                          ? 'bg-emerald-900/30 border border-emerald-700/40'
-                          : 'bg-zinc-700/50'
-                      }`}
-                    >
-                      <img
-                        src={getSpriteUrl(evo.id)}
-                        alt={evo.name}
-                        className="w-10 h-10 pixelated"
-                      />
+                  {detailData.evolvesTo.map((evo) => {
+                    const isReady = evo.level && selectedEncounter.level >= evo.level;
+                    return (
+                      <div
+                        key={evo.name}
+                        className={`flex items-center gap-3 p-2 rounded-lg ${
+                          isReady
+                            ? 'bg-emerald-900/30 border border-emerald-700/40'
+                            : 'bg-zinc-700/50'
+                        }`}
+                      >
+                        <img
+                          src={getSpriteUrl(evo.id)}
+                          alt={evo.name}
+                          className="w-10 h-10 pixelated"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold capitalize">{evo.name.replace(/-/g, ' ')}</p>
+                          <p className="text-xs text-zinc-400">{evo.method}</p>
+                        </div>
+                        <button
+                          onClick={() => handleEvolve(evo.id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                            isReady
+                              ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+                              : 'bg-zinc-600 text-zinc-300 hover:bg-zinc-500'
+                          }`}
+                        >
+                          Evolve
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Soul Link partner evolution */}
+            {run.rules.soulLink && selectedEncounter.linkedPokemonId && linkedDetailData?.evolvesTo && linkedDetailData.evolvesTo.length > 0 && (
+              <div>
+                <h4 className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">
+                  Partner Evolution ({selectedEncounter.linkedNickname})
+                </h4>
+                <div className="space-y-2">
+                  {linkedDetailData.evolvesTo.map((evo) => (
+                    <div key={evo.name} className="flex items-center gap-3 p-2 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                      <img src={getSpriteUrl(evo.id)} alt={evo.name} className="w-10 h-10 pixelated" />
                       <div className="flex-1">
                         <p className="text-sm font-semibold capitalize">{evo.name.replace(/-/g, ' ')}</p>
                         <p className="text-xs text-zinc-400">{evo.method}</p>
                       </div>
-                      {evo.level && selectedEncounter.level >= evo.level && (
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase">Ready</span>
-                      )}
+                      <button
+                        onClick={() => handleEvolveLinked(evo.id)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-600 text-white hover:bg-purple-500 transition-colors"
+                      >
+                        Evolve
+                      </button>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Soul Link type warning */}
+            {soulLinkTypeWarning && (
+              <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-2.5 flex items-center gap-3">
+                <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p className="text-sm text-amber-300">
+                  <span className="font-bold">Soul Link:</span> {soulLinkTypeWarning}
+                </p>
               </div>
             )}
 
@@ -641,6 +745,28 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
               </div>
             </div>
 
+            {/* Soul Link clause warnings */}
+            {run.rules.soulLink && selectedEncounter.linkedPokemonId && selectedEncounter.linkedNickname && (() => {
+              const isOnTeam = selectedLocation === 'team';
+              const partnerOnTeam = selectedEncounter.linkedOnPartnerTeam ?? false;
+              const mismatch = isOnTeam !== partnerOnTeam;
+              if (!mismatch) return null;
+              return (
+                <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-2.5 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p className="text-sm text-amber-300">
+                    <span className="font-bold">Soul Link:</span>{' '}
+                    {isOnTeam
+                      ? `${selectedEncounter.linkedNickname} is in partner's box. Both should be on team or both boxed.`
+                      : `${selectedEncounter.linkedNickname} is on partner's team. Both should be on team or both boxed.`
+                    }
+                  </p>
+                </div>
+              );
+            })()}
+
             {/* Move actions */}
             <div className="flex gap-2">
               {selectedLocation === 'box' && run.team.length < 6 && (
@@ -649,6 +775,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   className="flex-1 rounded-lg bg-emerald-600 py-2.5 font-medium hover:bg-emerald-500 transition-colors"
                 >
                   Move to Party
+                  {run.rules.soulLink && selectedEncounter.linkedPokemonId && !selectedEncounter.linkedOnPartnerTeam && (
+                    <span className="block text-[10px] font-normal opacity-80">Partner should also add theirs</span>
+                  )}
                 </button>
               )}
               {selectedLocation === 'team' && (
@@ -657,6 +786,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   className="flex-1 rounded-lg bg-zinc-600 py-2.5 font-medium hover:bg-zinc-500 transition-colors"
                 >
                   Move to Box
+                  {run.rules.soulLink && selectedEncounter.linkedPokemonId && selectedEncounter.linkedOnPartnerTeam && (
+                    <span className="block text-[10px] font-normal opacity-80">Partner should also box theirs</span>
+                  )}
                 </button>
               )}
             </div>

@@ -4,6 +4,7 @@ import { ALL_TYPES, GAME_GENERATIONS } from '../types';
 import { fetchPokemonData, getSpriteUrl, fetchMoveData } from '../utils/pokeapi';
 import { getDefensiveMultiplier, getTypesForGen } from '../data/typeChart';
 import { getCustomGame } from '../utils/storage';
+import { TypeBadge } from './TypeBadge';
 
 interface AnalysisTabProps {
   run: Run;
@@ -76,6 +77,125 @@ function TeamWeaknessCell({ value, isGap }: { value: number; isGap: boolean }) {
   );
 }
 
+// Mobile-friendly per-pokemon summary card
+function PokemonSummaryCard({
+  enc,
+  data,
+  gen,
+  relevantTypes,
+  mode,
+  moveDataMap,
+}: {
+  enc: Encounter;
+  data: PokemonData;
+  gen: number;
+  relevantTypes: string[];
+  mode: MatrixMode;
+  moveDataMap: Map<string, MoveData>;
+}) {
+  const matchups = useMemo(() => {
+    if (mode === 'defensive') {
+      return relevantTypes.map((type) => ({
+        type,
+        value: getDefensiveMultiplier(type as PokemonType, data.types, gen),
+      }));
+    } else {
+      const moves = enc.moves?.filter((m) => m.trim()) ?? [];
+      return relevantTypes.map((attackingType) => {
+        let bestMult = 1;
+        if (moves.length > 0) {
+          for (const moveName of moves) {
+            const key = moveName.trim().toLowerCase().replace(/\s+/g, '-');
+            const moveData = moveDataMap.get(key);
+            if (!moveData || moveData.damageClass === 'status') continue;
+            const mult = getDefensiveMultiplier(moveData.type as PokemonType, [attackingType], gen);
+            if (mult > bestMult) bestMult = mult;
+          }
+        } else {
+          for (const stabType of data.types) {
+            const mult = getDefensiveMultiplier(stabType as PokemonType, [attackingType], gen);
+            if (mult > bestMult) bestMult = mult;
+          }
+        }
+        return { type: attackingType, value: bestMult };
+      });
+    }
+  }, [enc, data, gen, relevantTypes, mode, moveDataMap]);
+
+  const weakTo = matchups.filter((m) => m.value > 1);
+  const resistsOrImmune = matchups.filter((m) => m.value < 1);
+  const superEffective = mode === 'offensive' ? matchups.filter((m) => m.value > 1) : [];
+
+  return (
+    <div className="rounded-xl bg-zinc-800 border border-zinc-700 p-3">
+      <div className="flex items-center gap-3 mb-3">
+        <img
+          src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
+          alt={enc.nickname}
+          className="w-12 h-12 pixelated"
+        />
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-sm truncate">{enc.nickname}</p>
+          <div className="flex gap-1 mt-0.5">
+            {data.types.map((t) => (
+              <TypeBadge key={t} type={t} small />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {mode === 'defensive' ? (
+        <div className="space-y-2">
+          {weakTo.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">Weak to</p>
+              <div className="flex flex-wrap gap-1">
+                {weakTo.map((m) => (
+                  <span key={m.type} className="flex items-center gap-1">
+                    <TypeBadge type={m.type} small />
+                    <span className="text-[10px] text-red-400 font-bold">{m.value}x</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {resistsOrImmune.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Resists</p>
+              <div className="flex flex-wrap gap-1">
+                {resistsOrImmune.map((m) => (
+                  <span key={m.type} className="flex items-center gap-1">
+                    <TypeBadge type={m.type} small />
+                    <span className="text-[10px] text-emerald-400 font-bold">
+                      {m.value === 0 ? '0x' : m.value === 0.25 ? '\u00BCx' : '\u00BDx'}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {superEffective.length > 0 && (
+            <div>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Super effective vs</p>
+              <div className="flex flex-wrap gap-1">
+                {superEffective.map((m) => (
+                  <TypeBadge key={m.type} type={m.type} small />
+                ))}
+              </div>
+            </div>
+          )}
+          {superEffective.length === 0 && (
+            <p className="text-xs text-zinc-500">No super effective coverage (add moves for better analysis)</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function AnalysisTab({ run }: AnalysisTabProps) {
   const [mode, setMode] = useState<MatrixMode>('defensive');
   const [pokemonDataMap, setPokemonDataMap] = useState<Map<number, PokemonData>>(new Map());
@@ -138,7 +258,6 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
 
     for (let typeIdx = 0; typeIdx < ALL_TYPES.length; typeIdx++) {
       const attackingType = ALL_TYPES[typeIdx];
-      // Skip types that don't exist in this gen
       if (!relevantTypes.includes(attackingType)) {
         mat.push(teamEncounters.map(() => 1));
         net.push(0);
@@ -167,12 +286,10 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
           }
           if (mult === 0) hasResist = true;
         } else {
-          // Offensive: use actual moves if available, otherwise STAB types
           const moves = enc.moves?.filter((m) => m.trim()) ?? [];
           let bestMult = 1;
 
           if (moves.length > 0) {
-            // Use actual move types
             for (const moveName of moves) {
               const key = moveName.trim().toLowerCase().replace(/\s+/g, '-');
               const moveData = moveDataMap.get(key);
@@ -185,7 +302,6 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
               if (mult > bestMult) bestMult = mult;
             }
           } else {
-            // Fallback: STAB types
             for (const stabType of data.types) {
               const mult = getDefensiveMultiplier(
                 stabType as PokemonType,
@@ -259,106 +375,155 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
       {gaps.size > 0 && mode === 'defensive' && (
         <div className="mb-4 rounded-lg bg-red-900/20 border border-red-800/30 p-3">
           <p className="text-sm text-red-400 font-medium mb-1">Defensive Gaps</p>
-          <p className="text-xs text-red-400/70">
-            No team member resists:{' '}
+          <div className="flex flex-wrap gap-1 mt-1">
             {Array.from(gaps)
               .filter((i) => relevantTypes.includes(ALL_TYPES[i]))
-              .map((i) => ALL_TYPES[i])
-              .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-              .join(', ')}
-          </p>
+              .map((i) => (
+                <TypeBadge key={ALL_TYPES[i]} type={ALL_TYPES[i]} small />
+              ))}
+          </div>
         </div>
       )}
       {offensiveGaps.size > 0 && mode === 'offensive' && (
         <div className="mb-4 rounded-lg bg-amber-900/20 border border-amber-800/30 p-3">
           <p className="text-sm text-amber-400 font-medium mb-1">Offensive Gaps</p>
-          <p className="text-xs text-amber-400/70">
-            No super-effective coverage against:{' '}
+          <div className="flex flex-wrap gap-1 mt-1">
             {Array.from(offensiveGaps)
               .filter((i) => relevantTypes.includes(ALL_TYPES[i]))
-              .map((i) => ALL_TYPES[i])
-              .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-              .join(', ')}
-          </p>
+              .map((i) => (
+                <TypeBadge key={ALL_TYPES[i]} type={ALL_TYPES[i]} small />
+              ))}
+          </div>
         </div>
       )}
 
-      {/* Matrix */}
-      <div className="overflow-x-auto -mx-4 px-4">
-        <div className="min-w-[420px]">
-          {/* Header row: team sprites */}
-          <div className="grid gap-1 mb-1" style={{ gridTemplateColumns: `80px repeat(${teamEncounters.length}, 1fr) 48px` }}>
-            <div /> {/* Empty corner */}
-            {teamEncounters.map((enc) => (
-              <div key={enc.id} className="flex flex-col items-center">
-                <img
-                  src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
-                  alt={enc.nickname}
-                  className="w-8 h-8 pixelated"
-                />
-                <span className="text-[10px] text-zinc-400 truncate max-w-full text-center">
-                  {enc.nickname}
-                </span>
-              </div>
-            ))}
-            <div className="flex items-center justify-center">
-              <span className="text-[10px] text-zinc-500 font-medium">NET</span>
-            </div>
-          </div>
+      {/* Mobile: per-Pokemon cards */}
+      <div className="sm:hidden space-y-3 mb-6">
+        {teamEncounters.map((enc) => {
+          const data = pokemonDataMap.get(enc.pokemonId);
+          if (!data) return null;
+          return (
+            <PokemonSummaryCard
+              key={enc.id}
+              enc={enc}
+              data={data}
+              gen={gen}
+              relevantTypes={relevantTypes}
+              mode={mode}
+              moveDataMap={moveDataMap}
+            />
+          );
+        })}
+      </div>
 
-          {/* Type rows */}
-          {ALL_TYPES.filter((t) => relevantTypes.includes(t)).map((type) => {
-            const typeIdx = ALL_TYPES.indexOf(type);
-            return (
-            <div
-              key={type}
-              className="grid gap-1 mb-1"
-              style={{ gridTemplateColumns: `80px repeat(${teamEncounters.length}, 1fr) 48px` }}
-            >
-              {/* Type label */}
-              <div className={`type-${type} rounded-sm flex items-center px-2 h-8`}>
-                <span className="text-[10px] font-bold uppercase tracking-wider">
-                  {type.slice(0, 4)}
-                </span>
-              </div>
-
-              {/* Effectiveness cells */}
-              {matrix[typeIdx]?.map((mult, colIdx) => (
-                <MultiplierCell key={colIdx} value={mult} />
+      {/* Desktop: full matrix */}
+      <div className="hidden sm:block">
+        <div className="overflow-x-auto -mx-4 px-4">
+          <div className="min-w-[420px]">
+            {/* Header row: team sprites */}
+            <div className="grid gap-1 mb-1" style={{ gridTemplateColumns: `80px repeat(${teamEncounters.length}, 1fr) 48px` }}>
+              <div />
+              {teamEncounters.map((enc) => (
+                <div key={enc.id} className="flex flex-col items-center">
+                  <img
+                    src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
+                    alt={enc.nickname}
+                    className="w-8 h-8 pixelated"
+                  />
+                  <span className="text-[10px] text-zinc-400 truncate max-w-full text-center">
+                    {enc.nickname}
+                  </span>
+                </div>
               ))}
-
-              {/* Net score */}
-              <TeamWeaknessCell
-                value={netScores[typeIdx]}
-                isGap={mode === 'defensive' ? gaps.has(typeIdx) : offensiveGaps.has(typeIdx)}
-              />
+              <div className="flex items-center justify-center">
+                <span className="text-[10px] text-zinc-500 font-medium">NET</span>
+              </div>
             </div>
-            );
-          })}
+
+            {/* Type rows */}
+            {ALL_TYPES.filter((t) => relevantTypes.includes(t)).map((type) => {
+              const typeIdx = ALL_TYPES.indexOf(type);
+              return (
+                <div
+                  key={type}
+                  className="grid gap-1 mb-1"
+                  style={{ gridTemplateColumns: `80px repeat(${teamEncounters.length}, 1fr) 48px` }}
+                >
+                  <div className={`type-${type} rounded-sm flex items-center px-2 h-8`}>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">
+                      {type.slice(0, 4)}
+                    </span>
+                  </div>
+                  {matrix[typeIdx]?.map((mult, colIdx) => (
+                    <MultiplierCell key={colIdx} value={mult} />
+                  ))}
+                  <TeamWeaknessCell
+                    value={netScores[typeIdx]}
+                    isGap={mode === 'defensive' ? gaps.has(typeIdx) : offensiveGaps.has(typeIdx)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex flex-wrap gap-4 text-xs text-zinc-400">
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-sm bg-emerald-800/40" />
+            <span>Resist (&frac12;)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-sm bg-emerald-900/60" />
+            <span>Double Resist (&frac14;)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-sm bg-red-900/40" />
+            <span>Weak (2&times;)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-sm bg-red-800/60" />
+            <span>Double Weak (4&times;)</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-sm bg-zinc-900" />
+            <span>Immune (0)</span>
+          </div>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-6 flex flex-wrap gap-4 text-xs text-zinc-400">
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-emerald-800/40" />
-          <span>Resist (&frac12;)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-emerald-900/60" />
-          <span>Double Resist (&frac14;)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-red-900/40" />
-          <span>Weak (2&times;)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-red-800/60" />
-          <span>Double Weak (4&times;)</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-sm bg-zinc-900" />
-          <span>Immune (0)</span>
+      {/* Mobile: team summary */}
+      <div className="sm:hidden mt-4 rounded-xl bg-zinc-800/50 border border-zinc-700 p-3">
+        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-2">
+          {mode === 'defensive' ? 'Team Coverage Summary' : 'Offensive Coverage'}
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          {relevantTypes.map((type) => {
+            const typeIdx = ALL_TYPES.indexOf(type);
+            const isGap = mode === 'defensive' ? gaps.has(typeIdx) : offensiveGaps.has(typeIdx);
+            const net = netScores[typeIdx];
+            return (
+              <div
+                key={type}
+                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg ${
+                  isGap
+                    ? 'bg-red-900/40 ring-1 ring-red-500/50'
+                    : net < 0
+                      ? 'bg-emerald-900/20'
+                      : net > 0
+                        ? 'bg-red-900/20'
+                        : 'bg-zinc-800/60'
+                }`}
+              >
+                <TypeBadge type={type} small />
+                <span className={`text-[10px] font-bold ${
+                  isGap ? 'text-red-400' : net < 0 ? 'text-emerald-400' : net > 0 ? 'text-red-400' : 'text-zinc-500'
+                }`}>
+                  {isGap ? 'GAP' : net !== 0 ? (net > 0 ? `+${net}` : net) : 'OK'}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
