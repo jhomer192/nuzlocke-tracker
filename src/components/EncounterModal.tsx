@@ -46,6 +46,7 @@ export function EncounterModal({
   // Soul Link fields
   const [linkedPokemon, setLinkedPokemon] = useState<PokemonData | null>(null);
   const [linkedNickname, setLinkedNickname] = useState(existingEncounter?.linkedNickname ?? '');
+  const [linkedOnPartnerTeam, setLinkedOnPartnerTeam] = useState(existingEncounter?.linkedOnPartnerTeam ?? false);
   const [showLinkedSearch, setShowLinkedSearch] = useState(false);
 
   // Initialize linked pokemon from existing encounter
@@ -111,6 +112,7 @@ export function EncounterModal({
       ...(soulLink && linkedPokemon ? {
         linkedPokemonId: linkedPokemon.id,
         linkedNickname: linkedNickname || linkedPokemon.name,
+        linkedOnPartnerTeam,
       } : {}),
     };
     onSave(encounter);
@@ -315,6 +317,18 @@ export function EncounterModal({
                 className="w-full rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
+
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={linkedOnPartnerTeam}
+                onChange={(e) => setLinkedOnPartnerTeam(e.target.checked)}
+                className="w-5 h-5 rounded bg-zinc-700 border-zinc-600 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
+              />
+              <span className="text-sm font-medium text-zinc-400 group-hover:text-zinc-200 transition-colors">
+                On partner&apos;s active team
+              </span>
+            </label>
           </div>
         )}
 

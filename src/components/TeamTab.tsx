@@ -77,6 +77,9 @@ function PokemonCard({
         {soulLink && encounter.linkedNickname && (
           <p className="text-[10px] text-purple-400 mt-0.5 truncate">
             Linked: {encounter.linkedNickname}
+            {encounter.linkedOnPartnerTeam && (
+              <span className="ml-1 text-purple-300">(team)</span>
+            )}
           </p>
         )}
       </div>
@@ -451,6 +454,20 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   <p className="text-[10px] text-purple-400 mt-0.5">
                     {selectedEncounter.linkedNickname ?? 'Partner'}
                   </p>
+                  <button
+                    onClick={() => {
+                      const newVal = !selectedEncounter.linkedOnPartnerTeam;
+                      onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedOnPartnerTeam: newVal }));
+                      setSelectedEncounter({ ...selectedEncounter, linkedOnPartnerTeam: newVal });
+                    }}
+                    className={`mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium transition-colors ${
+                      selectedEncounter.linkedOnPartnerTeam
+                        ? 'bg-purple-500/30 text-purple-300 border border-purple-500/50'
+                        : 'bg-zinc-700 text-zinc-500 border border-zinc-600'
+                    }`}
+                  >
+                    {selectedEncounter.linkedOnPartnerTeam ? 'On their team' : 'In their box'}
+                  </button>
                 </div>
               )}
               <div className="flex-1">
