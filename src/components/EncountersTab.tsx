@@ -1,10 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { Run, GameLocation, Encounter } from '../types';
-import { LEVEL_CAPS } from '../types';
+import { LEVEL_CAPS, GAME_GENERATIONS } from '../types';
 import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
-import { BossPrepButton } from './BossPrep';
+import { InlineBossRow } from './BossPrep';
+import { getBossesForSegment } from '../data/bosses';
 import { getCustomGame, loadCustomGames, saveCustomGames } from '../utils/storage';
 import { generateId } from '../utils/id';
 
@@ -149,34 +150,20 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">
               {segment}
             </h3>
-            <div className="flex items-center gap-2">
-              <BossPrepButton
-                game={run.game}
-                segment={segment}
-                defeatedBosses={run.defeatedBosses}
-                customGameId={run.customGameId}
-                onDefeat={(bossName) => {
-                  onUpdate((r) => ({
-                    ...r,
-                    defeatedBosses: [...(r.defeatedBosses ?? []), bossName],
-                  }));
-                }}
-              />
-              {run.rules.levelCap && (() => {
-                let cap: number | undefined;
-                if (isCustom && customDef?.bosses) {
-                  const boss = customDef.bosses.find((b) => b.segment === segment);
-                  cap = boss?.levelCap;
-                } else {
-                  cap = LEVEL_CAPS[run.game]?.[segment];
-                }
-                return cap ? (
-                  <span className="text-xs font-bold text-amber-400/80">
-                    Cap: Lv.{cap}
-                  </span>
-                ) : null;
-              })()}
-            </div>
+            {run.rules.levelCap && (() => {
+              let cap: number | undefined;
+              if (isCustom && customDef?.bosses) {
+                const boss = customDef.bosses.find((b) => b.segment === segment);
+                cap = boss?.levelCap;
+              } else {
+                cap = LEVEL_CAPS[run.game]?.[segment];
+              }
+              return cap ? (
+                <span className="text-xs font-bold text-amber-400/80">
+                  Cap: Lv.{cap}
+                </span>
+              ) : null;
+            })()}
           </div>
           <div className="divide-y divide-zinc-800/50">
             {segRoutes.map((route) => {
@@ -282,6 +269,29 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                 </div>
               );
             })}
+
+            {/* Boss fights inline at end of segment */}
+            {(() => {
+              const segBosses = getBossesForSegment(run.game, segment, run.customGameId);
+              const defeated = run.defeatedBosses ?? [];
+              const gen = isCustom
+                ? (customDef?.generation ?? 6)
+                : GAME_GENERATIONS[run.game];
+              return segBosses.map((boss, i) => (
+                <InlineBossRow
+                  key={`boss-${boss.name}-${i}`}
+                  boss={boss}
+                  gen={gen}
+                  isDefeated={defeated.includes(boss.name)}
+                  onDefeat={onDefeat => {
+                    onUpdate((r) => ({
+                      ...r,
+                      defeatedBosses: [...(r.defeatedBosses ?? []), onDefeat],
+                    }));
+                  }}
+                />
+              ));
+            })()}
           </div>
         </div>
       ))}

@@ -225,3 +225,66 @@ export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, custom
     </>
   );
 }
+
+// Inline boss row for the encounters list (matches route row style)
+export function InlineBossRow({ boss, gen, isDefeated, onDefeat }: {
+  boss: BossEntry;
+  gen: number;
+  isDefeated: boolean;
+  onDefeat: (bossName: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [victoryBoss, setVictoryBoss] = useState<string | null>(null);
+  const ace = boss.pokemon[boss.pokemon.length - 1];
+
+  const handleDefeat = () => {
+    setVictoryBoss(boss.name);
+    onDefeat(boss.name);
+    setTimeout(() => {
+      setVictoryBoss(null);
+      setOpen(false);
+    }, 1500);
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className={`flex items-center gap-3 w-full px-4 py-3 hover:bg-zinc-800/50 transition-colors text-left ${isDefeated ? 'opacity-50' : ''}`}
+      >
+        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${isDefeated ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+        <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+          <img src={getSpriteUrl(ace.id)} alt={boss.name} className={`w-10 h-10 pixelated ${isDefeated ? 'grayscale' : ''}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm text-zinc-300">{boss.name}</p>
+          {isDefeated ? (
+            <p className="text-xs font-bold text-emerald-400">Defeated</p>
+          ) : (
+            <p className="text-xs text-amber-400">{boss.pokemon.length} Pokemon</p>
+          )}
+        </div>
+        <svg className="w-4 h-4 text-zinc-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <Modal open={open} onClose={() => setOpen(false)} title={boss.name}>
+        {victoryBoss && (
+          <div className="mb-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-3 text-center animate-fade-in">
+            <p className="text-emerald-400 font-bold text-lg">Victory!</p>
+            <p className="text-emerald-300/70 text-sm">{victoryBoss} has been defeated</p>
+          </div>
+        )}
+        {!victoryBoss && (
+          <BossFocusedView
+            boss={boss}
+            gen={gen}
+            isDefeated={isDefeated}
+            onDefeat={!isDefeated ? handleDefeat : undefined}
+          />
+        )}
+      </Modal>
+    </>
+  );
+}
