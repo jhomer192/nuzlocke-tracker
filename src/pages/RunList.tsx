@@ -6,6 +6,7 @@ import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { loadCustomGames, saveCustomGames } from '../utils/storage';
 import { generateId } from '../utils/id';
+import { ThemePicker } from '../components/ThemePicker';
 
 interface RunListProps {
   runs: Run[];
@@ -188,20 +189,23 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const generationGroups = getGamesByGeneration();
 
   return (
-    <div className="min-h-screen bg-zinc-900">
+    <div className="min-h-screen" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       {/* Header */}
-      <div className="border-b border-zinc-800 bg-zinc-900/95 backdrop-blur-sm sticky top-0 z-20">
+      <div className="backdrop-blur-sm sticky top-0 z-20" style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">Nuzlocke Tracker</h1>
-            <p className="text-xs text-zinc-500 mt-0.5">Track your runs, honor your fallen</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text-dim)' }}>Track your runs, honor your fallen</p>
           </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20"
-          >
-            + New Run
-          </button>
+          <div className="flex items-center gap-3">
+            <ThemePicker />
+            <button
+              onClick={() => setShowModal(true)}
+              className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20"
+            >
+              + New Run
+            </button>
+          </div>
         </div>
       </div>
 
@@ -209,7 +213,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
       <div className="max-w-2xl mx-auto px-4 py-6">
         {runs.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-zinc-800 flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--surface)' }}>
               <svg className="w-10 h-10 text-zinc-600" viewBox="0 0 100 100" fill="currentColor">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="5" />
                 <line x1="5" y1="50" x2="95" y2="50" stroke="currentColor" strokeWidth="5" />
@@ -232,7 +236,8 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
               return (
                 <div
                   key={run.id}
-                  className="group relative bg-zinc-800 rounded-2xl border border-zinc-700 hover:border-zinc-600 transition-all overflow-hidden"
+                  className="group relative rounded-2xl transition-all overflow-hidden"
+                  style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
                 >
                   <button
                     onClick={() => navigate(`/run/${run.id}`)}
@@ -317,7 +322,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
       {/* Fan game submission */}
       <div className="max-w-2xl mx-auto px-4 pb-8">
-        <div className="rounded-2xl bg-zinc-800/50 border border-zinc-700/50 p-5">
+        <div className="rounded-2xl p-5" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
           <h3 className="text-sm font-bold text-zinc-300 mb-1.5">Want your game added?</h3>
           <p className="text-xs text-zinc-500 mb-3">
             We add fan games and ROM hacks. Submit yours and we'll review it.

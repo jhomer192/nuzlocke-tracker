@@ -65,7 +65,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
 
   if (!run) {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
           <p className="text-zinc-400 text-lg">Run not found</p>
           <button
@@ -84,9 +84,9 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       {/* Top bar */}
-      <div className="bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-800 sticky top-0 z-20">
+      <div className="backdrop-blur-sm sticky top-0 z-20" style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
         <div className="px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
@@ -169,7 +169,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
       </div>
 
       {/* Bottom tab bar */}
-      <div className="sticky bottom-0 bg-zinc-900/95 backdrop-blur-sm border-t border-zinc-800 safe-area-bottom">
+      <div className="sticky bottom-0 backdrop-blur-sm safe-area-bottom" style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
         <div className="flex">
           {TABS.map((tab) => (
             <button
