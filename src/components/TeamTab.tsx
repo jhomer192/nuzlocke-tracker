@@ -658,6 +658,28 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
               </div>
             </div>
 
+            {/* Soul Link clause warnings */}
+            {run.rules.soulLink && selectedEncounter.linkedPokemonId && selectedEncounter.linkedNickname && (() => {
+              const isOnTeam = selectedLocation === 'team';
+              const partnerOnTeam = selectedEncounter.linkedOnPartnerTeam ?? false;
+              const mismatch = isOnTeam !== partnerOnTeam;
+              if (!mismatch) return null;
+              return (
+                <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-2.5 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p className="text-sm text-amber-300">
+                    <span className="font-bold">Soul Link:</span>{' '}
+                    {isOnTeam
+                      ? `${selectedEncounter.linkedNickname} is in partner's box. Both should be on team or both boxed.`
+                      : `${selectedEncounter.linkedNickname} is on partner's team. Both should be on team or both boxed.`
+                    }
+                  </p>
+                </div>
+              );
+            })()}
+
             {/* Move actions */}
             <div className="flex gap-2">
               {selectedLocation === 'box' && run.team.length < 6 && (
@@ -666,6 +688,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   className="flex-1 rounded-lg bg-emerald-600 py-2.5 font-medium hover:bg-emerald-500 transition-colors"
                 >
                   Move to Party
+                  {run.rules.soulLink && selectedEncounter.linkedPokemonId && !selectedEncounter.linkedOnPartnerTeam && (
+                    <span className="block text-[10px] font-normal opacity-80">Partner should also add theirs</span>
+                  )}
                 </button>
               )}
               {selectedLocation === 'team' && (
@@ -674,6 +699,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   className="flex-1 rounded-lg bg-zinc-600 py-2.5 font-medium hover:bg-zinc-500 transition-colors"
                 >
                   Move to Box
+                  {run.rules.soulLink && selectedEncounter.linkedPokemonId && selectedEncounter.linkedOnPartnerTeam && (
+                    <span className="block text-[10px] font-normal opacity-80">Partner should also box theirs</span>
+                  )}
                 </button>
               )}
             </div>
