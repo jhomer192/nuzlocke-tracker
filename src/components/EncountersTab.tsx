@@ -167,6 +167,34 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           </div>
           <div className="divide-y divide-zinc-800/50">
             {segRoutes.map((route) => {
+              // Boss row - render inline using InlineBossRow
+              if (route.key.startsWith('boss-')) {
+                const segBosses = getBossesForSegment(run.game, segment, run.customGameId);
+                const boss = segBosses.find(b => b.name === route.name);
+                if (boss) {
+                  const defeated = run.defeatedBosses ?? [];
+                  const gen = isCustom
+                    ? (customDef?.generation ?? 6)
+                    : GAME_GENERATIONS[run.game];
+                  return (
+                    <InlineBossRow
+                      key={route.key}
+                      boss={boss}
+                      gen={gen}
+                      isDefeated={defeated.includes(boss.name)}
+                      onDefeat={onDefeat => {
+                        onUpdate((r) => ({
+                          ...r,
+                          defeatedBosses: [...(r.defeatedBosses ?? []), onDefeat],
+                        }));
+                      }}
+                    />
+                  );
+                }
+                return null;
+              }
+
+              // Normal encounter row
               const enc = encounterByRoute.get(route.key);
               const routeEncs = allEncountersByRoute.get(route.key) ?? [];
               const shinyEnc = routeEncs.find((e) => e.isShiny && e.id !== enc?.id);
@@ -269,29 +297,6 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                 </div>
               );
             })}
-
-            {/* Boss fights inline at end of segment */}
-            {(() => {
-              const segBosses = getBossesForSegment(run.game, segment, run.customGameId);
-              const defeated = run.defeatedBosses ?? [];
-              const gen = isCustom
-                ? (customDef?.generation ?? 6)
-                : GAME_GENERATIONS[run.game];
-              return segBosses.map((boss, i) => (
-                <InlineBossRow
-                  key={`boss-${boss.name}-${i}`}
-                  boss={boss}
-                  gen={gen}
-                  isDefeated={defeated.includes(boss.name)}
-                  onDefeat={onDefeat => {
-                    onUpdate((r) => ({
-                      ...r,
-                      defeatedBosses: [...(r.defeatedBosses ?? []), onDefeat],
-                    }));
-                  }}
-                />
-              ));
-            })()}
           </div>
         </div>
       ))}
