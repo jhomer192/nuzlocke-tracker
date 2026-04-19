@@ -11,6 +11,8 @@ import { getDefensiveMultiplier } from '../data/typeChart';
 interface BossPrepProps {
   game: Game;
   segment: string;
+  defeatedBosses?: string[];
+  onDefeat?: (bossName: string) => void;
 }
 
 function getWeaknesses(types: string[], gen: number): string[] {
@@ -87,10 +89,17 @@ function BossPokemonCard({ mon, gen }: { mon: BossPokemon; gen: number }) {
   );
 }
 
-function BossCard({ boss, gen }: { boss: BossEntry; gen: number }) {
+function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isDefeated: boolean }) {
   return (
     <div className="mb-4">
-      <h3 className="text-base font-bold text-white mb-2">{boss.name}</h3>
+      <div className="flex items-center gap-2 mb-2">
+        <h3 className="text-base font-bold text-white">{boss.name}</h3>
+        {isDefeated && (
+          <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+            Defeated
+          </span>
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         {boss.pokemon.map((mon, i) => (
           <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
@@ -100,16 +109,26 @@ function BossCard({ boss, gen }: { boss: BossEntry; gen: number }) {
   );
 }
 
-export function BossPrepButton({ game, segment }: BossPrepProps) {
+export function BossPrepButton({ game, segment, defeatedBosses, onDefeat }: BossPrepProps) {
   const [open, setOpen] = useState(false);
+  const [victoryBoss, setVictoryBoss] = useState<string | null>(null);
   const bosses = useMemo(() => getBossesForSegment(game, segment), [game, segment]);
   const gen = GAME_GENERATIONS[game];
 
   if (bosses.length === 0) return null;
 
+  const defeated = defeatedBosses ?? [];
+  const allDefeated = bosses.every((b) => defeated.includes(b.name));
+
   const title = bosses.length === 1
     ? `${bosses[0].name}'s Team`
     : `${segment} Bosses`;
+
+  const handleDefeat = (bossName: string) => {
+    setVictoryBoss(bossName);
+    onDefeat?.(bossName);
+    setTimeout(() => setVictoryBoss(null), 2000);
+  };
 
   return (
     <>
@@ -118,16 +137,46 @@ export function BossPrepButton({ game, segment }: BossPrepProps) {
           e.stopPropagation();
           setOpen(true);
         }}
-        className="text-xs font-bold text-purple-400 hover:text-purple-300 transition-colors px-2 py-0.5 rounded bg-purple-500/10 hover:bg-purple-500/20"
+        className={`text-xs font-bold transition-colors px-2 py-0.5 rounded flex items-center gap-1 ${
+          allDefeated
+            ? 'text-emerald-400 bg-emerald-500/15 hover:bg-emerald-500/25'
+            : 'text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20'
+        }`}
         title="View boss team"
       >
+        {allDefeated && (
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        )}
         Boss
       </button>
 
       <Modal open={open} onClose={() => setOpen(false)} title={title}>
-        {bosses.map((boss, i) => (
-          <BossCard key={`${boss.name}-${i}`} boss={boss} gen={gen} />
-        ))}
+        {/* Victory animation overlay */}
+        {victoryBoss && (
+          <div className="mb-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-3 text-center animate-fade-in">
+            <p className="text-emerald-400 font-bold text-lg">Victory!</p>
+            <p className="text-emerald-300/70 text-sm">{victoryBoss} has been defeated</p>
+          </div>
+        )}
+
+        {bosses.map((boss, i) => {
+          const isDefeated = defeated.includes(boss.name);
+          return (
+            <div key={`${boss.name}-${i}`}>
+              <BossCard boss={boss} gen={gen} isDefeated={isDefeated} />
+              {!isDefeated && onDefeat && (
+                <button
+                  onClick={() => handleDefeat(boss.name)}
+                  className="w-full mb-4 rounded-lg bg-emerald-600 py-2.5 font-semibold text-white hover:bg-emerald-500 transition-colors"
+                >
+                  Mark as Defeated
+                </button>
+              )}
+            </div>
+          );
+        })}
       </Modal>
     </>
   );

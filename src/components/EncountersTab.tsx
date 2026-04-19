@@ -130,7 +130,17 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
               {segment}
             </h3>
             <div className="flex items-center gap-2">
-              <BossPrepButton game={run.game} segment={segment} />
+              <BossPrepButton
+                game={run.game}
+                segment={segment}
+                defeatedBosses={run.defeatedBosses}
+                onDefeat={(bossName) => {
+                  onUpdate((r) => ({
+                    ...r,
+                    defeatedBosses: [...(r.defeatedBosses ?? []), bossName],
+                  }));
+                }}
+              />
               {run.rules.levelCap && LEVEL_CAPS[run.game]?.[segment] && (
                 <span className="text-xs font-bold text-amber-400/80">
                   Cap: Lv.{LEVEL_CAPS[run.game][segment]}

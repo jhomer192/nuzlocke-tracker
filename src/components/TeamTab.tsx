@@ -241,6 +241,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
   const [selectedLocation, setSelectedLocation] = useState<'team' | 'box'>('team');
   const [showDeathModal, setShowDeathModal] = useState(false);
   const [causeOfDeath, setCauseOfDeath] = useState('');
+  const [showRipMessage, setShowRipMessage] = useState<string | null>(null);
   const [editLevel, setEditLevel] = useState(0);
   const [detailData, setDetailData] = useState<PokemonData | null>(null);
   const [moveInputs, setMoveInputs] = useState<string[]>(['', '', '', '']);
@@ -315,10 +316,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
 
   const handleMarkDead = () => {
     if (!selectedEncounter) return;
+    const nickname = selectedEncounter.nickname;
     // If soul link is enabled and there's a linked pokemon, kill both
     if (run.rules.soulLink && selectedEncounter.linkedPokemonId) {
-      // Find the linked encounter (another encounter with the same linkedPokemonId from a different pokemon)
-      // The linked pokemon info is stored directly on the encounter
       onUpdate((r) => markDead(r, selectedEncounter.id, causeOfDeath));
     } else {
       onUpdate((r) => markDead(r, selectedEncounter.id, causeOfDeath));
@@ -326,6 +326,9 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     setShowDeathModal(false);
     setCauseOfDeath('');
     setSelectedEncounter(null);
+    // Show RIP message briefly
+    setShowRipMessage(nickname);
+    setTimeout(() => setShowRipMessage(null), 2000);
   };
 
   const handleSaveMoves = useCallback(() => {
@@ -648,7 +651,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
             {/* Mark dead */}
             <button
               onClick={() => setShowDeathModal(true)}
-              className="w-full rounded-lg bg-red-600/20 py-2.5 font-medium text-red-400 hover:bg-red-600/30 border border-red-600/30 transition-colors"
+              className="w-full rounded-lg bg-red-600 py-3 font-bold text-white hover:bg-red-500 transition-colors shadow-lg shadow-red-600/20"
             >
               Mark Dead
             </button>
@@ -665,50 +668,72 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
         }}
         title="Mark as Dead"
       >
-        <div className="space-y-4">
-          <p className="text-zinc-400">
-            <span className="font-bold text-white">{selectedEncounter?.nickname}</span> has fallen.
-            What happened?
-          </p>
-
-          {/* Soul Link warning */}
-          {run.rules.soulLink && selectedEncounter?.linkedPokemonId && selectedEncounter?.linkedNickname && (
-            <div className="rounded-lg bg-purple-500/10 border border-purple-500/30 px-4 py-2.5 flex items-center gap-3">
-              <svg className="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <p className="text-sm text-purple-300">
-                <span className="font-bold">Soul Link:</span> {selectedEncounter.linkedNickname} will also die
-              </p>
+        {selectedEncounter && (
+          <div className="space-y-4">
+            {/* Grayscale sprite preview */}
+            <div className="flex justify-center">
+              <img
+                src={getSpriteUrl(selectedEncounter.pokemonId, selectedEncounter.isShiny)}
+                alt={selectedEncounter.nickname}
+                className="w-20 h-20 pixelated grayscale opacity-60"
+              />
             </div>
-          )}
 
-          <textarea
-            value={causeOfDeath}
-            onChange={(e) => setCauseOfDeath(e.target.value)}
-            placeholder="e.g., Misty's Starmie, Water Pulse crit"
-            rows={3}
-            className="w-full rounded-lg bg-zinc-700 px-4 py-3 text-white placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-red-500 resize-none"
-          />
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                setShowDeathModal(false);
-                setCauseOfDeath('');
-              }}
-              className="flex-1 rounded-lg bg-zinc-600 py-2.5 font-medium hover:bg-zinc-500 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleMarkDead}
-              className="flex-1 rounded-lg bg-red-600 py-2.5 font-medium hover:bg-red-500 transition-colors"
-            >
-              Confirm Death
-            </button>
+            <p className="text-zinc-400 text-center">
+              How did <span className="font-bold text-white">{selectedEncounter.nickname}</span> die?
+            </p>
+
+            {/* Soul Link warning */}
+            {run.rules.soulLink && selectedEncounter.linkedPokemonId && selectedEncounter.linkedNickname && (
+              <div className="rounded-lg bg-purple-500/10 border border-purple-500/30 px-4 py-2.5 flex items-center gap-3">
+                <svg className="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p className="text-sm text-purple-300">
+                  <span className="font-bold">Soul Link:</span> {selectedEncounter.linkedNickname} will also die
+                </p>
+              </div>
+            )}
+
+            <input
+              type="text"
+              value={causeOfDeath}
+              onChange={(e) => setCauseOfDeath(e.target.value)}
+              placeholder="e.g., Misty's Starmie, Water Pulse crit"
+              className="w-full rounded-lg bg-zinc-700 px-4 py-3 text-white placeholder:text-zinc-400 outline-none focus:ring-2 focus:ring-red-500"
+              onKeyDown={(e) => e.key === 'Enter' && handleMarkDead()}
+              autoFocus
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowDeathModal(false);
+                  setCauseOfDeath('');
+                }}
+                className="flex-1 rounded-lg bg-zinc-600 py-2.5 font-medium hover:bg-zinc-500 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkDead}
+                className="flex-1 rounded-lg bg-red-600 py-2.5 font-bold hover:bg-red-500 transition-colors text-white"
+              >
+                Confirm Death
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* RIP toast */}
+      {showRipMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="bg-zinc-900/90 border border-zinc-700 rounded-2xl px-8 py-6 text-center shadow-2xl animate-fade-in">
+            <p className="text-zinc-500 text-sm uppercase tracking-widest mb-1">Rest in peace</p>
+            <p className="text-white text-xl font-bold">{showRipMessage}</p>
           </div>
         </div>
-      </Modal>
+      )}
     </div>
   );
 }

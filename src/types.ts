@@ -39,6 +39,7 @@ export interface Run {
   team: string[];
   box: string[];
   graveyard: string[];
+  defeatedBosses?: string[];
 }
 
 export interface Encounter {

@@ -274,6 +274,25 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
         )}
       </div>
 
+      {/* Fan game submission */}
+      <div className="max-w-2xl mx-auto px-4 pb-8">
+        <div className="rounded-2xl bg-zinc-800/50 border border-zinc-700/50 p-5">
+          <h3 className="text-sm font-bold text-zinc-300 mb-1.5">Want your game added?</h3>
+          <p className="text-xs text-zinc-500 mb-3">
+            We add fan games and ROM hacks. Submit yours and we'll review it.
+          </p>
+          <a
+            href="mailto:jack@homerfamily.com?subject=Fan%20Game%20Submission&body=Game%20Name:%0ADeveloper:%0ALink:%0ADescription:"
+            className="inline-block rounded-lg bg-purple-600/20 border border-purple-500/30 px-4 py-2 text-sm font-medium text-purple-300 hover:bg-purple-600/30 transition-colors"
+          >
+            Submit a Game
+          </a>
+          <p className="text-[11px] text-zinc-600 mt-2">
+            Or create a <span className="text-purple-400/70">Custom Game</span> to start tracking right away
+          </p>
+        </div>
+      </div>
+
       {/* New Run Modal */}
       <Modal open={showModal} onClose={() => setShowModal(false)} title="New Nuzlocke Run">
         <div className="space-y-4">
