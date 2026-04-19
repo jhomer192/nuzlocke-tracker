@@ -367,6 +367,8 @@ const DIAMOND_PEARL_ROUTES: GameLocation[] = [
   { key: 'dp-route-205', name: 'Route 205', segment: 'Pre-Gardenia' },
   { key: 'dp-eterna-forest', name: 'Eterna Forest', segment: 'Pre-Gardenia' },
   { key: 'dp-old-chateau', name: 'Old Chateau', segment: 'Pre-Gardenia' },
+  { key: 'boss-mars-valley-windworks', name: 'Mars (Valley Windworks)', segment: 'Pre-Gardenia' },
+  { key: 'boss-jupiter-eterna-building', name: 'Jupiter (Eterna Building)', segment: 'Pre-Gardenia' },
   { key: 'boss-gardenia', name: 'Gardenia', segment: 'Pre-Gardenia' },
   // Pre-Maylene
   { key: 'dp-route-206', name: 'Route 206', segment: 'Pre-Maylene' },
@@ -398,17 +400,22 @@ const DIAMOND_PEARL_ROUTES: GameLocation[] = [
   { key: 'dp-lake-acuity', name: 'Lake Acuity', segment: 'Pre-Candice' },
   { key: 'dp-route-211', name: 'Route 211', segment: 'Pre-Candice' },
   { key: 'dp-mt-coronet-north', name: 'Mt. Coronet (North)', segment: 'Pre-Candice' },
+  { key: 'boss-saturn-lake-valor', name: 'Saturn (Lake Valor)', segment: 'Pre-Candice' },
+  { key: 'boss-jupiter-lake-acuity', name: 'Jupiter (Lake Acuity)', segment: 'Pre-Candice' },
   { key: 'boss-candice', name: 'Candice', segment: 'Pre-Candice' },
   // Pre-Volkner
   { key: 'dp-route-222', name: 'Route 222', segment: 'Pre-Volkner' },
   { key: 'dp-route-219', name: 'Route 219', segment: 'Pre-Volkner' },
   { key: 'dp-route-220', name: 'Route 220', segment: 'Pre-Volkner' },
   { key: 'dp-route-221', name: 'Route 221', segment: 'Pre-Volkner' },
+  { key: 'boss-mars-lake-verity', name: 'Mars (Lake Verity)', segment: 'Pre-Volkner' },
+  { key: 'boss-cyrus-galactic-hq', name: 'Cyrus (Galactic HQ)', segment: 'Pre-Volkner' },
   { key: 'boss-volkner', name: 'Volkner', segment: 'Pre-Volkner' },
   // Pre-Elite Four
   { key: 'dp-route-223', name: 'Route 223', segment: 'Pre-Elite Four' },
   { key: 'dp-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
   { key: 'dp-route-224', name: 'Route 224', segment: 'Pre-Elite Four' },
+  { key: 'boss-cyrus-spear-pillar', name: 'Cyrus (Spear Pillar)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-aaron', name: 'Elite Four: Aaron', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bertha', name: 'Elite Four: Bertha', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-flint', name: 'Elite Four: Flint', segment: 'Pre-Elite Four' },
@@ -430,6 +437,8 @@ const PLATINUM_ROUTES: GameLocation[] = [
   { key: 'pt-route-205', name: 'Route 205', segment: 'Pre-Gardenia' },
   { key: 'pt-eterna-forest', name: 'Eterna Forest', segment: 'Pre-Gardenia' },
   { key: 'pt-old-chateau', name: 'Old Chateau', segment: 'Pre-Gardenia' },
+  { key: 'boss-mars-valley-windworks', name: 'Mars (Valley Windworks)', segment: 'Pre-Gardenia' },
+  { key: 'boss-jupiter-eterna-building', name: 'Jupiter (Eterna Building)', segment: 'Pre-Gardenia' },
   { key: 'boss-gardenia', name: 'Gardenia', segment: 'Pre-Gardenia' },
   // Pre-Fantina (Platinum order)
   { key: 'pt-route-206', name: 'Route 206', segment: 'Pre-Fantina' },
@@ -459,15 +468,20 @@ const PLATINUM_ROUTES: GameLocation[] = [
   { key: 'pt-route-216', name: 'Route 216', segment: 'Pre-Candice' },
   { key: 'pt-route-217', name: 'Route 217', segment: 'Pre-Candice' },
   { key: 'pt-lake-acuity', name: 'Lake Acuity', segment: 'Pre-Candice' },
+  { key: 'boss-saturn-lake-valor', name: 'Saturn (Lake Valor)', segment: 'Pre-Candice' },
+  { key: 'boss-jupiter-lake-acuity', name: 'Jupiter (Lake Acuity)', segment: 'Pre-Candice' },
   { key: 'boss-candice', name: 'Candice', segment: 'Pre-Candice' },
   // Pre-Volkner
   { key: 'pt-route-211', name: 'Route 211', segment: 'Pre-Volkner' },
   { key: 'pt-mt-coronet-north', name: 'Mt. Coronet (North)', segment: 'Pre-Volkner' },
   { key: 'pt-route-222', name: 'Route 222', segment: 'Pre-Volkner' },
+  { key: 'boss-cyrus-galactic-hq', name: 'Cyrus (Galactic HQ)', segment: 'Pre-Volkner' },
+  { key: 'boss-mars-lake-verity', name: 'Mars (Lake Verity)', segment: 'Pre-Volkner' },
   { key: 'boss-volkner', name: 'Volkner', segment: 'Pre-Volkner' },
   // Pre-Elite Four
   { key: 'pt-route-223', name: 'Route 223', segment: 'Pre-Elite Four' },
   { key: 'pt-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
+  { key: 'boss-cyrus-distortion-world', name: 'Cyrus (Distortion World)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-aaron', name: 'Elite Four: Aaron', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bertha', name: 'Elite Four: Bertha', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-flint', name: 'Elite Four: Flint', segment: 'Pre-Elite Four' },
@@ -581,6 +595,7 @@ const BLACK_WHITE_ROUTES: GameLocation[] = [
   { key: 'boss-elite-four-caitlin', name: 'Elite Four: Caitlin', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-marshal', name: 'Elite Four: Marshal', segment: 'Pre-Elite Four' },
   { key: 'boss-n-final', name: 'N (Final)', segment: 'Pre-Elite Four' },
+  { key: 'boss-ghetsis', name: 'Ghetsis', segment: 'Pre-Elite Four' },
 ];
 
 const BLACK2_WHITE2_ROUTES: GameLocation[] = [
@@ -618,6 +633,7 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'b2w2-route-9', name: 'Route 9', segment: 'Pre-Drayden' },
   { key: 'b2w2-reversal-mountain', name: 'Reversal Mountain', segment: 'Pre-Drayden' },
   { key: 'b2w2-strange-house', name: 'Strange House', segment: 'Pre-Drayden' },
+  { key: 'boss-colress-plasma-frigate', name: 'Colress (Plasma Frigate)', segment: 'Pre-Drayden' },
   { key: 'boss-drayden', name: 'Drayden', segment: 'Pre-Drayden' },
   // Pre-Marlon
   { key: 'b2w2-route-21', name: 'Route 21', segment: 'Pre-Marlon' },
@@ -632,6 +648,7 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'boss-elite-four-caitlin', name: 'Elite Four: Caitlin', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-marshal', name: 'Elite Four: Marshal', segment: 'Pre-Elite Four' },
   { key: 'boss-iris-champion', name: 'Iris (Champion)', segment: 'Pre-Elite Four' },
+  { key: 'boss-ghetsis', name: 'Ghetsis', segment: 'Pre-Elite Four' },
 ];
 
 const X_Y_ROUTES: GameLocation[] = [
@@ -679,6 +696,7 @@ const X_Y_ROUTES: GameLocation[] = [
   // Pre-Wulfric
   { key: 'xy-route-20', name: 'Route 20', segment: 'Pre-Wulfric' },
   { key: 'xy-pokemon-village', name: 'Pokemon Village', segment: 'Pre-Wulfric' },
+  { key: 'boss-lysandre-lysandre-labs', name: 'Lysandre (Lysandre Labs)', segment: 'Pre-Wulfric' },
   { key: 'boss-wulfric', name: 'Wulfric', segment: 'Pre-Wulfric' },
   // Pre-Elite Four
   { key: 'xy-route-21', name: 'Route 21', segment: 'Pre-Elite Four' },
@@ -818,6 +836,7 @@ const SUN_MOON_ROUTES: GameLocation[] = [
   { key: 'sm-poni-canyon', name: 'Vast Poni Canyon', segment: 'Pre-Vast Poni' },
   { key: 'boss-hapu-kahuna', name: 'Hapu (Kahuna)', segment: 'Pre-Vast Poni' },
   // Pre-Elite Four
+  { key: 'boss-lusamine-aether-paradise', name: 'Lusamine (Aether Paradise)', segment: 'Pre-Elite Four' },
   { key: 'sm-mount-lanakila', name: 'Mount Lanakila', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-hala', name: 'Elite Four: Hala', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-olivia', name: 'Elite Four: Olivia', segment: 'Pre-Elite Four' },
@@ -879,6 +898,7 @@ const ULTRA_SUN_ULTRA_MOON_ROUTES: GameLocation[] = [
   { key: 'usum-route-16', name: 'Route 16', segment: 'Pre-Vast Poni' },
   { key: 'usum-route-17', name: 'Route 17', segment: 'Pre-Vast Poni' },
   { key: 'usum-po-town', name: 'Po Town', segment: 'Pre-Vast Poni' },
+  { key: 'boss-lusamine-aether-paradise', name: 'Lusamine (Aether Paradise)', segment: 'Pre-Vast Poni' },
   { key: 'boss-nanu-kahuna', name: 'Nanu (Kahuna)', segment: 'Pre-Vast Poni' },
   { key: 'usum-poni-wilds', name: 'Poni Wilds', segment: 'Pre-Vast Poni' },
   { key: 'usum-ancient-poni-path', name: 'Ancient Poni Path', segment: 'Pre-Vast Poni' },
@@ -939,6 +959,8 @@ const SWORD_SHIELD_ROUTES: GameLocation[] = [
   { key: 'boss-raihan', name: 'Raihan', segment: 'Pre-Raihan' },
   // Pre-Champion Cup
   { key: 'swsh-victory-road', name: 'Victory Road', segment: 'Pre-Champion Cup' },
+  { key: 'boss-oleana-rose-tower', name: 'Oleana (Rose Tower)', segment: 'Pre-Champion Cup' },
+  { key: 'boss-chairman-rose-energy-plant', name: 'Chairman Rose (Energy Plant)', segment: 'Pre-Champion Cup' },
   { key: 'boss-champion-cup-marnie', name: 'Champion Cup: Marnie', segment: 'Pre-Champion Cup' },
   { key: 'boss-champion-cup-hop', name: 'Champion Cup: Hop', segment: 'Pre-Champion Cup' },
   { key: 'boss-leon-champion', name: 'Leon (Champion)', segment: 'Pre-Champion Cup' },
@@ -958,6 +980,8 @@ const BRILLIANT_DIAMOND_SHINING_PEARL_ROUTES: GameLocation[] = [
   { key: 'bdsp-route-205', name: 'Route 205', segment: 'Pre-Gardenia' },
   { key: 'bdsp-eterna-forest', name: 'Eterna Forest', segment: 'Pre-Gardenia' },
   { key: 'bdsp-old-chateau', name: 'Old Chateau', segment: 'Pre-Gardenia' },
+  { key: 'boss-mars-valley-windworks', name: 'Mars (Valley Windworks)', segment: 'Pre-Gardenia' },
+  { key: 'boss-jupiter-eterna-building', name: 'Jupiter (Eterna Building)', segment: 'Pre-Gardenia' },
   { key: 'boss-gardenia', name: 'Gardenia', segment: 'Pre-Gardenia' },
   // Pre-Maylene
   { key: 'bdsp-route-206', name: 'Route 206', segment: 'Pre-Maylene' },
@@ -989,16 +1013,21 @@ const BRILLIANT_DIAMOND_SHINING_PEARL_ROUTES: GameLocation[] = [
   { key: 'bdsp-lake-acuity', name: 'Lake Acuity', segment: 'Pre-Candice' },
   { key: 'bdsp-route-211', name: 'Route 211', segment: 'Pre-Candice' },
   { key: 'bdsp-mt-coronet-north', name: 'Mt. Coronet (North)', segment: 'Pre-Candice' },
+  { key: 'boss-saturn-lake-valor', name: 'Saturn (Lake Valor)', segment: 'Pre-Candice' },
+  { key: 'boss-jupiter-lake-acuity', name: 'Jupiter (Lake Acuity)', segment: 'Pre-Candice' },
   { key: 'boss-candice', name: 'Candice', segment: 'Pre-Candice' },
   // Pre-Volkner
   { key: 'bdsp-route-222', name: 'Route 222', segment: 'Pre-Volkner' },
   { key: 'bdsp-route-219', name: 'Route 219', segment: 'Pre-Volkner' },
   { key: 'bdsp-route-220', name: 'Route 220', segment: 'Pre-Volkner' },
   { key: 'bdsp-route-221', name: 'Route 221', segment: 'Pre-Volkner' },
+  { key: 'boss-mars-lake-verity', name: 'Mars (Lake Verity)', segment: 'Pre-Volkner' },
+  { key: 'boss-cyrus-galactic-hq', name: 'Cyrus (Galactic HQ)', segment: 'Pre-Volkner' },
   { key: 'boss-volkner', name: 'Volkner', segment: 'Pre-Volkner' },
   // Pre-Elite Four
   { key: 'bdsp-route-223', name: 'Route 223', segment: 'Pre-Elite Four' },
   { key: 'bdsp-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
+  { key: 'boss-cyrus-spear-pillar', name: 'Cyrus (Spear Pillar)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-aaron', name: 'Elite Four: Aaron', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bertha', name: 'Elite Four: Bertha', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-flint', name: 'Elite Four: Flint', segment: 'Pre-Elite Four' },
@@ -1116,6 +1145,8 @@ const SCARLET_VIOLET_ROUTES: GameLocation[] = [
   { key: 'boss-elite-four-larry', name: 'Elite Four: Larry', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-hassel', name: 'Elite Four: Hassel', segment: 'Pre-Elite Four' },
   { key: 'boss-geeta-top-champion', name: 'Geeta (Top Champion)', segment: 'Pre-Elite Four' },
+  { key: 'boss-ai-sada-area-zero', name: 'AI Sada (Area Zero)', segment: 'Pre-Elite Four' },
+  { key: 'boss-ai-turo-area-zero', name: 'AI Turo (Area Zero)', segment: 'Pre-Elite Four' },
 ];
 
 // Gift/starter route prepended to every game so starters don't consume route encounters

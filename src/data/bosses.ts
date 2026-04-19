@@ -878,6 +878,22 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Mars (Valley Windworks)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 15, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Astonish'] },
+      { name: 'Purugly', id: 432, level: 17, types: ['normal'], moves: ['Scratch', 'Faint Attack', 'Hypnosis', 'Fury Swipes'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Eterna Building)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 18, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Supersonic'] },
+      { name: 'Skuntank', id: 435, level: 20, types: ['poison', 'dark'], moves: ['Night Slash', 'Poison Gas', 'Screech', 'Fury Swipes'] },
+    ],
+  },
+  {
     name: 'Gardenia',
     segment: 'Pre-Gardenia',
     pokemon: [
@@ -923,6 +939,33 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Saturn (Lake Valor)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Toxicroak', id: 454, level: 40, types: ['poison', 'fighting'], moves: ['Revenge', 'Poison Jab', 'Swagger', 'Mud Bomb'] },
+    ],
+  },
+  {
+    name: 'Mars (Lake Verity)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 37, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 37, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Purugly', id: 432, level: 39, types: ['normal'], moves: ['Slash', 'Faint Attack', 'Hypnosis', 'Body Slam'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Lake Acuity)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Skuntank', id: 435, level: 40, types: ['poison', 'dark'], moves: ['Night Slash', 'Flamethrower', 'Smokescreen', 'Toxic'] },
+    ],
+  },
+  {
     name: 'Candice',
     segment: 'Pre-Candice',
     pokemon: [
@@ -933,6 +976,16 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Cyrus (Galactic HQ)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Murkrow', id: 198, level: 34, types: ['dark', 'flying'], moves: ['Drill Peck', 'Night Slash', 'Swagger'] },
+      { name: 'Golbat', id: 42, level: 34, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Sneasel', id: 215, level: 36, types: ['dark', 'ice'], moves: ['Slash', 'Ice Punch', 'Faint Attack', 'Quick Attack'] },
+      { name: 'Honchkrow', id: 430, level: 38, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Swagger', 'Nasty Plot'] },
+    ],
+  },
+  {
     name: 'Volkner',
     segment: 'Pre-Volkner',
     pokemon: [
@@ -940,6 +993,17 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Ambipom', id: 424, level: 47, types: ['normal'], moves: ['Shock Wave', 'Last Resort', 'Baton Pass', 'Agility'] },
       { name: 'Octillery', id: 224, level: 47, types: ['water'], moves: ['Charge Beam', 'Aurora Beam', 'Bullet Seed', 'Focus Energy'] },
       { name: 'Luxray', id: 405, level: 49, types: ['electric'], moves: ['Thunder Fang', 'Crunch', 'Ice Fang', 'Charge'] },
+    ],
+  },
+  {
+    name: 'Cyrus (Spear Pillar)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Houndoom', id: 229, level: 45, types: ['dark', 'fire'], moves: ['Flamethrower', 'Dark Pulse', 'Thunder Fang', 'Nasty Plot'] },
+      { name: 'Gyarados', id: 130, level: 45, types: ['water', 'flying'], moves: ['Waterfall', 'Ice Fang', 'Earthquake', 'Dragon Dance'] },
+      { name: 'Crobat', id: 169, level: 46, types: ['poison', 'flying'], moves: ['Cross Poison', 'Air Slash', 'Confuse Ray', 'Bite'] },
+      { name: 'Honchkrow', id: 430, level: 47, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Heat Wave', 'Swagger'] },
+      { name: 'Weavile', id: 461, level: 48, types: ['dark', 'ice'], moves: ['Night Slash', 'Ice Punch', 'Brick Break', 'X-Scissor'] },
     ],
   },
   {
@@ -1022,6 +1086,22 @@ const PLATINUM_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Mars (Valley Windworks)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 15, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Astonish'] },
+      { name: 'Purugly', id: 432, level: 17, types: ['normal'], moves: ['Scratch', 'Faint Attack', 'Hypnosis', 'Fury Swipes'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Eterna Building)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 18, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Supersonic'] },
+      { name: 'Skuntank', id: 435, level: 20, types: ['poison', 'dark'], moves: ['Night Slash', 'Poison Gas', 'Screech', 'Fury Swipes'] },
+    ],
+  },
+  {
     name: 'Fantina',
     segment: 'Pre-Fantina',
     pokemon: [
@@ -1058,6 +1138,24 @@ const PLATINUM_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Saturn (Lake Valor)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Toxicroak', id: 454, level: 40, types: ['poison', 'fighting'], moves: ['Revenge', 'Poison Jab', 'Swagger', 'Mud Bomb'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Lake Acuity)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Skuntank', id: 435, level: 40, types: ['poison', 'dark'], moves: ['Night Slash', 'Flamethrower', 'Smokescreen', 'Toxic'] },
+    ],
+  },
+  {
     name: 'Candice',
     segment: 'Pre-Candice',
     pokemon: [
@@ -1068,6 +1166,25 @@ const PLATINUM_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Cyrus (Galactic HQ)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Murkrow', id: 198, level: 34, types: ['dark', 'flying'], moves: ['Drill Peck', 'Night Slash', 'Swagger'] },
+      { name: 'Golbat', id: 42, level: 34, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Sneasel', id: 215, level: 36, types: ['dark', 'ice'], moves: ['Slash', 'Ice Punch', 'Faint Attack', 'Quick Attack'] },
+      { name: 'Honchkrow', id: 430, level: 38, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Swagger', 'Nasty Plot'] },
+    ],
+  },
+  {
+    name: 'Mars (Lake Verity)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 37, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 37, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Purugly', id: 432, level: 39, types: ['normal'], moves: ['Slash', 'Faint Attack', 'Hypnosis', 'Body Slam'] },
+    ],
+  },
+  {
     name: 'Volkner',
     segment: 'Pre-Volkner',
     pokemon: [
@@ -1075,6 +1192,17 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Raichu', id: 26, level: 46, types: ['electric'], moves: ['Charge Beam', 'Signal Beam', 'Quick Attack', 'Brick Break'] },
       { name: 'Luxray', id: 405, level: 48, types: ['electric'], moves: ['Thunder Fang', 'Crunch', 'Ice Fang', 'Fire Fang'] },
       { name: 'Electivire', id: 466, level: 50, types: ['electric'], moves: ['Thunder Punch', 'Fire Punch', 'Ice Punch', 'Giga Impact'] },
+    ],
+  },
+  {
+    name: 'Cyrus (Distortion World)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Houndoom', id: 229, level: 45, types: ['dark', 'fire'], moves: ['Flamethrower', 'Dark Pulse', 'Thunder Fang', 'Nasty Plot'] },
+      { name: 'Gyarados', id: 130, level: 45, types: ['water', 'flying'], moves: ['Waterfall', 'Ice Fang', 'Earthquake', 'Dragon Dance'] },
+      { name: 'Crobat', id: 169, level: 46, types: ['poison', 'flying'], moves: ['Cross Poison', 'Air Slash', 'Confuse Ray', 'Bite'] },
+      { name: 'Honchkrow', id: 430, level: 47, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Heat Wave', 'Swagger'] },
+      { name: 'Weavile', id: 461, level: 48, types: ['dark', 'ice'], moves: ['Night Slash', 'Ice Punch', 'Brick Break', 'X-Scissor'] },
     ],
   },
   {
@@ -1392,6 +1520,18 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
       { name: 'Archeops', id: 567, level: 50, types: ['rock', 'flying'], moves: ['Acrobatics', 'Stone Edge', 'Dragon Claw', 'Crunch'] },
     ],
   },
+  {
+    name: 'Ghetsis',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Cofagrigus', id: 563, level: 52, types: ['ghost'], moves: ['Shadow Ball', 'Toxic', 'Protect', 'Psychic'] },
+      { name: 'Bouffalant', id: 626, level: 52, types: ['normal'], moves: ['Head Charge', 'Wild Charge', 'Earthquake', 'Poison Jab'] },
+      { name: 'Seismitoad', id: 537, level: 52, types: ['water', 'ground'], moves: ['Muddy Water', 'Earthquake', 'Rain Dance', 'Drain Punch'] },
+      { name: 'Bisharp', id: 625, level: 52, types: ['dark', 'steel'], moves: ['Night Slash', 'X-Scissor', 'Metal Burst', 'Stone Edge'] },
+      { name: 'Eelektross', id: 604, level: 52, types: ['electric'], moves: ['Wild Charge', 'Crunch', 'Flamethrower', 'Acrobatics'] },
+      { name: 'Hydreigon', id: 635, level: 54, types: ['dark', 'dragon'], moves: ['Dragon Pulse', 'Fire Blast', 'Surf', 'Focus Blast'] },
+    ],
+  },
 ];
 
 // ── Black 2 / White 2 ────────────────────────────────────────────────────
@@ -1447,6 +1587,17 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
       { name: 'Swoobat', id: 528, level: 37, types: ['psychic', 'flying'], moves: ['Acrobatics', 'Heart Stamp', 'Assurance', 'Attract'] },
       { name: 'Skarmory', id: 227, level: 37, types: ['steel', 'flying'], moves: ['Air Slash', 'Steel Wing', 'Fury Attack', 'Agility'] },
       { name: 'Swanna', id: 581, level: 39, types: ['water', 'flying'], moves: ['Air Slash', 'BubbleBeam', 'Aerial Ace', 'FeatherDance'] },
+    ],
+  },
+  {
+    name: 'Colress (Plasma Frigate)',
+    segment: 'Pre-Drayden',
+    pokemon: [
+      { name: 'Magneton', id: 82, level: 50, types: ['electric', 'steel'], moves: ['Thunderbolt', 'Flash Cannon', 'Thunder Wave', 'Tri Attack'] },
+      { name: 'Magnezone', id: 462, level: 50, types: ['electric', 'steel'], moves: ['Thunderbolt', 'Flash Cannon', 'Thunder Wave', 'Metal Sound'] },
+      { name: 'Beheeyem', id: 606, level: 50, types: ['psychic'], moves: ['Psychic', 'Energy Ball', 'Thunder Wave', 'Calm Mind'] },
+      { name: 'Metang', id: 375, level: 50, types: ['steel', 'psychic'], moves: ['Zen Headbutt', 'Meteor Mash', 'Agility', 'Pursuit'] },
+      { name: 'Klinklang', id: 601, level: 52, types: ['steel'], moves: ['Gear Grind', 'Thunderbolt', 'Flash Cannon', 'Shift Gear'] },
     ],
   },
   {
@@ -1519,6 +1670,18 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
       { name: 'Haxorus', id: 612, level: 59, types: ['dragon'], moves: ['Outrage', 'Earthquake', 'X-Scissor', 'Dragon Dance'] },
     ],
   },
+  {
+    name: 'Ghetsis',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Cofagrigus', id: 563, level: 50, types: ['ghost'], moves: ['Shadow Ball', 'Toxic', 'Protect', 'Psychic'] },
+      { name: 'Seismitoad', id: 537, level: 50, types: ['water', 'ground'], moves: ['Muddy Water', 'Earthquake', 'Rain Dance', 'Drain Punch'] },
+      { name: 'Eelektross', id: 604, level: 50, types: ['electric'], moves: ['Wild Charge', 'Crunch', 'Flamethrower', 'Acrobatics'] },
+      { name: 'Drapion', id: 452, level: 50, types: ['poison', 'dark'], moves: ['Cross Poison', 'Night Slash', 'X-Scissor', 'Earthquake'] },
+      { name: 'Toxicroak', id: 454, level: 50, types: ['poison', 'fighting'], moves: ['Poison Jab', 'Drain Punch', 'Sucker Punch', 'Rock Slide'] },
+      { name: 'Hydreigon', id: 635, level: 52, types: ['dark', 'dragon'], moves: ['Dragon Pulse', 'Fire Blast', 'Surf', 'Focus Blast'] },
+    ],
+  },
 ];
 
 // ── X / Y ─────────────────────────────────────────────────────────────────
@@ -1583,6 +1746,16 @@ const X_Y_BOSSES: BossEntry[] = [
       { name: 'Sigilyph', id: 561, level: 44, types: ['psychic', 'flying'], moves: ['Psychic', 'Air Slash', 'Light Screen', 'Reflect'] },
       { name: 'Slowking', id: 199, level: 45, types: ['water', 'psychic'], moves: ['Psychic', 'Power Gem', 'Yawn', 'Calm Mind'] },
       { name: 'Meowstic', id: 678, level: 48, types: ['psychic'], moves: ['Psychic', 'Shadow Ball', 'Fake Out', 'Calm Mind'] },
+    ],
+  },
+  {
+    name: 'Lysandre (Lysandre Labs)',
+    segment: 'Pre-Wulfric',
+    pokemon: [
+      { name: 'Mienshao', id: 620, level: 49, types: ['fighting'], moves: ['High Jump Kick', 'Acrobatics', 'U-turn', 'Fake Out'] },
+      { name: 'Honchkrow', id: 430, level: 49, types: ['dark', 'flying'], moves: ['Night Slash', 'Brave Bird', 'Steel Wing', 'Foul Play'] },
+      { name: 'Pyroar', id: 668, level: 51, types: ['fire', 'normal'], moves: ['Flamethrower', 'Hyper Voice', 'Noble Roar', 'Dark Pulse'] },
+      { name: 'Gyarados', id: 130, level: 53, types: ['water', 'flying'], moves: ['Waterfall', 'Iron Head', 'Earthquake', 'Outrage'] },
     ],
   },
   {
@@ -1866,6 +2039,17 @@ const SUN_MOON_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Lusamine (Aether Paradise)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Clefable', id: 36, level: 50, types: ['fairy'], moves: ['Moonblast', 'Cosmic Power', 'Metronome', 'Moonlight'] },
+      { name: 'Lilligant', id: 549, level: 50, types: ['grass'], moves: ['Petal Dance', 'Leech Seed', 'Stun Spore', 'Teeter Dance'] },
+      { name: 'Milotic', id: 350, level: 50, types: ['water'], moves: ['Hydro Pump', 'Recover', 'Safeguard', 'Flail'] },
+      { name: 'Mismagius', id: 429, level: 50, types: ['ghost'], moves: ['Shadow Ball', 'Power Gem', 'Mystical Fire', 'Pain Split'] },
+      { name: 'Bewear', id: 760, level: 50, types: ['normal', 'fighting'], moves: ['Hammer Arm', 'Take Down', 'Pain Split', 'Baby-Doll Eyes'] },
+    ],
+  },
+  {
     name: 'Elite Four: Hala',
     segment: 'Pre-Elite Four',
     pokemon: [
@@ -1984,6 +2168,17 @@ const ULTRA_SUN_ULTRA_MOON_BOSSES: BossEntry[] = [
     segment: 'Pre-Acerola',
     pokemon: [
       { name: 'Mimikyu', id: 778, level: 35, types: ['ghost', 'fairy'], moves: ['Shadow Claw', 'Play Rough', 'Mimic', 'Astonish'] },
+    ],
+  },
+  {
+    name: 'Lusamine (Aether Paradise)',
+    segment: 'Pre-Vast Poni',
+    pokemon: [
+      { name: 'Clefable', id: 36, level: 50, types: ['fairy'], moves: ['Moonblast', 'Cosmic Power', 'Metronome', 'Moonlight'] },
+      { name: 'Lilligant', id: 549, level: 50, types: ['grass'], moves: ['Petal Dance', 'Leech Seed', 'Stun Spore', 'Teeter Dance'] },
+      { name: 'Milotic', id: 350, level: 50, types: ['water'], moves: ['Hydro Pump', 'Recover', 'Safeguard', 'Flail'] },
+      { name: 'Mismagius', id: 429, level: 50, types: ['ghost'], moves: ['Shadow Ball', 'Power Gem', 'Mystical Fire', 'Pain Split'] },
+      { name: 'Bewear', id: 760, level: 50, types: ['normal', 'fighting'], moves: ['Hammer Arm', 'Take Down', 'Pain Split', 'Baby-Doll Eyes'] },
     ],
   },
   {
@@ -2143,6 +2338,28 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Oleana (Rose Tower)',
+    segment: 'Pre-Champion Cup',
+    pokemon: [
+      { name: 'Froslass', id: 478, level: 50, types: ['ice', 'ghost'], moves: ['Shadow Ball', 'Ice Beam', 'Confuse Ray', 'Will-O-Wisp'] },
+      { name: 'Tsareena', id: 763, level: 50, types: ['grass'], moves: ['Trop Kick', 'High Jump Kick', 'U-turn', 'Play Rough'] },
+      { name: 'Salazzle', id: 758, level: 50, types: ['poison', 'fire'], moves: ['Flamethrower', 'Sludge Bomb', 'Dragon Pulse', 'Toxic'] },
+      { name: 'Milotic', id: 350, level: 51, types: ['water'], moves: ['Hydro Pump', 'Ice Beam', 'Recover', 'Hypnosis'] },
+      { name: 'Garbodor', id: 569, level: 52, types: ['poison'], moves: ['Gunk Shot', 'Seed Bomb', 'Psychic', 'Stomping Tantrum'] },
+    ],
+  },
+  {
+    name: 'Chairman Rose (Energy Plant)',
+    segment: 'Pre-Champion Cup',
+    pokemon: [
+      { name: 'Escavalier', id: 589, level: 55, types: ['bug', 'steel'], moves: ['Iron Head', 'Megahorn', 'Slash', 'Swords Dance'] },
+      { name: 'Ferrothorn', id: 598, level: 55, types: ['grass', 'steel'], moves: ['Power Whip', 'Gyro Ball', 'Iron Defense', 'Ingrain'] },
+      { name: 'Perrserker', id: 863, level: 55, types: ['steel'], moves: ['Iron Head', 'Shadow Claw', 'Crunch', 'Fake Out'] },
+      { name: 'Klinklang', id: 601, level: 56, types: ['steel'], moves: ['Gear Grind', 'Wild Charge', 'Shift Gear', 'Screech'] },
+      { name: 'Copperajah', id: 879, level: 57, types: ['steel'], moves: ['Iron Head', 'Heavy Slam', 'Stone Edge', 'High Horsepower'] },
+    ],
+  },
+  {
     name: 'Champion Cup: Marnie',
     segment: 'Pre-Champion Cup',
     pokemon: [
@@ -2200,6 +2417,22 @@ const BDSP_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Mars (Valley Windworks)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 15, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Astonish'] },
+      { name: 'Purugly', id: 432, level: 17, types: ['normal'], moves: ['Scratch', 'Faint Attack', 'Hypnosis', 'Fury Swipes'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Eterna Building)',
+    segment: 'Pre-Gardenia',
+    pokemon: [
+      { name: 'Zubat', id: 41, level: 18, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Supersonic'] },
+      { name: 'Skuntank', id: 435, level: 20, types: ['poison', 'dark'], moves: ['Night Slash', 'Poison Gas', 'Screech', 'Fury Swipes'] },
+    ],
+  },
+  {
     name: 'Maylene',
     segment: 'Pre-Maylene',
     pokemon: [
@@ -2236,6 +2469,24 @@ const BDSP_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Saturn (Lake Valor)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Toxicroak', id: 454, level: 40, types: ['poison', 'fighting'], moves: ['Revenge', 'Poison Jab', 'Swagger', 'Mud Bomb'] },
+    ],
+  },
+  {
+    name: 'Jupiter (Lake Acuity)',
+    segment: 'Pre-Candice',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 38, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 38, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Skuntank', id: 435, level: 40, types: ['poison', 'dark'], moves: ['Night Slash', 'Flamethrower', 'Smokescreen', 'Toxic'] },
+    ],
+  },
+  {
     name: 'Candice',
     segment: 'Pre-Candice',
     pokemon: [
@@ -2246,6 +2497,25 @@ const BDSP_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Cyrus (Galactic HQ)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Murkrow', id: 198, level: 34, types: ['dark', 'flying'], moves: ['Drill Peck', 'Night Slash', 'Swagger'] },
+      { name: 'Golbat', id: 42, level: 34, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Sneasel', id: 215, level: 36, types: ['dark', 'ice'], moves: ['Slash', 'Ice Punch', 'Faint Attack', 'Quick Attack'] },
+      { name: 'Honchkrow', id: 430, level: 38, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Swagger', 'Nasty Plot'] },
+    ],
+  },
+  {
+    name: 'Mars (Lake Verity)',
+    segment: 'Pre-Volkner',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 37, types: ['poison', 'flying'], moves: ['Air Cutter', 'Bite', 'Confuse Ray', 'Poison Fang'] },
+      { name: 'Bronzor', id: 436, level: 37, types: ['steel', 'psychic'], moves: ['Extrasensory', 'Confuse Ray', 'Iron Defense'] },
+      { name: 'Purugly', id: 432, level: 39, types: ['normal'], moves: ['Slash', 'Faint Attack', 'Hypnosis', 'Body Slam'] },
+    ],
+  },
+  {
     name: 'Volkner',
     segment: 'Pre-Volkner',
     pokemon: [
@@ -2253,6 +2523,17 @@ const BDSP_BOSSES: BossEntry[] = [
       { name: 'Ambipom', id: 424, level: 47, types: ['normal'], moves: ['Shock Wave', 'Last Resort', 'Baton Pass'] },
       { name: 'Octillery', id: 224, level: 47, types: ['water'], moves: ['Charge Beam', 'Aurora Beam', 'Bullet Seed'] },
       { name: 'Luxray', id: 405, level: 49, types: ['electric'], moves: ['Thunder Fang', 'Crunch', 'Ice Fang'] },
+    ],
+  },
+  {
+    name: 'Cyrus (Spear Pillar)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Houndoom', id: 229, level: 45, types: ['dark', 'fire'], moves: ['Flamethrower', 'Dark Pulse', 'Thunder Fang', 'Nasty Plot'] },
+      { name: 'Gyarados', id: 130, level: 45, types: ['water', 'flying'], moves: ['Waterfall', 'Ice Fang', 'Earthquake', 'Dragon Dance'] },
+      { name: 'Crobat', id: 169, level: 46, types: ['poison', 'flying'], moves: ['Cross Poison', 'Air Slash', 'Confuse Ray', 'Bite'] },
+      { name: 'Honchkrow', id: 430, level: 47, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Heat Wave', 'Swagger'] },
+      { name: 'Weavile', id: 461, level: 48, types: ['dark', 'ice'], moves: ['Night Slash', 'Ice Punch', 'Brick Break', 'X-Scissor'] },
     ],
   },
   {
@@ -2621,6 +2902,30 @@ const SCARLET_VIOLET_BOSSES: BossEntry[] = [
       { name: 'Avalugg', id: 713, level: 61, types: ['ice'], moves: ['Icicle Crash', 'Earthquake', 'Crunch'] },
       { name: 'Kingambit', id: 983, level: 61, types: ['dark', 'steel'], moves: ['Kowtow Cleave', 'Iron Head', 'Stone Edge'] },
       { name: 'Glimmora', id: 970, level: 62, types: ['rock', 'poison'], moves: ['Sludge Wave', 'Power Gem', 'Dazzling Gleam', 'Earth Power'] },
+    ],
+  },
+  {
+    name: 'AI Sada (Area Zero)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Slither Wing', id: 988, level: 64, types: ['bug', 'fighting'], moves: ['First Impression', 'Close Combat', 'Leech Life', 'Flame Charge'] },
+      { name: 'Brute Bonnet', id: 986, level: 64, types: ['grass', 'dark'], moves: ['Sucker Punch', 'Seed Bomb', 'Crunch', 'Stun Spore'] },
+      { name: 'Flutter Mane', id: 987, level: 64, types: ['ghost', 'fairy'], moves: ['Shadow Ball', 'Moonblast', 'Mystical Fire', 'Psyshock'] },
+      { name: 'Sandy Shocks', id: 989, level: 64, types: ['electric', 'ground'], moves: ['Thunderbolt', 'Earth Power', 'Flash Cannon', 'Thunder Wave'] },
+      { name: 'Roaring Moon', id: 1005, level: 64, types: ['dragon', 'dark'], moves: ['Dragon Claw', 'Crunch', 'Flare Blitz', 'Dragon Dance'] },
+      { name: 'Koraidon', id: 1007, level: 68, types: ['fighting', 'dragon'], moves: ['Collision Course', 'Dragon Claw', 'Flare Blitz', 'Drain Punch'] },
+    ],
+  },
+  {
+    name: 'AI Turo (Area Zero)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Iron Moth', id: 994, level: 64, types: ['fire', 'poison'], moves: ['Fiery Dance', 'Sludge Wave', 'Psychic', 'Energy Ball'] },
+      { name: 'Iron Hands', id: 992, level: 64, types: ['fighting', 'electric'], moves: ['Wild Charge', 'Close Combat', 'Ice Punch', 'Thunder Punch'] },
+      { name: 'Iron Jugulis', id: 993, level: 64, types: ['dark', 'flying'], moves: ['Dark Pulse', 'Air Slash', 'Flash Cannon', 'Flamethrower'] },
+      { name: 'Iron Thorns', id: 995, level: 64, types: ['rock', 'electric'], moves: ['Stone Edge', 'Wild Charge', 'Ice Punch', 'Earthquake'] },
+      { name: 'Iron Valiant', id: 1006, level: 64, types: ['fairy', 'fighting'], moves: ['Moonblast', 'Close Combat', 'Psycho Cut', 'Shadow Claw'] },
+      { name: 'Miraidon', id: 1008, level: 68, types: ['electric', 'dragon'], moves: ['Electro Drift', 'Dragon Pulse', 'Parabolic Charge', 'Overheat'] },
     ],
   },
 ];
