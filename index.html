@@ -5,8 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/nuzlocke-tracker/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nuzlocke Tracker</title>
+    <script>(function(){var s=localStorage.getItem('site-theme');if(s)document.documentElement.setAttribute('data-theme',s)})()</script>
   </head>
-  <body class="bg-zinc-900 text-zinc-100 antialiased">
+  <body class="antialiased" style="background:var(--bg);color:var(--text)">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

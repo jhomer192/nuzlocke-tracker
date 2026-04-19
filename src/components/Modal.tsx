@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   open: boolean;
@@ -21,7 +22,8 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
 
   if (!open) return null;
 
-  return (
+  // Portal to document.body so modals escape sticky/backdrop-blur stacking contexts
+  return createPortal(
     <div
       className="modal-backdrop fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4"
       onClick={onClose}
@@ -42,6 +44,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         </div>
         <div className="px-6 py-4 overflow-y-auto flex-1">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

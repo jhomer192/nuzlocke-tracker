@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Run } from '../types';
-import { GAME_NAMES } from '../types';
+import { GAME_NAMES, LEVEL_CAPS } from '../types';
 import { BadgeBar } from '../components/BadgeBar';
 import { EncountersTab } from '../components/EncountersTab';
 import { TeamTab } from '../components/TeamTab';
 import { AnalysisTab } from '../components/AnalysisTab';
 import { GraveyardTab } from '../components/GraveyardTab';
+import { ShiniesTab } from '../components/ShiniesTab';
 import { toggleBadge } from '../hooks/useRuns';
+import { getCustomGame } from '../utils/storage';
 
-type Tab = 'encounters' | 'team' | 'analysis' | 'graveyard';
+type Tab = 'encounters' | 'team' | 'analysis' | 'graveyard' | 'shinies';
 
 const TABS: { key: Tab; label: string; icon: (active: boolean) => React.ReactNode }[] = [
   {
@@ -48,6 +50,13 @@ const TABS: { key: Tab; label: string; icon: (active: boolean) => React.ReactNod
       </svg>
     ),
   },
+  {
+    key: 'shinies',
+    label: 'Shinies',
+    icon: (active) => (
+      <span className={`text-lg leading-5 ${active ? 'text-yellow-400' : 'text-zinc-500'}`}>&#10024;</span>
+    ),
+  },
 ];
 
 interface RunDashboardProps {
@@ -64,7 +73,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
 
   if (!run) {
     return (
-      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
           <p className="text-zinc-400 text-lg">Run not found</p>
           <button
@@ -83,9 +92,9 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       {/* Top bar */}
-      <div className="bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-800 sticky top-0 z-20">
+      <div className="backdrop-blur-sm sticky top-0 z-20" style={{ background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
         <div className="px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
@@ -97,8 +106,24 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
           </button>
           <div className="flex-1 min-w-0">
             <h1 className="font-bold text-lg truncate">{run.name}</h1>
-            <p className="text-xs text-zinc-500">{GAME_NAMES[run.game]}</p>
+            <p className="text-xs text-zinc-500">
+              {run.game === 'CUSTOM' && run.customGameId
+                ? getCustomGame(run.customGameId)?.name ?? 'Custom Game'
+                : GAME_NAMES[run.game]}
+            </p>
           </div>
+          {(() => {
+            const shinyCount = runs.reduce((sum, r) => sum + r.encounters.filter((e) => e.isShiny && e.status !== 'missed').length, 0);
+            return shinyCount > 0 ? (
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-yellow-500/15 text-yellow-400 cursor-pointer"
+                onClick={() => setActiveTab('shinies')}
+                title="Total shinies across all runs"
+              >
+                &#10024; {shinyCount}
+              </span>
+            ) : null;
+          })()}
           <span
             className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase ${
               run.status === 'active'
@@ -113,11 +138,42 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
         </div>
       </div>
 
+      {/* Level cap indicator */}
+      {run.rules.levelCap && (() => {
+        let caps: Record<string, number>;
+        if (run.game === 'CUSTOM' && run.customGameId) {
+          const def = getCustomGame(run.customGameId);
+          if (!def?.bosses?.length) return null;
+          caps = {};
+          for (const boss of def.bosses) {
+            if (boss.levelCap) caps[boss.segment] = boss.levelCap;
+          }
+          if (Object.keys(caps).length === 0) return null;
+        } else {
+          caps = LEVEL_CAPS[run.game];
+        }
+        const segments = Object.keys(caps);
+        if (segments.length === 0) return null;
+        const badgeCount = run.badges.filter(Boolean).length;
+        const currentSegment = segments[Math.min(badgeCount, segments.length - 1)];
+        const currentCap = caps[currentSegment];
+        return (
+          <div className="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-amber-400 text-xs font-bold uppercase tracking-wider">Level Cap</span>
+              <span className="text-amber-300 font-bold text-lg">{currentCap}</span>
+            </div>
+            <span className="text-amber-400/60 text-xs">{currentSegment}</span>
+          </div>
+        );
+      })()}
+
       {/* Badge bar */}
       <BadgeBar
         game={run.game}
         badges={run.badges}
         onToggle={(i) => handleUpdate((r) => toggleBadge(r, i))}
+        customGameId={run.customGameId}
       />
 
       {/* Tab content */}
@@ -130,10 +186,11 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
         )}
         {activeTab === 'analysis' && <AnalysisTab run={run} />}
         {activeTab === 'graveyard' && <GraveyardTab run={run} />}
+        {activeTab === 'shinies' && <ShiniesTab runs={runs} />}
       </div>
 
       {/* Bottom tab bar */}
-      <div className="sticky bottom-0 bg-zinc-900/95 backdrop-blur-sm border-t border-zinc-800 safe-area-bottom">
+      <div className="sticky bottom-0 backdrop-blur-sm safe-area-bottom" style={{ background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
         <div className="flex">
           {TABS.map((tab) => (
             <button

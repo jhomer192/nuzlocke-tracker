@@ -72,7 +72,7 @@ export function GraveyardTab({ run }: GraveyardTabProps) {
                 {/* Desaturated sprite */}
                 <div className="relative flex-shrink-0">
                   <img
-                    src={getSpriteUrl(enc.pokemonId)}
+                    src={getSpriteUrl(enc.pokemonId, enc.isShiny)}
                     alt={enc.nickname}
                     className="w-16 h-16 pixelated grayscale opacity-60"
                   />
