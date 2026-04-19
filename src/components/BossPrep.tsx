@@ -91,21 +91,31 @@ function BossPokemonCard({ mon, gen }: { mon: BossPokemon; gen: number }) {
 }
 
 function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isDefeated: boolean }) {
+  const [expanded, setExpanded] = useState(!isDefeated);
+
   return (
     <div className="mb-4">
-      <div className="flex items-center gap-2 mb-2">
-        <h3 className="text-base font-bold text-white">{boss.name}</h3>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={`flex items-center gap-2 mb-2 w-full text-left ${isDefeated ? 'opacity-60' : ''}`}
+      >
+        <h3 className="text-base font-bold text-white flex-1">{boss.name}</h3>
         {isDefeated && (
           <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
             Defeated
           </span>
         )}
-      </div>
-      <div className="flex flex-col gap-2">
-        {boss.pokemon.map((mon, i) => (
-          <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
-        ))}
-      </div>
+        <svg className={`w-4 h-4 text-zinc-400 transition-transform ${expanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {expanded && (
+        <div className="flex flex-col gap-2">
+          {boss.pokemon.map((mon, i) => (
+            <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
