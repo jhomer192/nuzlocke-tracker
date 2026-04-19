@@ -46,6 +46,11 @@
   animation: fadeIn 150ms ease-out;
 }
 
+/* Toast animation */
+.animate-fade-in {
+  animation: fadeIn 150ms ease-out;
+}
+
 /* Type colors */
 .type-normal { background-color: #a8a878; }
 .type-fire { background-color: #f08030; }

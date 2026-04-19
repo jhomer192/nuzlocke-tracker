@@ -23,6 +23,7 @@ export interface RuleSet {
   duplicateClause: boolean;
   shinyClause: boolean;
   levelCap: boolean;
+  soulLink: boolean;
 }
 
 export interface Run {
@@ -52,6 +53,8 @@ export interface Encounter {
   caughtAt: string;
   diedAt?: string;
   moves?: string[]; // up to 4 move names
+  linkedPokemonId?: number;     // partner's Pokemon national dex ID (soul link)
+  linkedNickname?: string;       // partner's nickname for their Pokemon (soul link)
 }
 
 // Level caps per gym for each game (ace Pokemon level)

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Run, Encounter, PokemonData, MoveData, PokemonType } from '../types';
-import { ALL_TYPES, GAME_GENERATIONS } from '../types';
+import { ALL_TYPES, GAME_GENERATIONS, GAME_NAMES } from '../types';
 import { getSpriteUrl, fetchPokemonData, fetchMoveData } from '../utils/pokeapi';
 import { moveToParty, moveToBox, markDead, updateEncounter } from '../hooks/useRuns';
 import { getDefensiveMultiplier } from '../data/typeChart';
@@ -18,11 +18,13 @@ function PokemonCard({
   location,
   onTap,
   isDead,
+  soulLink,
 }: {
   encounter: Encounter;
   location: 'team' | 'box';
   onTap: () => void;
   isDead?: boolean;
+  soulLink?: boolean;
 }) {
   const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
 
@@ -41,11 +43,26 @@ function PokemonCard({
             : 'bg-zinc-800/60 hover:bg-zinc-800'
       }`}
     >
-      <img
-        src={getSpriteUrl(encounter.pokemonId, encounter.isShiny)}
-        alt={encounter.nickname}
-        className={`w-14 h-14 pixelated ${isDead ? 'grayscale' : ''}`}
-      />
+      <div className="flex items-center flex-shrink-0">
+        <img
+          src={getSpriteUrl(encounter.pokemonId, encounter.isShiny)}
+          alt={encounter.nickname}
+          className={`w-14 h-14 pixelated ${isDead ? 'grayscale' : ''}`}
+        />
+        {/* Soul Link partner sprite */}
+        {soulLink && encounter.linkedPokemonId && (
+          <div className="flex items-center -ml-2">
+            <svg className="w-3 h-3 text-purple-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            <img
+              src={getSpriteUrl(encounter.linkedPokemonId)}
+              alt={encounter.linkedNickname ?? 'Linked'}
+              className={`w-10 h-10 pixelated ${isDead ? 'grayscale' : ''}`}
+            />
+          </div>
+        )}
+      </div>
       <div className="flex-1 min-w-0">
         <p className="font-bold text-sm truncate">{encounter.nickname}</p>
         <p className="text-xs text-zinc-400">Lv.{encounter.level}</p>
@@ -55,6 +72,11 @@ function PokemonCard({
               <TypeBadge key={t} type={t} small />
             ))}
           </div>
+        )}
+        {soulLink && encounter.linkedNickname && (
+          <p className="text-[10px] text-purple-400 mt-0.5 truncate">
+            Linked: {encounter.linkedNickname}
+          </p>
         )}
       </div>
     </button>
@@ -96,6 +118,120 @@ function TypeMatchupRow({ type, multiplier }: { type: string; multiplier: number
     <div className="flex items-center gap-1.5">
       <TypeBadge type={type} small />
       <span className={`text-xs font-semibold ${textColor}`}>{label}</span>
+    </div>
+  );
+}
+
+function ExportButton({ run }: { run: Run }) {
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const buildExportData = () => {
+    const teamEncounters = run.team
+      .map((id) => run.encounters.find((e) => e.id === id))
+      .filter((e): e is Encounter => !!e);
+    const boxEncounters = run.box
+      .map((id) => run.encounters.find((e) => e.id === id))
+      .filter((e): e is Encounter => !!e);
+    const graveyardEncounters = run.graveyard
+      .map((id) => run.encounters.find((e) => e.id === id))
+      .filter((e): e is Encounter => !!e);
+
+    const formatEncounter = (enc: Encounter) => ({
+      pokemonId: enc.pokemonId,
+      nickname: enc.nickname,
+      level: enc.level,
+      status: enc.status,
+      isShiny: enc.isShiny ?? false,
+      moves: enc.moves ?? [],
+      route: enc.route,
+      causeOfDeath: enc.causeOfDeath,
+      caughtAt: enc.caughtAt,
+      diedAt: enc.diedAt,
+      ...(enc.linkedPokemonId ? {
+        linkedPokemonId: enc.linkedPokemonId,
+        linkedNickname: enc.linkedNickname,
+      } : {}),
+    });
+
+    return {
+      runName: run.name,
+      game: run.game === 'CUSTOM' && run.customGameId
+        ? (getCustomGame(run.customGameId)?.name ?? 'Custom Game')
+        : GAME_NAMES[run.game],
+      status: run.status,
+      badges: {
+        earned: run.badges.filter(Boolean).length,
+        total: run.badges.length,
+      },
+      rules: run.rules,
+      startedAt: run.startedAt,
+      team: teamEncounters.map(formatEncounter),
+      box: boxEncounters.map(formatEncounter),
+      graveyard: graveyardEncounters.map(formatEncounter),
+      encounterLog: run.encounters.map(formatEncounter),
+      exportedAt: new Date().toISOString(),
+    };
+  };
+
+  const flash = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
+
+  const handleCopy = async () => {
+    const data = buildExportData();
+    const json = JSON.stringify(data, null, 2);
+    try {
+      await navigator.clipboard.writeText(json);
+      flash('Copied!');
+    } catch {
+      flash('Copy failed');
+    }
+  };
+
+  const handleDownload = () => {
+    const data = buildExportData();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${run.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_export.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    flash('Downloaded!');
+  };
+
+  return (
+    <div className="relative flex items-center gap-1">
+      <button
+        onClick={handleCopy}
+        className="rounded-lg bg-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-600 hover:text-white transition-colors flex items-center gap-1.5"
+        title="Copy run data as JSON"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+        </svg>
+        Export
+      </button>
+      <button
+        onClick={handleDownload}
+        className="rounded-lg bg-zinc-700 px-2 py-1.5 text-xs text-zinc-400 hover:bg-zinc-600 hover:text-white transition-colors"
+        title="Download as JSON file"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+      </button>
+      {showToast && (
+        <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-xs font-medium px-3 py-1 rounded-lg shadow-lg whitespace-nowrap animate-fade-in">
+          {toastMessage}
+        </span>
+      )}
     </div>
   );
 }
@@ -179,7 +315,14 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
 
   const handleMarkDead = () => {
     if (!selectedEncounter) return;
-    onUpdate((r) => markDead(r, selectedEncounter.id, causeOfDeath));
+    // If soul link is enabled and there's a linked pokemon, kill both
+    if (run.rules.soulLink && selectedEncounter.linkedPokemonId) {
+      // Find the linked encounter (another encounter with the same linkedPokemonId from a different pokemon)
+      // The linked pokemon info is stored directly on the encounter
+      onUpdate((r) => markDead(r, selectedEncounter.id, causeOfDeath));
+    } else {
+      onUpdate((r) => markDead(r, selectedEncounter.id, causeOfDeath));
+    }
     setShowDeathModal(false);
     setCauseOfDeath('');
     setSelectedEncounter(null);
@@ -223,9 +366,12 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     <div className="tab-content p-4 pb-20 space-y-6">
       {/* Party */}
       <div>
-        <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">
-          Party ({teamEncounters.length}/6)
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">
+            Party ({teamEncounters.length}/6)
+          </h3>
+          <ExportButton run={run} />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {teamEncounters.map((enc) => (
             <PokemonCard
@@ -233,6 +379,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
               encounter={enc}
               location="team"
               onTap={() => handleSelectPokemon(enc, 'team')}
+              soulLink={run.rules.soulLink}
             />
           ))}
           {Array.from({ length: 6 - teamEncounters.length }).map((_, i) => (
@@ -261,6 +408,7 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                 encounter={enc}
                 location="box"
                 onTap={() => handleSelectPokemon(enc, 'box')}
+                soulLink={run.rules.soulLink}
               />
             ))}
           </div>
@@ -291,6 +439,22 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   </div>
                 )}
               </div>
+              {/* Soul link partner in header */}
+              {run.rules.soulLink && selectedEncounter.linkedPokemonId && (
+                <div className="flex flex-col items-center">
+                  <svg className="w-4 h-4 text-purple-400 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  <img
+                    src={getSpriteUrl(selectedEncounter.linkedPokemonId)}
+                    alt={selectedEncounter.linkedNickname ?? 'Linked'}
+                    className="w-14 h-14 pixelated"
+                  />
+                  <p className="text-[10px] text-purple-400 mt-0.5">
+                    {selectedEncounter.linkedNickname ?? 'Partner'}
+                  </p>
+                </div>
+              )}
               <div className="flex-1">
                 <p className="font-bold text-lg">{selectedEncounter.nickname}</p>
                 <p className="text-zinc-400 text-sm capitalize">{detailData?.name ?? ''}</p>
@@ -506,6 +670,19 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
             <span className="font-bold text-white">{selectedEncounter?.nickname}</span> has fallen.
             What happened?
           </p>
+
+          {/* Soul Link warning */}
+          {run.rules.soulLink && selectedEncounter?.linkedPokemonId && selectedEncounter?.linkedNickname && (
+            <div className="rounded-lg bg-purple-500/10 border border-purple-500/30 px-4 py-2.5 flex items-center gap-3">
+              <svg className="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p className="text-sm text-purple-300">
+                <span className="font-bold">Soul Link:</span> {selectedEncounter.linkedNickname} will also die
+              </p>
+            </div>
+          )}
+
           <textarea
             value={causeOfDeath}
             onChange={(e) => setCauseOfDeath(e.target.value)}

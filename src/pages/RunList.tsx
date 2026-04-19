@@ -49,6 +49,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
     duplicateClause: true,
     shinyClause: false,
     levelCap: false,
+    soulLink: false,
   });
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [expandedGens, setExpandedGens] = useState<Set<number>>(() => new Set([GAME_GENERATIONS[game]]));
@@ -393,6 +394,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                 { key: 'duplicateClause' as const, label: 'Duplicate Clause', desc: 'Skip duplicate species' },
                 { key: 'shinyClause' as const, label: 'Shiny Clause', desc: 'Shinies exempt from first-encounter rule' },
                 { key: 'levelCap' as const, label: 'Level Cap', desc: "Can't overlevel gym leader's ace" },
+                { key: 'soulLink' as const, label: 'Soul Link', desc: 'Partner mode: linked Pokemon share fate' },
               ].map(({ key, label, desc }) => (
                 <button
                   key={key}
