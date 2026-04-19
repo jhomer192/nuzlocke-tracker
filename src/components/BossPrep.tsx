@@ -30,62 +30,37 @@ function formatTypeName(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
-function BossPokemonCard({ mon, gen }: { mon: BossPokemon; gen: number }) {
+function BossPokemonRow({ mon, gen }: { mon: BossPokemon; gen: number }) {
   const weaknesses = useMemo(() => getWeaknesses(mon.types, gen), [mon.types, gen]);
 
   return (
-    <div className="bg-zinc-700/50 rounded-xl p-3">
-      <div className="flex items-center gap-3">
-        <img
-          src={getSpriteUrl(mon.id)}
-          alt={mon.name}
-          className="w-12 h-12 pixelated"
-        />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-bold text-sm text-white">{mon.name}</span>
-            <span className="text-xs text-zinc-400">Lv.{mon.level}</span>
-          </div>
-          <div className="flex gap-1 mt-0.5">
-            {mon.types.map((t) => (
-              <TypeBadge key={t} type={t} small />
-            ))}
-          </div>
+    <div className="flex items-center gap-3 w-full px-3 py-2 border-b border-zinc-700/50 last:border-b-0">
+      <img
+        src={getSpriteUrl(mon.id)}
+        alt={mon.name}
+        className="w-10 h-10 pixelated flex-shrink-0"
+      />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="capitalize font-medium">{mon.name}</span>
+          <span className="text-xs text-zinc-400">Lv.{mon.level}</span>
         </div>
-      </div>
-
-      {/* Moves */}
-      <div className="mt-2 flex flex-wrap gap-1">
-        {mon.moves.map((move) => (
-          <span
-            key={move}
-            className="text-[11px] bg-zinc-600/60 text-zinc-300 rounded px-1.5 py-0.5"
-          >
-            {move}
-          </span>
-        ))}
-      </div>
-
-      {/* Ability / Item */}
-      {(mon.ability || mon.item) && (
-        <div className="mt-1.5 flex gap-3 text-[11px] text-zinc-400">
-          {mon.ability && <span>Ability: <span className="text-zinc-300">{mon.ability}</span></span>}
-          {mon.item && <span>Item: <span className="text-zinc-300">{mon.item}</span></span>}
-        </div>
-      )}
-
-      {/* Weaknesses */}
-      {weaknesses.length > 0 && (
-        <div className="mt-1.5 text-[11px] text-zinc-400">
-          Weak to:{' '}
-          {weaknesses.map((w, i) => (
-            <span key={w}>
-              {i > 0 && ', '}
-              <span className="text-amber-400">{formatTypeName(w)}</span>
-            </span>
+        <div className="flex flex-wrap gap-1 mt-0.5">
+          {mon.moves.map((move) => (
+            <span key={move} className="text-[10px] text-zinc-400">{move}</span>
           ))}
         </div>
-      )}
+        {weaknesses.length > 0 && (
+          <div className="text-[10px] text-amber-400/80 mt-0.5">
+            Weak: {weaknesses.map(formatTypeName).join(', ')}
+          </div>
+        )}
+      </div>
+      <div className="flex gap-1 flex-shrink-0">
+        {mon.types.map((t) => (
+          <TypeBadge key={t} type={t} small />
+        ))}
+      </div>
     </div>
   );
 }
@@ -111,9 +86,9 @@ function BossCard({ boss, gen, isDefeated, startExpanded, onDefeat }: { boss: Bo
       </button>
       {expanded && (
         <>
-          <div className="flex flex-col gap-2">
+          <div className="rounded-lg bg-zinc-700/30 border border-zinc-700 overflow-hidden">
             {boss.pokemon.map((mon, i) => (
-              <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
+              <BossPokemonRow key={`${mon.name}-${i}`} mon={mon} gen={gen} />
             ))}
           </div>
           {!isDefeated && onDefeat && (
