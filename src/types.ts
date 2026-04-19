@@ -285,6 +285,17 @@ export interface MoveData {
   damageClass: 'physical' | 'special' | 'status';
 }
 
+export interface CustomBoss {
+  name: string;          // "Gym Leader Aria"
+  segment: string;       // "Pre-Aria"
+  pokemon: Array<{
+    name: string;        // "Gardevoir"
+    level: number;       // 45
+    types: string;       // "psychic, fairy"
+  }>;
+  levelCap?: number;     // the ace's level
+}
+
 export interface CustomGameDef {
   id: string;
   name: string;
@@ -292,6 +303,7 @@ export interface CustomGameDef {
   badgeCount: number;
   badgeNames: string[];
   routes: GameLocation[];
+  bosses?: CustomBoss[];
 }
 
 export interface GameLocation {

@@ -119,9 +119,21 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
       </div>
 
       {/* Level cap indicator */}
-      {run.rules.levelCap && run.game !== 'CUSTOM' && (() => {
-        const caps = LEVEL_CAPS[run.game];
+      {run.rules.levelCap && (() => {
+        let caps: Record<string, number>;
+        if (run.game === 'CUSTOM' && run.customGameId) {
+          const def = getCustomGame(run.customGameId);
+          if (!def?.bosses?.length) return null;
+          caps = {};
+          for (const boss of def.bosses) {
+            if (boss.levelCap) caps[boss.segment] = boss.levelCap;
+          }
+          if (Object.keys(caps).length === 0) return null;
+        } else {
+          caps = LEVEL_CAPS[run.game];
+        }
         const segments = Object.keys(caps);
+        if (segments.length === 0) return null;
         const badgeCount = run.badges.filter(Boolean).length;
         const currentSegment = segments[Math.min(badgeCount, segments.length - 1)];
         const currentCap = caps[currentSegment];

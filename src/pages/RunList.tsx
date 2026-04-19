@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Game, RuleSet, Run, CustomGameDef, GameLocation } from '../types';
+import type { Game, RuleSet, Run, CustomGameDef, CustomBoss, GameLocation } from '../types';
 import { GAME_NAMES, GAME_GENERATIONS } from '../types';
 import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
@@ -59,12 +59,18 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const [customGames, setCustomGames] = useState<CustomGameDef[]>([]);
   const [customName, setCustomName] = useState('');
   const [customGen, setCustomGen] = useState(6);
-  const [customBadgeCount, setCustomBadgeCount] = useState(8);
-  const [customBadgeNames, setCustomBadgeNames] = useState<string[]>([]);
   const [customRoutes, setCustomRoutes] = useState<{ name: string; segment: string }[]>([]);
   const [newRouteName, setNewRouteName] = useState('');
   const [newRouteSegment, setNewRouteSegment] = useState('');
   const [selectedCustomGameId, setSelectedCustomGameId] = useState<string | null>(null);
+
+  // Boss editing state
+  const [customBosses, setCustomBosses] = useState<CustomBoss[]>([]);
+  const [newBossName, setNewBossName] = useState('');
+  const [newBossSegment, setNewBossSegment] = useState('');
+  const [newBossLevelCap, setNewBossLevelCap] = useState('');
+  const [newBossPokemon, setNewBossPokemon] = useState<Array<{ name: string; level: string; types: string }>>([]);
+  const [justSavedGameId, setJustSavedGameId] = useState<string | null>(null);
 
   useEffect(() => {
     setCustomGames(loadCustomGames());
@@ -81,10 +87,8 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
   const handleSaveCustomGame = () => {
     if (!customName.trim()) return;
-    const badgeNames: string[] = [];
-    for (let i = 0; i < customBadgeCount; i++) {
-      badgeNames.push(customBadgeNames[i] || `Badge ${i + 1}`);
-    }
+    const badgeCount = customBosses.length || 8;
+    const badgeNames = customBosses.map((b) => b.name);
     const routes: GameLocation[] = customRoutes.map((r, i) => ({
       key: `custom-${i}-${r.name.toLowerCase().replace(/\s+/g, '-')}`,
       name: r.name,
@@ -94,14 +98,16 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
       id: generateId(),
       name: customName.trim(),
       generation: customGen,
-      badgeCount: customBadgeCount,
+      badgeCount,
       badgeNames,
       routes,
+      bosses: customBosses.length > 0 ? customBosses : undefined,
     };
     const updated = [...customGames, def];
     setCustomGames(updated);
     saveCustomGames(updated);
     setSelectedCustomGameId(def.id);
+    setJustSavedGameId(def.id);
     setGame('CUSTOM');
     setShowCustomForm(false);
     resetCustomForm();
@@ -110,11 +116,46 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const resetCustomForm = () => {
     setCustomName('');
     setCustomGen(6);
-    setCustomBadgeCount(8);
-    setCustomBadgeNames([]);
     setCustomRoutes([]);
     setNewRouteName('');
     setNewRouteSegment('');
+    setCustomBosses([]);
+    setNewBossName('');
+    setNewBossSegment('');
+    setNewBossLevelCap('');
+    setNewBossPokemon([]);
+  };
+
+  const handleAddBossPokemon = () => {
+    setNewBossPokemon([...newBossPokemon, { name: '', level: '', types: '' }]);
+  };
+
+  const handleAddBoss = () => {
+    if (!newBossName.trim() || !newBossSegment.trim()) return;
+    const pokemon = newBossPokemon
+      .filter((p) => p.name.trim())
+      .map((p) => ({
+        name: p.name.trim(),
+        level: Number(p.level) || 1,
+        types: p.types.trim(),
+      }));
+    const levelCap = newBossLevelCap ? Number(newBossLevelCap) : undefined;
+    setCustomBosses([...customBosses, {
+      name: newBossName.trim(),
+      segment: newBossSegment.trim(),
+      pokemon,
+      levelCap: levelCap || (pokemon.length > 0 ? Math.max(...pokemon.map((p) => p.level)) : undefined),
+    }]);
+    setNewBossName('');
+    setNewBossSegment('');
+    setNewBossLevelCap('');
+    setNewBossPokemon([]);
+  };
+
+  const buildShareMailto = (def: CustomGameDef) => {
+    const subject = encodeURIComponent(`Fan Game Submission: ${def.name}`);
+    const body = encodeURIComponent(JSON.stringify(def, null, 2));
+    return `mailto:jack@homerfamily.com?subject=${subject}&body=${body}`;
   };
 
   const handleDeleteCustomGame = (id: string) => {
@@ -371,27 +412,49 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                 {expandedGens.has(0) && (
                   <div className="mt-1 space-y-1 pl-2">
                     {customGames.map((cg) => (
-                      <div key={cg.id} className="flex gap-1">
-                        <button
-                          onClick={() => { setGame('CUSTOM'); setSelectedCustomGameId(cg.id); }}
-                          className={`flex-1 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
-                            game === 'CUSTOM' && selectedCustomGameId === cg.id
-                              ? 'bg-purple-600/20 border-2 border-purple-500 text-purple-400'
-                              : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
-                          }`}
-                        >
-                          {cg.name}
-                          <span className="text-xs text-zinc-500 ml-2">Gen {cg.generation}</span>
-                        </button>
-                        <button
-                          onClick={() => handleDeleteCustomGame(cg.id)}
-                          className="px-2 rounded-lg bg-zinc-700 text-zinc-500 hover:text-red-400 hover:bg-red-600/20 transition-colors"
-                          title="Delete custom game"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
+                      <div key={cg.id}>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => { setGame('CUSTOM'); setSelectedCustomGameId(cg.id); setJustSavedGameId(null); }}
+                            className={`flex-1 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
+                              game === 'CUSTOM' && selectedCustomGameId === cg.id
+                                ? 'bg-purple-600/20 border-2 border-purple-500 text-purple-400'
+                                : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
+                            }`}
+                          >
+                            {cg.name}
+                            <span className="text-xs text-zinc-500 ml-2">Gen {cg.generation}</span>
+                          </button>
+                          <a
+                            href={buildShareMailto(cg)}
+                            className="px-2 rounded-lg bg-zinc-700 text-zinc-500 hover:text-purple-400 hover:bg-purple-600/20 transition-colors flex items-center"
+                            title="Share this game via email"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </a>
+                          <button
+                            onClick={() => handleDeleteCustomGame(cg.id)}
+                            className="px-2 rounded-lg bg-zinc-700 text-zinc-500 hover:text-red-400 hover:bg-red-600/20 transition-colors"
+                            title="Delete custom game"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        {justSavedGameId === cg.id && (
+                          <a
+                            href={buildShareMailto(cg)}
+                            className="mt-1 flex items-center gap-1.5 rounded-lg bg-purple-600/20 border border-purple-500/30 px-3 py-2 text-xs font-medium text-purple-300 hover:bg-purple-600/30 transition-colors"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Share This Game with Jack for review
+                          </a>
+                        )}
                       </div>
                     ))}
                     <button
@@ -520,39 +583,127 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
             </select>
           </div>
 
+          {/* Boss Fights */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Number of Badges</label>
-            <input
-              type="number"
-              value={customBadgeCount}
-              onChange={(e) => setCustomBadgeCount(Math.max(0, Math.min(16, Number(e.target.value))))}
-              min={0}
-              max={16}
-              className="w-24 rounded-lg bg-zinc-700 px-4 py-3 text-white outline-none focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
-
-          {customBadgeCount > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Badge Names (optional)</label>
-              <div className="grid grid-cols-2 gap-2">
-                {Array.from({ length: customBadgeCount }).map((_, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    value={customBadgeNames[i] ?? ''}
-                    onChange={(e) => {
-                      const next = [...customBadgeNames];
-                      next[i] = e.target.value;
-                      setCustomBadgeNames(next);
-                    }}
-                    placeholder={`Badge ${i + 1}`}
-                    className="rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
-                  />
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Boss Fights</label>
+            {customBosses.length > 0 && (
+              <div className="mb-2 space-y-1 max-h-40 overflow-y-auto">
+                {customBosses.map((b, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm bg-zinc-700/50 rounded-lg px-3 py-1.5">
+                    <span className="flex-1 text-zinc-200">{b.name}</span>
+                    <span className="text-xs text-zinc-500">{b.segment}</span>
+                    <span className="text-xs text-amber-400/70">{b.pokemon.length} mon{b.pokemon.length !== 1 ? 's' : ''}</span>
+                    {b.levelCap && <span className="text-xs text-amber-400/70">Cap {b.levelCap}</span>}
+                    <button
+                      onClick={() => setCustomBosses(customBosses.filter((_, j) => j !== i))}
+                      className="text-zinc-500 hover:text-red-400 transition-colors"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
                 ))}
               </div>
+            )}
+
+            <div className="rounded-lg bg-zinc-700/30 border border-zinc-600/50 p-3 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newBossName}
+                  onChange={(e) => setNewBossName(e.target.value)}
+                  placeholder="Boss name (e.g. Gym Leader Aria)"
+                  className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newBossSegment}
+                  onChange={(e) => setNewBossSegment(e.target.value)}
+                  placeholder="Segment (e.g. Pre-Aria)"
+                  className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+                <input
+                  type="number"
+                  value={newBossLevelCap}
+                  onChange={(e) => setNewBossLevelCap(e.target.value)}
+                  placeholder="Level cap"
+                  className="w-24 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              {/* Pokemon in this boss's team */}
+              {newBossPokemon.length > 0 && (
+                <div className="space-y-1">
+                  <p className="text-xs text-zinc-500">Team:</p>
+                  {newBossPokemon.map((p, pi) => (
+                    <div key={pi} className="flex gap-1.5 items-center">
+                      <input
+                        type="text"
+                        value={p.name}
+                        onChange={(e) => {
+                          const next = [...newBossPokemon];
+                          next[pi] = { ...next[pi], name: e.target.value };
+                          setNewBossPokemon(next);
+                        }}
+                        placeholder="Pokemon name"
+                        className="flex-1 rounded bg-zinc-700 px-2 py-1.5 text-xs text-white placeholder:text-zinc-500 outline-none focus:ring-1 focus:ring-purple-500"
+                      />
+                      <input
+                        type="number"
+                        value={p.level}
+                        onChange={(e) => {
+                          const next = [...newBossPokemon];
+                          next[pi] = { ...next[pi], level: e.target.value };
+                          setNewBossPokemon(next);
+                        }}
+                        placeholder="Lv"
+                        className="w-14 rounded bg-zinc-700 px-2 py-1.5 text-xs text-white placeholder:text-zinc-500 outline-none focus:ring-1 focus:ring-purple-500"
+                      />
+                      <input
+                        type="text"
+                        value={p.types}
+                        onChange={(e) => {
+                          const next = [...newBossPokemon];
+                          next[pi] = { ...next[pi], types: e.target.value };
+                          setNewBossPokemon(next);
+                        }}
+                        placeholder="Types (e.g. fire, water)"
+                        className="flex-1 rounded bg-zinc-700 px-2 py-1.5 text-xs text-white placeholder:text-zinc-500 outline-none focus:ring-1 focus:ring-purple-500"
+                      />
+                      <button
+                        onClick={() => setNewBossPokemon(newBossPokemon.filter((_, j) => j !== pi))}
+                        className="text-zinc-500 hover:text-red-400 transition-colors"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddBossPokemon}
+                  className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  + Add Pokemon to team
+                </button>
+              </div>
+              <button
+                onClick={handleAddBoss}
+                disabled={!newBossName.trim() || !newBossSegment.trim()}
+                className="w-full rounded-lg bg-purple-600/50 py-2 text-sm font-medium text-purple-200 hover:bg-purple-600/70 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                Add Boss
+              </button>
             </div>
-          )}
+            <p className="text-[10px] text-zinc-500 mt-1">Each boss = one badge. Badge count is set by number of bosses.</p>
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Routes</label>

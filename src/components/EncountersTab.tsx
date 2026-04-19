@@ -134,6 +134,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                 game={run.game}
                 segment={segment}
                 defeatedBosses={run.defeatedBosses}
+                customGameId={run.customGameId}
                 onDefeat={(bossName) => {
                   onUpdate((r) => ({
                     ...r,
@@ -141,11 +142,20 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                   }));
                 }}
               />
-              {run.rules.levelCap && LEVEL_CAPS[run.game]?.[segment] && (
-                <span className="text-xs font-bold text-amber-400/80">
-                  Cap: Lv.{LEVEL_CAPS[run.game][segment]}
-                </span>
-              )}
+              {run.rules.levelCap && (() => {
+                let cap: number | undefined;
+                if (isCustom && customDef?.bosses) {
+                  const boss = customDef.bosses.find((b) => b.segment === segment);
+                  cap = boss?.levelCap;
+                } else {
+                  cap = LEVEL_CAPS[run.game]?.[segment];
+                }
+                return cap ? (
+                  <span className="text-xs font-bold text-amber-400/80">
+                    Cap: Lv.{cap}
+                  </span>
+                ) : null;
+              })()}
             </div>
           </div>
           <div className="divide-y divide-zinc-800/50">

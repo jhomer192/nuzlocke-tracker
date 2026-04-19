@@ -1,4 +1,5 @@
-import type { Game } from '../types';
+import type { Game, CustomBoss } from '../types';
+import { getCustomGame } from '../utils/storage';
 
 export interface BossPokemon {
   name: string;
@@ -744,8 +745,34 @@ export function getBossForSegment(game: Game, segment: string): BossEntry | unde
   return bosses.find((b) => b.segment === segment);
 }
 
+/** Convert a CustomBoss to BossEntry format */
+function customBossToBossEntry(cb: CustomBoss): BossEntry {
+  return {
+    name: cb.name,
+    segment: cb.segment,
+    pokemon: cb.pokemon.map((p) => ({
+      name: p.name,
+      id: 0,  // no dex ID for custom pokemon
+      level: p.level,
+      types: p.types.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean),
+      moves: [],
+    })),
+  };
+}
+
 /** Get all bosses for a segment (for E4 segments with multiple bosses) */
-export function getBossesForSegment(game: Game, segment: string): BossEntry[] {
+export function getBossesForSegment(game: Game, segment: string, customGameId?: string): BossEntry[] {
+  // For custom games, look up the CustomGameDef bosses
+  if (game === 'CUSTOM' && customGameId) {
+    const def = getCustomGame(customGameId);
+    if (def?.bosses) {
+      return def.bosses
+        .filter((b) => b.segment === segment)
+        .map(customBossToBossEntry);
+    }
+    return [];
+  }
+
   const bosses = BOSS_DATA[game];
   if (!bosses) return [];
   return bosses.filter((b) => b.segment === segment);

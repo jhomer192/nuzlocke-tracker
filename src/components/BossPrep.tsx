@@ -13,6 +13,7 @@ interface BossPrepProps {
   segment: string;
   defeatedBosses?: string[];
   onDefeat?: (bossName: string) => void;
+  customGameId?: string;
 }
 
 function getWeaknesses(types: string[], gen: number): string[] {
@@ -109,10 +110,10 @@ function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isD
   );
 }
 
-export function BossPrepButton({ game, segment, defeatedBosses, onDefeat }: BossPrepProps) {
+export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, customGameId }: BossPrepProps) {
   const [open, setOpen] = useState(false);
   const [victoryBoss, setVictoryBoss] = useState<string | null>(null);
-  const bosses = useMemo(() => getBossesForSegment(game, segment), [game, segment]);
+  const bosses = useMemo(() => getBossesForSegment(game, segment, customGameId), [game, segment, customGameId]);
   const gen = GAME_GENERATIONS[game];
 
   if (bosses.length === 0) return null;
