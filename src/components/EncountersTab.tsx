@@ -192,7 +192,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                             : enc.status === 'dead'
                               ? 'bg-red-500'
                               : 'bg-amber-500'
-                          : route.key === 'gift-starter'
+                          : route.key.startsWith('gift-')
                             ? 'bg-purple-500'
                             : 'bg-zinc-600'
                       }`}

@@ -108,7 +108,7 @@ export function EncounterModal({
       status,
       level,
       isShiny,
-      isGift: routeKey === 'gift-starter' || undefined,
+      isGift: routeKey.startsWith('gift-') || undefined,
       caughtAt: existingEncounter?.caughtAt ?? new Date().toISOString(),
       ...(soulLink && linkedPokemon ? {
         linkedPokemonId: linkedPokemon.id,

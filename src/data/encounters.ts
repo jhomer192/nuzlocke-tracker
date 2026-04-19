@@ -9,6 +9,12 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   RED_BLUE: {
     // Starter
     'gift-starter': [1, 4, 7],                            // Bulbasaur, Charmander, Squirtle
+    // Gift Pokemon
+    'gift-magikarp': [129],                               // Magikarp (Route 4 Pokemon Center, 500P)
+    'gift-eevee': [133],                                  // Eevee (Celadon Mansion)
+    'gift-lapras': [131],                                 // Lapras (Silph Co)
+    'gift-hitmon': [106, 107],                            // Hitmonlee/Hitmonchan (Fighting Dojo)
+    'gift-fossil': [138, 140],                            // Omanyte/Kabuto (Cinnabar Lab)
     // Pre-Brock
     'route-1': [16, 19],                                  // Pidgey, Rattata
     'route-2': [10, 13, 16, 19],                      // Caterpie, Weedle, Pidgey, Rattata
@@ -75,6 +81,11 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   GOLD_SILVER: {
     // Starter
     'gift-starter': [152, 155, 158],                      // Chikorita, Cyndaquil, Totodile
+    // Gift Pokemon
+    'gift-togepi': [175],                                 // Togepi Egg (from Elm's aide)
+    'gift-eevee-gs': [133],                               // Eevee (Bill, Goldenrod)
+    'gift-shuckle': [213],                                // Shuckle (Cianwood)
+    'gift-dratini': [147],                                // Dratini (Dragon's Den)
     // Pre-Falkner
     'route-29': [16, 19, 21, 163, 161],                   // Pidgey, Rattata, Spearow, Hoothoot, Sentret
     'route-30': [10, 16, 19, 43, 69, 163, 161],       // Caterpie, Pidgey, Rattata, Oddish, Bellsprout, Hoothoot, Sentret
@@ -128,6 +139,9 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   RUBY_SAPPHIRE: {
     // Starter
     'gift-starter': [252, 255, 258],                      // Treecko, Torchic, Mudkip
+    // Gift Pokemon
+    'gift-wynaut': [360],                                 // Wynaut Egg (Lavaridge Town)
+    'gift-castform': [351],                               // Castform (Weather Institute)
     // Pre-Roxanne
     'route-101': [261, 263, 265],                         // Poochyena, Zigzagoon, Wurmple
     'route-102': [261, 263, 265, 270, 273, 280],       // Poochyena, Zigzagoon, Wurmple, Lotad, Seedot, Ralts
@@ -191,6 +205,9 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   EMERALD: {
     // Starter
     'gift-starter': [252, 255, 258],                      // Treecko, Torchic, Mudkip
+    // Gift Pokemon
+    'gift-wynaut-e': [360],                               // Wynaut Egg (Lavaridge Town)
+    'gift-castform-e': [351],                             // Castform (Weather Institute)
     // Pre-Roxanne
     'route-101-e': [261, 263, 265],                       // Poochyena, Zigzagoon, Wurmple
     'route-102-e': [261, 263, 265, 270, 273, 280],
@@ -254,6 +271,12 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   FIRERED_LEAFGREEN: {
     // Starter
     'gift-starter': [1, 4, 7],                            // Bulbasaur, Charmander, Squirtle
+    // Gift Pokemon
+    'gift-magikarp-frlg': [129],                          // Magikarp (Route 4 Pokemon Center, 500P)
+    'gift-eevee-frlg': [133],                             // Eevee (Celadon Mansion)
+    'gift-lapras-frlg': [131],                            // Lapras (Silph Co)
+    'gift-hitmon-frlg': [106, 107],                       // Hitmonlee/Hitmonchan (Fighting Dojo)
+    'gift-fossil-frlg': [138, 140],                       // Omanyte/Kabuto (Cinnabar Lab)
     // Pre-Brock
     'frlg-route-1': [16, 19],                             // Pidgey, Rattata
     'frlg-route-2': [10, 13, 16, 19],                  // Caterpie, Weedle, Pidgey, Rattata
@@ -320,6 +343,11 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   DIAMOND_PEARL: {
     // Starter
     'gift-starter': [387, 390, 393],                      // Turtwig, Chimchar, Piplup
+    // Gift Pokemon
+    'gift-togepi-dp': [175],                              // Togepi Egg (Cynthia, Eterna)
+    'gift-eevee-dp': [133],                               // Eevee (Bebe, Hearthome)
+    'gift-riolu-dp': [447],                               // Riolu Egg (Riley, Iron Island)
+    'gift-porygon-dp': [137],                             // Porygon (Veilstone)
     // Pre-Roark
     'dp-route-201': [396, 399],                           // Starly, Bidoof
     'dp-route-202': [396, 399, 401, 403],              // Starly, Bidoof, Kricketot, Shinx
@@ -380,6 +408,11 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   PLATINUM: {
     // Starter
     'gift-starter': [387, 390, 393],                      // Turtwig, Chimchar, Piplup
+    // Gift Pokemon
+    'gift-togepi-pt': [175],                              // Togepi Egg (Cynthia, Eterna)
+    'gift-eevee-pt': [133],                               // Eevee (Bebe, Hearthome)
+    'gift-riolu-pt': [447],                               // Riolu Egg (Riley, Iron Island)
+    'gift-porygon-pt': [137],                             // Porygon (Veilstone)
     // Pre-Roark
     'pt-route-201': [396, 399],                           // Starly, Bidoof
     'pt-route-202': [396, 399, 401, 403],              // Starly, Bidoof, Kricketot, Shinx
@@ -436,6 +469,11 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   HEARTGOLD_SOULSILVER: {
     // Starter
     'gift-starter': [152, 155, 158],                      // Chikorita, Cyndaquil, Totodile
+    // Gift Pokemon
+    'gift-togepi-hgss': [175],                            // Togepi Egg (from Elm's aide)
+    'gift-eevee-hgss': [133],                             // Eevee (Bill, Goldenrod)
+    'gift-shuckle-hgss': [213],                           // Shuckle (Cianwood)
+    'gift-dratini-hgss': [147],                           // Dratini (Dragon's Den)
     // Pre-Falkner
     'hgss-route-29': [16, 19, 21, 163, 161],              // Pidgey, Rattata, Spearow, Hoothoot, Sentret
     'hgss-route-30': [10, 16, 19, 43, 69, 163, 161],
@@ -490,6 +528,9 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   BLACK_WHITE: {
     // Starter
     'gift-starter': [495, 498, 501],                      // Snivy, Tepig, Oshawott
+    // Gift Pokemon
+    'gift-pansage-bw': [511, 513, 515],                   // Pansage/Pansear/Panpour (Dreamyard)
+    'gift-zorua-bw': [570],                               // Zorua (Castelia, event transfer)
     // Pre-Cilan/Chili/Cress
     'bw-route-1': [504, 506, 509],                        // Patrat, Lillipup, Purrloin
     'bw-route-2': [504, 506, 509],
@@ -534,6 +575,8 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   BLACK2_WHITE2: {
     // Starter
     'gift-starter': [495, 498, 501],                      // Snivy, Tepig, Oshawott
+    // Gift Pokemon
+    'gift-zorua-b2w2': [570],                             // Zorua (from Rood, Driftveil)
     // Pre-Cheren
     'b2w2-route-19': [504, 506, 509],                     // Patrat, Lillipup, Purrloin
     'b2w2-route-20': [504, 506, 509, 531, 540],       // Patrat, Lillipup, Purrloin, Audino, Sewaddle
@@ -582,6 +625,10 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   X_Y: {
     // Starter
     'gift-starter': [650, 653, 656],                      // Chespin, Fennekin, Froakie
+    // Gift Pokemon
+    'gift-kanto-starter': [1, 4, 7],                      // Bulbasaur/Charmander/Squirtle (Sycamore, Lumiose)
+    'gift-lucario-xy': [448],                             // Lucario (Tower of Mastery)
+    'gift-lapras-xy': [131],                              // Lapras (Route 12)
     // Pre-Viola
     'xy-route-2': [16, 659, 661, 731],                    // Pidgey, Bunnelby, Fletchling, (filler)
     'xy-santalune-forest': [10, 13, 25, 511, 513, 515, 661], // Caterpie, Weedle, Pikachu, Pansage, Pansear, Panpour, Fletchling
@@ -636,6 +683,10 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   OMEGA_RUBY_ALPHA_SAPPHIRE: {
     // Starter
     'gift-starter': [252, 255, 258],                      // Treecko, Torchic, Mudkip
+    // Gift Pokemon
+    'gift-wynaut-oras': [360],                            // Wynaut Egg (Lavaridge Town)
+    'gift-castform-oras': [351],                          // Castform (Weather Institute)
+    'gift-latias-oras': [380, 381],                       // Latias/Latios (Southern Island)
     // Pre-Roxanne
     'oras-route-101': [261, 263, 265],                    // Poochyena, Zigzagoon, Wurmple
     'oras-route-102': [261, 263, 265, 270, 273, 280],
@@ -699,6 +750,8 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   SUN_MOON: {
     // Starter
     'gift-starter': [722, 725, 728],                      // Rowlet, Litten, Popplio
+    // Gift Pokemon
+    'gift-type-null': [772],                              // Type: Null (Aether Paradise)
     // Pre-Ilima
     'sm-route-1': [19, 21, 25, 79, 163, 172, 731, 734, 735], // Rattata(A), Spearow(rare), Pikachu(rare), Slowpoke(rare), Hoothoot(night), Pichu, Pikipek, Yungoos, Gumshoos(rare)
     'sm-route-2': [52, 54, 278, 734, 735],             // Meowth(A), Psyduck(rare), Wingull(rare), Yungoos, Gumshoos(rare)
@@ -762,6 +815,9 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   ULTRA_SUN_ULTRA_MOON: {
     // Starter
     'gift-starter': [722, 725, 728],                      // Rowlet, Litten, Popplio
+    // Gift Pokemon
+    'gift-type-null-usum': [772],                         // Type: Null (Aether Paradise)
+    'gift-poipole-usum': [803],                           // Poipole (Ultra Megalopolis)
     // Pre-Ilima (same structure as SM with some encounter changes)
     'usum-route-1': [19, 21, 25, 79, 163, 172, 731, 734], // wild encounters only
     'usum-route-2': [52, 54, 278, 734, 735],
@@ -825,6 +881,8 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   SWORD_SHIELD: {
     // Starter
     'gift-starter': [810, 813, 816],                      // Grookey, Scorbunny, Sobble
+    // Gift Pokemon
+    'gift-toxel': [848],                                  // Toxel (Route 5 Nursery)
     // Pre-Milo
     'swsh-route-1': [263, 819, 821, 824, 831],            // Zigzagoon(G), Skwovet, Rookidee, Blipbug, Wooloo
     'swsh-route-2': [263, 819, 821, 824, 831, 833],   // Zigzagoon(G), Skwovet, Rookidee, Blipbug, Wooloo, Chewtle
@@ -875,6 +933,11 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   BRILLIANT_DIAMOND_SHINING_PEARL: {
     // Starter
     'gift-starter': [387, 390, 393],                      // Turtwig, Chimchar, Piplup
+    // Gift Pokemon
+    'gift-togepi-bdsp': [175],                            // Togepi Egg (Cynthia, Eterna)
+    'gift-eevee-bdsp': [133],                             // Eevee (Bebe, Hearthome)
+    'gift-riolu-bdsp': [447],                             // Riolu Egg (Riley, Iron Island)
+    'gift-porygon-bdsp': [137],                           // Porygon (Veilstone)
     // Pre-Roark
     'bdsp-route-201': [396, 399],                         // Starly, Bidoof
     'bdsp-route-202': [396, 399, 401, 403],
