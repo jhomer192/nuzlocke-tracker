@@ -17,6 +17,7 @@ interface EncounterModalProps {
   onSave: (encounter: Encounter) => void;
   isShinyClauseAdd?: boolean;
   soulLink?: boolean;
+  ownedPokemonIds?: Set<number>;
 }
 
 export function EncounterModal({
@@ -29,6 +30,7 @@ export function EncounterModal({
   onSave,
   isShinyClauseAdd,
   soulLink,
+  ownedPokemonIds,
 }: EncounterModalProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
   const [nickname, setNickname] = useState(existingEncounter?.nickname ?? '');
@@ -178,7 +180,12 @@ export function EncounterModal({
                         className="w-10 h-10 pixelated"
                         loading="lazy"
                       />
-                      <span className="capitalize font-medium flex-1">{name}</span>
+                      <span className="capitalize font-medium flex-1">
+                        {name}
+                        {ownedPokemonIds?.has(id) && (
+                          <span className="ml-1.5 text-xs text-emerald-400 font-semibold" title="Already owned">&#10003;</span>
+                        )}
+                      </span>
                       <div className="flex gap-1">
                         {types.map((t) => (
                           <TypeBadge key={t} type={t} small />

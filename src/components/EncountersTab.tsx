@@ -36,6 +36,18 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
     return map;
   }, [run.encounters]);
 
+  // Set of pokemon IDs currently owned (alive in team/box)
+  const ownedPokemonIds = useMemo(() => {
+    const aliveIds = new Set([...run.team, ...run.box]);
+    const ids = new Set<number>();
+    for (const enc of run.encounters) {
+      if (aliveIds.has(enc.id) && enc.status === 'alive') {
+        ids.add(enc.pokemonId);
+      }
+    }
+    return ids;
+  }, [run.encounters, run.team, run.box]);
+
   // Map of route key -> all encounters (for shiny clause)
   const allEncountersByRoute = useMemo(() => {
     const map = new Map<string, Encounter[]>();
@@ -326,6 +338,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           onSave={handleSaveEncounter}
           isShinyClauseAdd={isShinyClauseAdd}
           soulLink={run.rules.soulLink}
+          ownedPokemonIds={ownedPokemonIds}
         />
       )}
     </div>
