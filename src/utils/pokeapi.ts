@@ -175,6 +175,62 @@ function findEvolutions(
   return undefined;
 }
 
+/** Full cached move list for autocomplete */
+let moveList: { name: string; type?: string }[] = [];
+let moveListLoaded = false;
+
+const MOVE_LIST_CACHE_KEY = 'nuzlocke_move_list';
+const MOVE_LIST_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 1 week
+
+export async function loadMoveList(): Promise<{ name: string; type?: string }[]> {
+  if (moveListLoaded && moveList.length > 0) return moveList;
+
+  // Try localStorage cache first
+  try {
+    const cached = localStorage.getItem(MOVE_LIST_CACHE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed.timestamp && Date.now() - parsed.timestamp < MOVE_LIST_CACHE_TTL && parsed.data?.length > 0) {
+        moveList = parsed.data;
+        moveListLoaded = true;
+        return moveList;
+      }
+    }
+  } catch {
+    // Cache miss, fetch from API
+  }
+
+  try {
+    const res = await fetch('https://pokeapi.co/api/v2/move?limit=1000');
+    const data = await res.json();
+    moveList = data.results.map((m: { name: string; url: string }) => ({
+      name: m.name,
+    }));
+    moveListLoaded = true;
+
+    // Cache to localStorage
+    try {
+      localStorage.setItem(MOVE_LIST_CACHE_KEY, JSON.stringify({
+        timestamp: Date.now(),
+        data: moveList,
+      }));
+    } catch {
+      // localStorage full, no big deal
+    }
+  } catch {
+    moveList = [];
+  }
+  return moveList;
+}
+
+export function searchMoves(query: string): { name: string; type?: string }[] {
+  if (!query || query.length < 2) return [];
+  const lower = query.toLowerCase().replace(/\s+/g, '-');
+  return moveList
+    .filter((m) => m.name.includes(lower))
+    .slice(0, 5);
+}
+
 /** Fetch move data from PokeAPI with localStorage caching */
 export async function fetchMoveData(name: string): Promise<MoveData | null> {
   if (!name.trim()) return null;

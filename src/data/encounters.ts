@@ -8,7 +8,7 @@
 export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
   RED_BLUE: {
     // Pre-Brock
-    'route-1': [16, 19],                              // Pidgey, Rattata
+    'route-1': [1, 4, 7, 16, 19],                      // Bulbasaur, Charmander, Squirtle, Pidgey, Rattata
     'route-2': [10, 13, 16, 19],                      // Caterpie, Weedle, Pidgey, Rattata
     'route-22': [19, 21, 56, 29, 32],                 // Rattata, Spearow, Mankey, Nidoran♀, Nidoran♂
     'viridian-forest': [10, 11, 13, 14, 25],          // Caterpie, Metapod, Weedle, Kakuna, Pikachu
@@ -72,7 +72,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   GOLD_SILVER: {
     // Pre-Falkner
-    'route-29': [16, 19, 21, 163, 161],               // Pidgey, Rattata, Spearow, Hoothoot, Sentret
+    'route-29': [152, 155, 158, 16, 19, 21, 163, 161], // Chikorita, Cyndaquil, Totodile, Pidgey, Rattata, Spearow, Hoothoot, Sentret
     'route-30': [10, 16, 19, 43, 69, 163, 161],       // Caterpie, Pidgey, Rattata, Oddish, Bellsprout, Hoothoot, Sentret
     'route-31': [10, 16, 19, 43, 69, 163, 161],
     'dark-cave': [41, 74, 194, 207],                   // Zubat, Geodude, Wooper, Dunsparce
@@ -123,7 +123,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   RUBY_SAPPHIRE: {
     // Pre-Roxanne
-    'route-101': [261, 263, 265],                      // Poochyena, Zigzagoon, Wurmple
+    'route-101': [252, 255, 258, 261, 263, 265],        // Treecko, Torchic, Mudkip, Poochyena, Zigzagoon, Wurmple
     'route-102': [261, 263, 265, 270, 273, 280],       // Poochyena, Zigzagoon, Wurmple, Lotad, Seedot, Ralts
     'route-103': [261, 263, 265, 280],
     'route-104': [261, 263, 265, 276, 278, 283],       // + Taillow, Wingull, Surskit
@@ -184,7 +184,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   EMERALD: {
     // Pre-Roxanne
-    'route-101-e': [261, 263, 265],                    // Poochyena, Zigzagoon, Wurmple
+    'route-101-e': [252, 255, 258, 261, 263, 265],      // Treecko, Torchic, Mudkip, Poochyena, Zigzagoon, Wurmple
     'route-102-e': [261, 263, 265, 270, 273, 280],
     'route-103-e': [261, 263, 265, 280],
     'route-104-e': [261, 263, 265, 276, 278, 283],
@@ -245,7 +245,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   FIRERED_LEAFGREEN: {
     // Pre-Brock
-    'frlg-route-1': [16, 19],                          // Pidgey, Rattata
+    'frlg-route-1': [1, 4, 7, 16, 19],                  // Bulbasaur, Charmander, Squirtle, Pidgey, Rattata
     'frlg-route-2': [10, 13, 16, 19],                  // Caterpie, Weedle, Pidgey, Rattata
     'frlg-route-22': [19, 21, 56, 29, 32],
     'frlg-viridian-forest': [10, 11, 13, 14, 25],
@@ -309,7 +309,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   DIAMOND_PEARL: {
     // Pre-Roark
-    'dp-route-201': [396, 399],                        // Starly, Bidoof
+    'dp-route-201': [387, 390, 393, 396, 399],          // Turtwig, Chimchar, Piplup, Starly, Bidoof
     'dp-route-202': [396, 399, 401, 403],              // Starly, Bidoof, Kricketot, Shinx
     'dp-route-203': [41, 63, 396, 399, 401, 403],     // Zubat, Abra, Starly, Bidoof, Kricketot, Shinx
     'dp-oreburgh-gate': [41, 54, 74, 95],              // Zubat, Psyduck, Geodude, Onix
@@ -367,7 +367,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   PLATINUM: {
     // Pre-Roark
-    'pt-route-201': [396, 399],                        // Starly, Bidoof
+    'pt-route-201': [387, 390, 393, 396, 399],          // Turtwig, Chimchar, Piplup, Starly, Bidoof
     'pt-route-202': [396, 399, 401, 403],              // Starly, Bidoof, Kricketot, Shinx
     'pt-route-203': [41, 63, 396, 399, 401, 403],
     'pt-oreburgh-gate': [41, 54, 74, 95],
@@ -421,7 +421,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   HEARTGOLD_SOULSILVER: {
     // Pre-Falkner
-    'hgss-route-29': [16, 19, 21, 163, 161],
+    'hgss-route-29': [152, 155, 158, 16, 19, 21, 163, 161],
     'hgss-route-30': [10, 16, 19, 43, 69, 163, 161],
     'hgss-route-31': [10, 16, 19, 43, 69, 163, 161],
     'hgss-dark-cave': [41, 74, 194, 207],
@@ -473,7 +473,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   BLACK_WHITE: {
     // Pre-Cilan/Chili/Cress
-    'bw-route-1': [504, 506, 509],                     // Patrat, Lillipup, Purrloin
+    'bw-route-1': [495, 498, 501, 504, 506, 509],       // Snivy, Tepig, Oshawott, Patrat, Lillipup, Purrloin
     'bw-route-2': [504, 506, 509],
     'bw-dreamyard': [504, 509, 517],                   // Patrat, Purrloin, Munna
 
@@ -515,7 +515,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   BLACK2_WHITE2: {
     // Pre-Cheren
-    'b2w2-route-19': [504, 506, 509],                  // Patrat, Lillipup, Purrloin
+    'b2w2-route-19': [495, 498, 501, 504, 506, 509],    // Snivy, Tepig, Oshawott, Patrat, Lillipup, Purrloin
     'b2w2-route-20': [504, 506, 509, 531, 540],       // Patrat, Lillipup, Purrloin, Audino, Sewaddle
     'b2w2-floccesy-ranch': [504, 506, 507, 179, 180], // Patrat, Lillipup, Herdier, Mareep, Flaaffy
 
@@ -561,7 +561,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   X_Y: {
     // Pre-Viola
-    'xy-route-2': [16, 659, 661, 731],                 // Pidgey, Bunnelby, Fletchling, (filler) -> Caterpie(10), Weedle(13)
+    'xy-route-2': [650, 653, 656, 16, 659, 661, 731],   // Chespin, Fennekin, Froakie, Pidgey, Bunnelby, Fletchling, (filler)
     'xy-santalune-forest': [10, 13, 25, 511, 513, 515, 661], // Caterpie, Weedle, Pikachu, Pansage, Pansear, Panpour, Fletchling
     'xy-route-3': [16, 25, 63, 412, 659, 661],        // Pidgey, Pikachu(rare), Abra(rare), Burmy, Bunnelby, Fletchling
 
@@ -613,7 +613,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   OMEGA_RUBY_ALPHA_SAPPHIRE: {
     // Pre-Roxanne
-    'oras-route-101': [261, 263, 265],
+    'oras-route-101': [252, 255, 258, 261, 263, 265],
     'oras-route-102': [261, 263, 265, 270, 273, 280],
     'oras-route-103': [261, 263, 265, 280],
     'oras-route-104': [261, 263, 265, 276, 278, 283],
@@ -674,7 +674,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   SUN_MOON: {
     // Pre-Ilima
-    'sm-route-1': [19, 21, 25, 79, 163, 172, 731, 734, 735], // Rattata(A), Spearow(rare), Pikachu(rare), Slowpoke(rare), Hoothoot(night), Pichu, Pikipek, Yungoos, Gumshoos(rare)
+    'sm-route-1': [722, 725, 728, 19, 21, 25, 79, 163, 172, 731, 734, 735], // Rowlet, Litten, Popplio, Rattata(A), Spearow(rare), Pikachu(rare), Slowpoke(rare), Hoothoot(night), Pichu, Pikipek, Yungoos, Gumshoos(rare)
     'sm-route-2': [52, 54, 278, 734, 735],             // Meowth(A), Psyduck(rare), Wingull(rare), Yungoos, Gumshoos(rare)
     'sm-route-3': [21, 54, 63, 278, 627, 731],         // Spearow, Psyduck(rare), Abra(rare), Wingull(rare), Rufflet(rare), Pikipek
     'sm-hau-oli-city': [81, 88, 278, 568],             // Magnemite, Grimer(A), Wingull, Trubbish
@@ -735,7 +735,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   ULTRA_SUN_ULTRA_MOON: {
     // Pre-Ilima (same structure as SM with some encounter changes)
-    'usum-route-1': [19, 21, 25, 79, 163, 172, 731, 734],
+    'usum-route-1': [722, 725, 728, 19, 21, 25, 79, 163, 172, 731, 734],
     'usum-route-2': [52, 54, 278, 734, 735],
     'usum-route-3': [21, 54, 63, 278, 627, 731],
     'usum-hau-oli-city': [81, 88, 278, 568],
@@ -796,7 +796,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   SWORD_SHIELD: {
     // Pre-Milo
-    'swsh-route-1': [263, 819, 821, 824, 831],         // Zigzagoon(G), Skwovet, Rookidee, Blipbug, Wooloo
+    'swsh-route-1': [810, 813, 816, 263, 819, 821, 824, 831], // Grookey, Scorbunny, Sobble, Zigzagoon(G), Skwovet, Rookidee, Blipbug, Wooloo
     'swsh-route-2': [263, 819, 821, 824, 831, 833],   // Zigzagoon(G), Skwovet, Rookidee, Blipbug, Wooloo, Chewtle
     'swsh-wedgehurst': [263, 819, 831],                // Zigzagoon(G), Skwovet, Wooloo
     'swsh-rolling-fields': [113, 143, 194, 406, 659, 819, 827, 831], // Chansey(rare), Snorlax(rare), Wooper(rare), Budew, Bunnelby, Skwovet, Nickit, Wooloo
@@ -844,7 +844,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   BRILLIANT_DIAMOND_SHINING_PEARL: {
     // Pre-Roark
-    'bdsp-route-201': [396, 399],                      // Starly, Bidoof
+    'bdsp-route-201': [387, 390, 393, 396, 399],        // Turtwig, Chimchar, Piplup, Starly, Bidoof
     'bdsp-route-202': [396, 399, 401, 403],
     'bdsp-route-203': [41, 63, 396, 399, 401, 403],
     'bdsp-oreburgh-gate': [41, 54, 74, 95],
@@ -901,7 +901,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   LEGENDS_ARCEUS: {
     // Pre-Kleavor (Obsidian Fieldlands)
-    'pla-aspiration-hill': [396, 399, 403],            // Starly, Bidoof, Shinx
+    'pla-aspiration-hill': [722, 155, 501, 396, 399, 403], // Rowlet, Cyndaquil, Oshawott, Starly, Bidoof, Shinx
     'pla-horseshoe-plains': [396, 399, 403, 77],       // Starly, Bidoof, Shinx, Ponyta
     'pla-deertrack-path': [396, 399, 63, 406],         // Starly, Bidoof, Abra(rare), Budew
     'pla-deertrack-heights': [41, 92, 401, 403],       // Zubat, Gastly(night), Kricketot, Shinx
@@ -949,7 +949,7 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 
   SCARLET_VIOLET: {
     // Pre-Katy
-    'sv-los-platos': [19, 194, 396, 661, 819, 906, 912, 915], // Rattata(rare?), Wooper(P), Starly, Fletchling, Skwovet, Sprigatito area: Lechonk, Tarountula, Flittle -> Lechonk, Pawmi, Hoppip, Fletchling
+    'sv-los-platos': [906, 909, 912, 19, 194, 396, 661, 819, 915], // Sprigatito, Fuecoco, Quaxly, Rattata, Wooper(P), Starly, Fletchling, Skwovet, Flittle
     'sv-mesagoza': [19, 194, 661, 819, 906, 912, 921], // Lechonk, Pawmi, Fletchling, etc.
 
     // Pre-Brassius

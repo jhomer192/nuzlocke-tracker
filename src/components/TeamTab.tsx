@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Run, Encounter, PokemonData, MoveData, PokemonType } from '../types';
 import { ALL_TYPES, GAME_GENERATIONS, GAME_NAMES } from '../types';
 import { getSpriteUrl, fetchPokemonData, fetchMoveData } from '../utils/pokeapi';
 import { moveToParty, moveToBox, markDead, updateEncounter } from '../hooks/useRuns';
 import { getDefensiveMultiplier } from '../data/typeChart';
 import { TypeBadge } from './TypeBadge';
+import { MoveAutocomplete } from './MoveAutocomplete';
 import { Modal } from './Modal';
 import { getCustomGame } from '../utils/storage';
 
@@ -331,12 +332,6 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     setTimeout(() => setShowRipMessage(null), 2000);
   };
 
-  const handleSaveMoves = useCallback(() => {
-    if (!selectedEncounter) return;
-    const filtered = moveInputs.map((m) => m.trim());
-    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { moves: filtered }));
-  }, [selectedEncounter, moveInputs, onUpdate]);
-
   const handleMoveInput = (index: number, value: string) => {
     const next = [...moveInputs];
     next[index] = value;
@@ -585,13 +580,31 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   const moveData = key ? moveDataMap.get(key) : null;
                   return (
                     <div key={i} className="flex items-center gap-2">
-                      <input
-                        type="text"
+                      <MoveAutocomplete
                         value={moveInputs[i]}
-                        onChange={(e) => handleMoveInput(i, e.target.value)}
-                        onBlur={handleSaveMoves}
+                        onChange={(v) => handleMoveInput(i, v)}
+                        onSelect={(moveName) => {
+                          const display = moveName.replace(/-/g, ' ');
+                          const next = [...moveInputs];
+                          next[i] = display;
+                          setMoveInputs(next);
+                          // Trigger move data fetch
+                          fetchMoveData(moveName).then((data) => {
+                            if (data) {
+                              setMoveDataMap((prev) => {
+                                const m = new Map(prev);
+                                m.set(moveName, data);
+                                return m;
+                              });
+                            }
+                          });
+                          // Save moves
+                          const filtered = next.map((m) => m.trim());
+                          if (selectedEncounter) {
+                            onUpdate((r) => updateEncounter(r, selectedEncounter.id, { moves: filtered }));
+                          }
+                        }}
                         placeholder={`Move ${i + 1}`}
-                        className="flex-1 rounded-lg bg-zinc-700 px-3 py-2 text-sm text-white placeholder:text-zinc-500 outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                       {moveData && (
                         <div className="flex items-center gap-1.5 flex-shrink-0">
