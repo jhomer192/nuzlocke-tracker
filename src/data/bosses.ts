@@ -19,6 +19,56 @@ export interface BossEntry {
 // ── Red / Blue ─────────────────────────────────────────────────────────────
 
 const RED_BLUE_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Squirtle, so Blue has Bulbasaur line)
+  {
+    name: 'Rival (Route 22)',
+    segment: 'Pre-Brock',
+    pokemon: [
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+    ],
+  },
+  {
+    name: 'Rival (Cerulean City)',
+    segment: 'Pre-Misty',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 17, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
+      { name: 'Raticate', id: 20, level: 15, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
+      { name: 'Abra', id: 63, level: 16, types: ['psychic'], moves: ['Teleport'] },
+      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'] },
+    ],
+  },
+  {
+    name: 'Rival (S.S. Anne)',
+    segment: 'Pre-Lt. Surge',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 19, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
+      { name: 'Raticate', id: 20, level: 18, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
+      { name: 'Kadabra', id: 64, level: 20, types: ['psychic'], moves: ['Confusion', 'Disable'] },
+      { name: 'Ivysaur', id: 2, level: 22, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'] },
+    ],
+  },
+  {
+    name: 'Rival (Pokemon Tower)',
+    segment: 'Pre-Erika',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 23, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack', 'Whirlwind'] },
+      { name: 'Growlithe', id: 58, level: 22, types: ['fire'], moves: ['Bite', 'Roar', 'Ember', 'Leer'] },
+      { name: 'Exeggcute', id: 102, level: 22, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect'] },
+      { name: 'Kadabra', id: 64, level: 20, types: ['psychic'], moves: ['Confusion', 'Disable', 'Psybeam'] },
+      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Razor Leaf', 'Leech Seed'] },
+    ],
+  },
+  {
+    name: 'Rival (Silph Co.)',
+    segment: 'Pre-Sabrina',
+    pokemon: [
+      { name: 'Pidgeot', id: 18, level: 37, types: ['normal', 'flying'], moves: ['Wing Attack', 'Quick Attack', 'Whirlwind', 'Mirror Move'] },
+      { name: 'Growlithe', id: 58, level: 35, types: ['fire'], moves: ['Ember', 'Leer', 'Take Down', 'Agility'] },
+      { name: 'Exeggcute', id: 102, level: 38, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect', 'Leech Seed'] },
+      { name: 'Alakazam', id: 65, level: 35, types: ['psychic'], moves: ['Psybeam', 'Recover', 'Psychic', 'Reflect'] },
+      { name: 'Venusaur', id: 3, level: 37, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'Growth'] },
+    ],
+  },
   {
     name: 'Brock',
     segment: 'Pre-Brock',
@@ -96,7 +146,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
   },
   // Elite Four
   {
-    name: 'Lorelei',
+    name: 'Elite Four: Lorelei',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Dewgong', id: 87, level: 54, types: ['water', 'ice'], moves: ['Aurora Beam', 'Growl', 'Rest', 'Take Down'] },
@@ -107,7 +157,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Bruno',
+    name: 'Elite Four: Bruno',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Onix', id: 95, level: 53, types: ['rock', 'ground'], moves: ['Rock Throw', 'Rage', 'Slam', 'Harden'] },
@@ -118,7 +168,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Agatha',
+    name: 'Elite Four: Agatha',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Gengar', id: 94, level: 56, types: ['ghost', 'poison'], moves: ['Confuse Ray', 'Night Shade', 'Hypnosis', 'Dream Eater'] },
@@ -129,7 +179,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Lance',
+    name: 'Elite Four: Lance',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Gyarados', id: 130, level: 58, types: ['water', 'flying'], moves: ['Dragon Rage', 'Leer', 'Hydro Pump', 'Hyper Beam'] },
@@ -156,6 +206,45 @@ const RED_BLUE_BOSSES: BossEntry[] = [
 // ── Gold / Silver ──────────────────────────────────────────────────────────
 
 const GOLD_SILVER_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Cyndaquil, so Silver has Totodile line)
+  {
+    name: 'Rival (Cherrygrove City)',
+    segment: 'Pre-Falkner',
+    pokemon: [
+      { name: 'Totodile', id: 158, level: 5, types: ['water'], moves: ['Scratch', 'Leer'] },
+    ],
+  },
+  {
+    name: 'Rival (Azalea Town)',
+    segment: 'Pre-Bugsy',
+    pokemon: [
+      { name: 'Gastly', id: 92, level: 14, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Hypnosis', 'Mean Look'] },
+      { name: 'Zubat', id: 41, level: 14, types: ['poison', 'flying'], moves: ['Leech Life', 'Supersonic', 'Bite'] },
+      { name: 'Croconaw', id: 159, level: 16, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'] },
+    ],
+  },
+  {
+    name: 'Rival (Burned Tower)',
+    segment: 'Pre-Morty',
+    pokemon: [
+      { name: 'Haunter', id: 93, level: 20, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Mean Look', 'Curse'] },
+      { name: 'Zubat', id: 41, level: 22, types: ['poison', 'flying'], moves: ['Leech Life', 'Supersonic', 'Bite', 'Confuse Ray'] },
+      { name: 'Magnemite', id: 81, level: 18, types: ['electric', 'steel'], moves: ['Tackle', 'ThunderShock', 'SonicBoom', 'Thunder Wave'] },
+      { name: 'Croconaw', id: 159, level: 22, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'] },
+    ],
+  },
+  {
+    name: 'Rival (Victory Road)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Sneasel', id: 215, level: 34, types: ['dark', 'ice'], moves: ['Quick Attack', 'Screech', 'Faint Attack', 'Fury Cutter'] },
+      { name: 'Haunter', id: 93, level: 35, types: ['ghost', 'poison'], moves: ['Mean Look', 'Curse', 'Shadow Ball', 'Confuse Ray'] },
+      { name: 'Magneton', id: 82, level: 35, types: ['electric', 'steel'], moves: ['Thunder Wave', 'SonicBoom', 'Thunderbolt', 'Swift'] },
+      { name: 'Golbat', id: 42, level: 36, types: ['poison', 'flying'], moves: ['Leech Life', 'Bite', 'Confuse Ray', 'Wing Attack'] },
+      { name: 'Kadabra', id: 64, level: 35, types: ['psychic'], moves: ['Disable', 'Psybeam', 'Recover', 'Future Sight'] },
+      { name: 'Feraligatr', id: 160, level: 38, types: ['water'], moves: ['Rage', 'Water Gun', 'Slash', 'Surf'] },
+    ],
+  },
   {
     name: 'Falkner',
     segment: 'Pre-Falkner',
@@ -229,7 +318,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
   },
   // Elite Four
   {
-    name: 'Will',
+    name: 'Elite Four: Will',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Xatu', id: 178, level: 40, types: ['psychic', 'flying'], moves: ['Quick Attack', 'Confuse Ray', 'Future Sight', 'Psychic'] },
@@ -240,7 +329,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Koga',
+    name: 'Elite Four: Koga',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Ariados', id: 168, level: 40, types: ['bug', 'poison'], moves: ['Double Team', 'Giga Drain', 'Baton Pass', 'Sludge Bomb'] },
@@ -251,7 +340,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Bruno',
+    name: 'Elite Four: Bruno',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Hitmontop', id: 237, level: 42, types: ['fighting'], moves: ['Quick Attack', 'Pursuit', 'Counter', 'Dig'] },
@@ -262,7 +351,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Karen',
+    name: 'Elite Four: Karen',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Umbreon', id: 197, level: 42, types: ['dark'], moves: ['Sand Attack', 'Confuse Ray', 'Faint Attack', 'Mean Look'] },
@@ -289,6 +378,41 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
 // ── Ruby / Sapphire ────────────────────────────────────────────────────────
 
 const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Treecko, so rival has Torchic line)
+  {
+    name: 'Rival (Route 103)',
+    segment: 'Pre-Roxanne',
+    pokemon: [
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Route 110)',
+    segment: 'Pre-Wattson',
+    pokemon: [
+      { name: 'Wingull', id: 278, level: 18, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack'], ability: 'Keen Eye' },
+      { name: 'Lombre', id: 271, level: 18, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Route 119)',
+    segment: 'Pre-Winona',
+    pokemon: [
+      { name: 'Pelipper', id: 279, level: 29, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
+      { name: 'Lombre', id: 271, level: 29, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Lilycove City)',
+    segment: 'Pre-Tate & Liza',
+    pokemon: [
+      { name: 'Pelipper', id: 279, level: 31, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
+      { name: 'Ludicolo', id: 272, level: 32, types: ['water', 'grass'], moves: ['Nature Power', 'Fake Out', 'Surf', 'Giga Drain'], ability: 'Swift Swim' },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze' },
+    ],
+  },
   {
     name: 'Roxanne',
     segment: 'Pre-Roxanne',
@@ -370,7 +494,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
   },
   // Elite Four
   {
-    name: 'Sidney',
+    name: 'Elite Four: Sidney',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Mightyena', id: 262, level: 46, types: ['dark'], moves: ['Roar', 'Double Edge', 'Sand Attack', 'Crunch'], ability: 'Intimidate' },
@@ -381,7 +505,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Phoebe',
+    name: 'Elite Four: Phoebe',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Dusclops', id: 356, level: 48, types: ['ghost'], moves: ['Shadow Punch', 'Confuse Ray', 'Curse', 'Protect'], ability: 'Pressure' },
@@ -392,7 +516,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Glacia',
+    name: 'Elite Four: Glacia',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Glalie', id: 362, level: 50, types: ['ice'], moves: ['Light Screen', 'Crunch', 'Icy Wind', 'Ice Beam'], ability: 'Inner Focus' },
@@ -403,7 +527,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Drake',
+    name: 'Elite Four: Drake',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Shelgon', id: 372, level: 52, types: ['dragon'], moves: ['Rock Tomb', 'Dragon Claw', 'Protect', 'Double Edge'], ability: 'Rock Head' },
@@ -430,6 +554,41 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
 // ── Emerald ────────────────────────────────────────────────────────────────
 
 const EMERALD_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Treecko, so rival has Torchic line)
+  {
+    name: 'Rival (Route 103)',
+    segment: 'Pre-Roxanne',
+    pokemon: [
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Route 110)',
+    segment: 'Pre-Wattson',
+    pokemon: [
+      { name: 'Wingull', id: 278, level: 18, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack'], ability: 'Keen Eye' },
+      { name: 'Lombre', id: 271, level: 18, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Route 119)',
+    segment: 'Pre-Winona',
+    pokemon: [
+      { name: 'Pelipper', id: 279, level: 29, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
+      { name: 'Lombre', id: 271, level: 29, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze' },
+    ],
+  },
+  {
+    name: 'Rival (Lilycove City)',
+    segment: 'Pre-Tate & Liza',
+    pokemon: [
+      { name: 'Pelipper', id: 279, level: 31, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
+      { name: 'Ludicolo', id: 272, level: 32, types: ['water', 'grass'], moves: ['Nature Power', 'Fake Out', 'Surf', 'Giga Drain'], ability: 'Swift Swim' },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze' },
+    ],
+  },
   {
     name: 'Roxanne',
     segment: 'Pre-Roxanne',
@@ -512,7 +671,7 @@ const EMERALD_BOSSES: BossEntry[] = [
   },
   // Elite Four (Emerald has different levels and some different Pokemon from RS)
   {
-    name: 'Sidney',
+    name: 'Elite Four: Sidney',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Mightyena', id: 262, level: 46, types: ['dark'], moves: ['Roar', 'Double Edge', 'Sand Attack', 'Crunch'], ability: 'Intimidate' },
@@ -523,7 +682,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Phoebe',
+    name: 'Elite Four: Phoebe',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Dusclops', id: 356, level: 48, types: ['ghost'], moves: ['Shadow Punch', 'Confuse Ray', 'Curse', 'Protect'], ability: 'Pressure' },
@@ -534,7 +693,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Glacia',
+    name: 'Elite Four: Glacia',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Glalie', id: 362, level: 50, types: ['ice'], moves: ['Light Screen', 'Crunch', 'Icy Wind', 'Ice Beam'], ability: 'Inner Focus' },
@@ -545,7 +704,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Drake',
+    name: 'Elite Four: Drake',
     segment: 'Pre-Elite Four',
     pokemon: [
       { name: 'Shelgon', id: 372, level: 52, types: ['dragon'], moves: ['Rock Tomb', 'Dragon Claw', 'Protect', 'Double Edge'], ability: 'Rock Head' },
