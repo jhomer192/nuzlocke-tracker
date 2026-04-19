@@ -89,7 +89,7 @@ function PokemonSummaryCard({
   enc: Encounter;
   data: PokemonData;
   gen: number;
-  relevantTypes: string[];
+  relevantTypes: readonly string[];
   mode: MatrixMode;
   moveDataMap: Map<string, MoveData>;
 }) {
@@ -442,7 +442,7 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
 
             {/* Type rows */}
             {ALL_TYPES.filter((t) => relevantTypes.includes(t)).map((type) => {
-              const typeIdx = ALL_TYPES.indexOf(type);
+              const typeIdx = ALL_TYPES.indexOf(type as PokemonType);
               return (
                 <div
                   key={type}
@@ -499,7 +499,7 @@ export function AnalysisTab({ run }: AnalysisTabProps) {
         </p>
         <div className="grid grid-cols-3 gap-2">
           {relevantTypes.map((type) => {
-            const typeIdx = ALL_TYPES.indexOf(type);
+            const typeIdx = ALL_TYPES.indexOf(type as PokemonType);
             const isGap = mode === 'defensive' ? gaps.has(typeIdx) : offensiveGaps.has(typeIdx);
             const net = netScores[typeIdx];
             return (
