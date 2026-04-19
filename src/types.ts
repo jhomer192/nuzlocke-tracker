@@ -50,12 +50,14 @@ export interface Encounter {
   status: 'alive' | 'dead' | 'missed';
   level: number;
   isShiny?: boolean;
+  isGift?: boolean;              // gift Pokemon (starter, in-game trade, etc.) - doesn't consume route encounter
   causeOfDeath?: string;
   caughtAt: string;
   diedAt?: string;
   moves?: string[]; // up to 4 move names
-  linkedPokemonId?: number;     // partner's Pokemon national dex ID (soul link)
+  linkedPokemonId?: number;      // partner's Pokemon national dex ID (soul link)
   linkedNickname?: string;       // partner's nickname for their Pokemon (soul link)
+  linkedOnPartnerTeam?: boolean; // is partner's linked Pokemon on their active team? (soul link)
 }
 
 // Level caps per gym for each game (ace Pokemon level)
