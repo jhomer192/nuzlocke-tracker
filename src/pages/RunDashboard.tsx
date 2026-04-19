@@ -7,10 +7,11 @@ import { EncountersTab } from '../components/EncountersTab';
 import { TeamTab } from '../components/TeamTab';
 import { AnalysisTab } from '../components/AnalysisTab';
 import { GraveyardTab } from '../components/GraveyardTab';
+import { ShiniesTab } from '../components/ShiniesTab';
 import { toggleBadge } from '../hooks/useRuns';
 import { getCustomGame } from '../utils/storage';
 
-type Tab = 'encounters' | 'team' | 'analysis' | 'graveyard';
+type Tab = 'encounters' | 'team' | 'analysis' | 'graveyard' | 'shinies';
 
 const TABS: { key: Tab; label: string; icon: (active: boolean) => React.ReactNode }[] = [
   {
@@ -47,6 +48,13 @@ const TABS: { key: Tab; label: string; icon: (active: boolean) => React.ReactNod
       <svg className={`w-5 h-5 ${active ? 'text-emerald-400' : 'text-zinc-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
       </svg>
+    ),
+  },
+  {
+    key: 'shinies',
+    label: 'Shinies',
+    icon: (active) => (
+      <span className={`text-lg leading-5 ${active ? 'text-yellow-400' : 'text-zinc-500'}`}>&#10024;</span>
     ),
   },
 ];
@@ -104,6 +112,18 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
                 : GAME_NAMES[run.game]}
             </p>
           </div>
+          {(() => {
+            const shinyCount = runs.reduce((sum, r) => sum + r.encounters.filter((e) => e.isShiny && e.status !== 'missed').length, 0);
+            return shinyCount > 0 ? (
+              <span
+                className="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-yellow-500/15 text-yellow-400 cursor-pointer"
+                onClick={() => setActiveTab('shinies')}
+                title="Total shinies across all runs"
+              >
+                &#10024; {shinyCount}
+              </span>
+            ) : null;
+          })()}
           <span
             className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase ${
               run.status === 'active'
@@ -166,6 +186,7 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
         )}
         {activeTab === 'analysis' && <AnalysisTab run={run} />}
         {activeTab === 'graveyard' && <GraveyardTab run={run} />}
+        {activeTab === 'shinies' && <ShiniesTab runs={runs} />}
       </div>
 
       {/* Bottom tab bar */}
