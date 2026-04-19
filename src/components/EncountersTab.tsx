@@ -118,14 +118,22 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
       const existingIdx = r.encounters.findIndex((e) => e.id === encounter.id);
       let encounters: Encounter[];
       let box = [...r.box];
-      const team = [...r.team];
+      let team = [...r.team];
 
       if (existingIdx >= 0) {
         encounters = r.encounters.map((e) => (e.id === encounter.id ? encounter : e));
       } else {
         encounters = [...r.encounters, encounter];
         if (encounter.status === 'alive') {
-          box = [...box, encounter.id];
+          // Add to team if there's room, otherwise box
+          const hasRoom = team.length < 6;
+          // Soul link: only auto-add to team if partner is also on their team
+          const soulLinkOk = !r.rules.soulLink || !encounter.linkedPokemonId || encounter.linkedOnPartnerTeam;
+          if (hasRoom && soulLinkOk) {
+            team = [...team, encounter.id];
+          } else {
+            box = [...box, encounter.id];
+          }
         }
       }
 
