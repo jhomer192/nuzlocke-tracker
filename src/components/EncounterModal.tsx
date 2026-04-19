@@ -48,6 +48,7 @@ export function EncounterModal({
   const [linkedNickname, setLinkedNickname] = useState(existingEncounter?.linkedNickname ?? '');
   const [linkedOnPartnerTeam, setLinkedOnPartnerTeam] = useState(existingEncounter?.linkedOnPartnerTeam ?? false);
   const [showLinkedSearch, setShowLinkedSearch] = useState(false);
+  const [showLinkedManualSearch, setShowLinkedManualSearch] = useState(false);
 
   // Initialize linked pokemon from existing encounter
   useEffect(() => {
@@ -295,7 +296,7 @@ export function EncounterModal({
                   </div>
                 </div>
                 <button
-                  onClick={() => { setLinkedPokemon(null); setShowLinkedSearch(true); }}
+                  onClick={() => { setLinkedPokemon(null); setShowLinkedSearch(true); setShowLinkedManualSearch(false); }}
                   className="text-zinc-400 hover:text-white p-1"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -304,7 +305,62 @@ export function EncounterModal({
                 </button>
               </div>
             ) : (
-              <PokemonSearch onSelect={(p) => { setLinkedPokemon(p); setShowLinkedSearch(false); }} />
+              <>
+                {/* Route encounter suggestions for partner */}
+                {routeEncounters.length > 0 && !showLinkedManualSearch && (
+                  <div className="rounded-lg bg-zinc-700/30 border border-zinc-700 max-h-48 overflow-y-auto mb-2">
+                    {routeEncounters.map((id) => {
+                      const name = encounterNames.get(id) ?? `#${id}`;
+                      const types = encounterTypes.get(id) ?? [];
+                      return (
+                        <button
+                          key={id}
+                          onClick={async () => {
+                            const data = await fetchPokemonData(id);
+                            if (data) { setLinkedPokemon(data); setShowLinkedSearch(false); }
+                          }}
+                          className="flex items-center gap-2 w-full px-3 py-1.5 hover:bg-zinc-600/50 transition-colors text-left border-b border-zinc-700/50 last:border-b-0"
+                        >
+                          <img src={getSpriteUrl(id)} alt={name} className="w-8 h-8 pixelated" loading="lazy" />
+                          <span className="capitalize text-sm font-medium flex-1">{name}</span>
+                          <div className="flex gap-1">
+                            {types.map((t) => (
+                              <TypeBadge key={t} type={t} small />
+                            ))}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                {!showLinkedManualSearch && (
+                  <button
+                    onClick={() => setShowLinkedManualSearch(true)}
+                    className="text-xs text-purple-400 hover:text-purple-300 mb-1"
+                  >
+                    Search all Pokemon instead
+                  </button>
+                )}
+                {showLinkedManualSearch && (
+                  <div>
+                    {routeEncounters.length > 0 && (
+                      <button
+                        onClick={() => setShowLinkedManualSearch(false)}
+                        className="text-xs text-purple-400 hover:text-purple-300 mb-2 flex items-center gap-1"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to route encounters
+                      </button>
+                    )}
+                    <PokemonSearch onSelect={(p) => { setLinkedPokemon(p); setShowLinkedSearch(false); setShowLinkedManualSearch(false); }} />
+                  </div>
+                )}
+                {routeEncounters.length === 0 && !showLinkedManualSearch && (
+                  <PokemonSearch onSelect={(p) => { setLinkedPokemon(p); setShowLinkedSearch(false); }} />
+                )}
+              </>
             )}
 
             <div>
