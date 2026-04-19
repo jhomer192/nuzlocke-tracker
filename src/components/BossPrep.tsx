@@ -90,8 +90,8 @@ function BossPokemonCard({ mon, gen }: { mon: BossPokemon; gen: number }) {
   );
 }
 
-function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isDefeated: boolean }) {
-  const [expanded, setExpanded] = useState(!isDefeated);
+function BossCard({ boss, gen, isDefeated, startExpanded, onDefeat }: { boss: BossEntry; gen: number; isDefeated: boolean; startExpanded: boolean; onDefeat?: () => void }) {
+  const [expanded, setExpanded] = useState(startExpanded);
 
   return (
     <div className="mb-4">
@@ -110,11 +110,21 @@ function BossCard({ boss, gen, isDefeated }: { boss: BossEntry; gen: number; isD
         </svg>
       </button>
       {expanded && (
-        <div className="flex flex-col gap-2">
-          {boss.pokemon.map((mon, i) => (
-            <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
-          ))}
-        </div>
+        <>
+          <div className="flex flex-col gap-2">
+            {boss.pokemon.map((mon, i) => (
+              <BossPokemonCard key={`${mon.name}-${i}`} mon={mon} gen={gen} />
+            ))}
+          </div>
+          {!isDefeated && onDefeat && (
+            <button
+              onClick={onDefeat}
+              className="w-full mt-3 mb-2 rounded-xl bg-emerald-600 py-3.5 font-bold text-white text-base hover:bg-emerald-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-600/20"
+            >
+              Mark as Defeated
+            </button>
+          )}
+        </>
       )}
     </div>
   );
@@ -172,22 +182,24 @@ export function BossPrepButton({ game, segment, defeatedBosses, onDefeat, custom
           </div>
         )}
 
-        {bosses.map((boss, i) => {
+        {(() => {
+          // Find the index of the first undefeated boss
+          const firstUndefeatedIdx = bosses.findIndex((b) => !defeated.includes(b.name));
+          return bosses.map((boss, i) => {
           const isDefeated = defeated.includes(boss.name);
+          const isNextBoss = i === firstUndefeatedIdx;
           return (
-            <div key={`${boss.name}-${i}`}>
-              <BossCard boss={boss} gen={gen} isDefeated={isDefeated} />
-              {!isDefeated && onDefeat && (
-                <button
-                  onClick={() => handleDefeat(boss.name)}
-                  className="w-full mb-4 rounded-xl bg-emerald-600 py-3.5 font-bold text-white text-base hover:bg-emerald-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-600/20"
-                >
-                  Mark as Defeated
-                </button>
-              )}
-            </div>
+            <BossCard
+              key={`${boss.name}-${i}`}
+              boss={boss}
+              gen={gen}
+              isDefeated={isDefeated}
+              startExpanded={isNextBoss}
+              onDefeat={onDefeat ? () => handleDefeat(boss.name) : undefined}
+            />
           );
-        })}
+        });
+        })()}
       </Modal>
     </>
   );
