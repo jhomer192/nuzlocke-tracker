@@ -2232,6 +2232,22 @@ const ORAS_BOSSES: BossEntry[] = [
 // ── Sun / Moon ────────────────────────────────────────────────────────────
 
 const SUN_MOON_BOSSES: BossEntry[] = [
+  // Hau rival battles (assuming player chose Rowlet, Hau has Popplio line)
+  {
+    name: 'Hau (Iki Town)',
+    segment: 'Pre-Ilima',
+    pokemon: [
+      { name: 'Popplio', id: 728, level: 5, types: ['water'], moves: ['Pound', 'Water Gun'] },
+    ],
+  },
+  {
+    name: 'Hau (Route 3)',
+    segment: 'Pre-Ilima',
+    pokemon: [
+      { name: 'Pichu', id: 172, level: 10, types: ['electric'], moves: ['Thunder Shock', 'Charm', 'Tail Whip'] },
+      { name: 'Popplio', id: 728, level: 11, types: ['water'], moves: ['Water Gun', 'Pound', 'Growl', 'Disarming Voice'] },
+    ],
+  },
   {
     name: 'Ilima (Trial)',
     segment: 'Pre-Ilima',
@@ -2246,6 +2262,16 @@ const SUN_MOON_BOSSES: BossEntry[] = [
       { name: 'Mankey', id: 56, level: 14, types: ['fighting'], moves: ['Pursuit', 'Karate Chop', 'Focus Energy'] },
       { name: 'Makuhita', id: 296, level: 14, types: ['fighting'], moves: ['Fake Out', 'Sand Attack', 'Arm Thrust', 'Knock Off'] },
       { name: 'Crabrawler', id: 739, level: 15, types: ['fighting'], moves: ['Power-Up Punch', 'Pursuit', 'Leer', 'All-Out Pummeling'] },
+    ],
+  },
+  {
+  {
+    name: 'Hau (Paniola Town)',
+    segment: 'Pre-Lana',
+    pokemon: [
+      { name: 'Pikachu', id: 25, level: 16, types: ['electric'], moves: ['Quick Attack', 'Electro Ball', 'Thunder Wave'] },
+      { name: 'Noibat', id: 714, level: 15, types: ['flying', 'dragon'], moves: ['Supersonic', 'Tackle', 'Absorb'] },
+      { name: 'Brionne', id: 729, level: 17, types: ['water'], moves: ['Water Gun', 'Disarming Voice', 'Aqua Jet', 'Baby-Doll Eyes'] },
     ],
   },
   {
@@ -2270,12 +2296,39 @@ const SUN_MOON_BOSSES: BossEntry[] = [
     ],
   },
   {
+  {
+    name: 'Gladion (Route 5)',
+    segment: 'Pre-Olivia',
+    pokemon: [
+      { name: 'Type: Null', id: 772, level: 18, types: ['normal'], moves: ['Tackle', 'Pursuit', 'Crush Claw'] },
+      { name: 'Zubat', id: 41, level: 17, types: ['poison', 'flying'], moves: ['Bite', 'Wing Attack', 'Confuse Ray'] },
+    ],
+  },
+  {
     name: 'Olivia (Kahuna)',
     segment: 'Pre-Olivia',
     pokemon: [
       { name: 'Nosepass', id: 299, level: 26, types: ['rock'], moves: ['Rock Slide', 'Thunder Wave', 'Block'] },
       { name: 'Boldore', id: 525, level: 26, types: ['rock'], moves: ['Rock Blast', 'Headbutt', 'Mud-Slap'] },
       { name: 'Lycanroc', id: 745, level: 27, types: ['rock'], moves: ['Rock Throw', 'Bite', 'Rock Tomb', 'Continental Crush'] },
+    ],
+  },
+  {
+  {
+    name: 'Guzma (Malie Garden)',
+    segment: 'Pre-Sophocles',
+    pokemon: [
+      { name: 'Golisopod', id: 768, level: 34, types: ['bug', 'water'], moves: ['First Impression', 'Razor Shell', 'Sucker Punch'] },
+      { name: 'Ariados', id: 168, level: 34, types: ['bug', 'poison'], moves: ['Shadow Sneak', 'Fell Stinger', 'Sucker Punch'] },
+    ],
+  },
+  {
+    name: 'Hau (Malie City)',
+    segment: 'Pre-Sophocles',
+    pokemon: [
+      { name: 'Raichu', id: 26, level: 28, types: ['electric', 'psychic'], moves: ['Psychic', 'Electro Ball', 'Quick Attack'] },
+      { name: 'Noibat', id: 714, level: 27, types: ['flying', 'dragon'], moves: ['Wing Attack', 'Bite', 'Supersonic'] },
+      { name: 'Brionne', id: 729, level: 29, types: ['water'], moves: ['Aqua Jet', 'Disarming Voice', 'Bubble Beam', 'Icy Wind'] },
     ],
   },
   {
@@ -2290,6 +2343,26 @@ const SUN_MOON_BOSSES: BossEntry[] = [
     segment: 'Pre-Acerola',
     pokemon: [
       { name: 'Mimikyu', id: 778, level: 35, types: ['ghost', 'fairy'], moves: ['Shadow Claw', 'Play Rough', 'Mimic', 'Astonish'] },
+    ],
+  },
+  {
+  {
+    name: 'Gladion (Aether House)',
+    segment: 'Pre-Vast Poni',
+    pokemon: [
+      { name: 'Type: Null', id: 772, level: 37, types: ['normal'], moves: ['Crush Claw', 'X-Scissor', 'Scary Face', 'Air Slash'] },
+      { name: 'Golbat', id: 42, level: 37, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Wing Attack', 'Confuse Ray'] },
+      { name: 'Sneasel', id: 215, level: 37, types: ['dark', 'ice'], moves: ['Ice Shard', 'Faint Attack', 'Metal Claw', 'Taunt'] },
+    ],
+  },
+  {
+    name: 'Guzma (Shady House)',
+    segment: 'Pre-Vast Poni',
+    pokemon: [
+      { name: 'Golisopod', id: 768, level: 41, types: ['bug', 'water'], moves: ['First Impression', 'Razor Shell', 'Sucker Punch', 'Swords Dance'] },
+      { name: 'Ariados', id: 168, level: 40, types: ['bug', 'poison'], moves: ['Shadow Sneak', 'Fell Stinger', 'Sucker Punch', 'Toxic Thread'] },
+      { name: 'Masquerain', id: 284, level: 40, types: ['bug', 'flying'], moves: ['Air Slash', 'Bug Buzz', 'Icy Wind', 'Scary Face'] },
+      { name: 'Pinsir', id: 127, level: 40, types: ['bug'], moves: ['X-Scissor', 'Storm Throw', 'Thrash'] },
     ],
   },
   {
@@ -2309,6 +2382,28 @@ const SUN_MOON_BOSSES: BossEntry[] = [
       { name: 'Gastrodon', id: 423, level: 47, types: ['water', 'ground'], moves: ['Muddy Water', 'Earth Power', 'Recover'] },
       { name: 'Flygon', id: 330, level: 47, types: ['ground', 'dragon'], moves: ['Earth Power', 'Dragon Breath', 'Rock Slide'] },
       { name: 'Mudsdale', id: 750, level: 48, types: ['ground'], moves: ['Earthquake', 'Heavy Slam', 'Counter', 'Tectonic Rage'] },
+    ],
+  },
+  {
+  {
+    name: 'Gladion (Mount Lanakila)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Crobat', id: 169, level: 53, types: ['poison', 'flying'], moves: ['Acrobatics', 'Cross Poison', 'Confuse Ray', 'Air Slash'] },
+      { name: 'Weavile', id: 461, level: 53, types: ['dark', 'ice'], moves: ['Night Slash', 'Ice Punch', 'Brick Break'] },
+      { name: 'Lucario', id: 448, level: 53, types: ['fighting', 'steel'], moves: ['Aura Sphere', 'Flash Cannon', 'Dragon Pulse'] },
+      { name: 'Silvally', id: 773, level: 55, types: ['normal'], moves: ['Multi-Attack', 'X-Scissor', 'Crunch', 'Iron Head'] },
+    ],
+  },
+  {
+    name: 'Hau (Mount Lanakila)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Raichu', id: 26, level: 53, types: ['electric', 'psychic'], moves: ['Psychic', 'Thunderbolt', 'Quick Attack', 'Focus Blast'] },
+      { name: 'Tauros', id: 128, level: 53, types: ['normal'], moves: ['Double-Edge', 'Zen Headbutt', 'Iron Head'] },
+      { name: 'Noivern', id: 715, level: 53, types: ['flying', 'dragon'], moves: ['Dragon Pulse', 'Air Slash', 'Dark Pulse'] },
+      { name: 'Crabominable', id: 740, level: 53, types: ['fighting', 'ice'], moves: ['Ice Hammer', 'Close Combat', 'Stone Edge'] },
+      { name: 'Primarina', id: 730, level: 55, types: ['water', 'fairy'], moves: ['Sparkling Aria', 'Moonblast', 'Ice Beam', 'Psychic'] },
     ],
   },
   {
