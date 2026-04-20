@@ -5,7 +5,7 @@ import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
 import { InlineBossRow } from './BossPrep';
-import { getBossesForSegment } from '../data/bosses';
+import { getBossesForSegment, getBadgeIndexForBoss } from '../data/bosses';
 import { getCustomGame, loadCustomGames, saveCustomGames } from '../utils/storage';
 import { generateId } from '../utils/id';
 
@@ -123,6 +123,17 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
 
       if (existingIdx >= 0) {
         encounters = r.encounters.map((e) => (e.id === encounter.id ? encounter : e));
+        // If status changed away from 'alive', remove from team/box so the
+        // pokemon doesn't linger in the party UI after being marked missed.
+        if (encounter.status !== 'alive') {
+          team = team.filter((id) => id !== encounter.id);
+          box = box.filter((id) => id !== encounter.id);
+        } else {
+          // Status went back to alive but encounter isn't currently tracked:
+          // put it in the box so it's visible again.
+          const tracked = team.includes(encounter.id) || box.includes(encounter.id);
+          if (!tracked) box = [...box, encounter.id];
+        }
       } else {
         encounters = [...r.encounters, encounter];
         if (encounter.status === 'alive') {
@@ -183,10 +194,16 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                       gen={gen}
                       isDefeated={defeated.includes(boss.name)}
                       onDefeat={onDefeat => {
-                        onUpdate((r) => ({
-                          ...r,
-                          defeatedBosses: [...(r.defeatedBosses ?? []), onDefeat],
-                        }));
+                        onUpdate((r) => {
+                          const defeatedBosses = [...(r.defeatedBosses ?? []), onDefeat];
+                          const badgeIdx = getBadgeIndexForBoss(r.game, onDefeat, r.customGameId);
+                          let badges = r.badges;
+                          if (badgeIdx !== null && !r.badges[badgeIdx]) {
+                            badges = [...r.badges];
+                            badges[badgeIdx] = true;
+                          }
+                          return { ...r, defeatedBosses, badges };
+                        });
                       }}
                     />
                   );

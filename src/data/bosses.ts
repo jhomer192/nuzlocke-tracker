@@ -3778,7 +3778,8 @@ const LEGENDS_ARCEUS_BOSSES: BossEntry[] = [
     segment: 'Pre-Dialga/Palkia',
     pokemon: [
       { name: 'Dialga', id: 483, level: 65, types: ['steel', 'dragon'], moves: ['Roar of Time', 'Flash Cannon', 'Earth Power', 'Dragon Pulse'] },
-
+    ],
+  },
   {
     name: 'Volo (Temple of Sinnoh)',
     segment: 'Pre-Dialga/Palkia',
@@ -3796,8 +3797,6 @@ const LEGENDS_ARCEUS_BOSSES: BossEntry[] = [
     segment: 'Pre-Dialga/Palkia',
     pokemon: [
       { name: 'Giratina', id: 487, level: 70, types: ['ghost', 'dragon'], moves: ['Shadow Force', 'Dragon Pulse', 'Earth Power', 'Aura Sphere'] },
-    ],
-  },
     ],
   },
 ];
@@ -4153,6 +4152,34 @@ function customBossToBossEntry(cb: CustomBoss): BossEntry {
       moves: [],
     })),
   };
+}
+
+/**
+ * Return the badge index to award when this boss is defeated,
+ * or null if defeating this boss shouldn't grant a badge.
+ * A boss is considered a "badge granter" when its own name appears in
+ * the segment prefix ("Pre-X" where X == boss.name). E.g. defeating "Brock"
+ * whose segment is "Pre-Brock" grants badge 0. Rivals/grunts are skipped.
+ */
+export function getBadgeIndexForBoss(game: Game, bossName: string, customGameId?: string): number | null {
+  let bosses: BossEntry[] | undefined;
+  if (game === 'CUSTOM' && customGameId) {
+    const def = getCustomGame(customGameId);
+    if (!def?.bosses) return null;
+    bosses = def.bosses.map(customBossToBossEntry);
+  } else {
+    bosses = BOSS_DATA[game];
+  }
+  if (!bosses) return null;
+  // Preserve declaration order, dedupe
+  const gymLeaders: string[] = [];
+  for (const b of bosses) {
+    if (b.segment === `Pre-${b.name}` && !gymLeaders.includes(b.name)) {
+      gymLeaders.push(b.name);
+    }
+  }
+  const idx = gymLeaders.indexOf(bossName);
+  return idx >= 0 ? idx : null;
 }
 
 /** Get all bosses for a segment (for E4 segments with multiple bosses) */
