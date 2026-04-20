@@ -1,11 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import type { BossEntry, BossPokemon } from '../data/bosses';
 import { getBossesForSegment } from '../data/bosses';
-import { getSpriteUrl } from '../utils/pokeapi';
+import { getSpriteUrl, fetchPokemonData } from '../utils/pokeapi';
 import { TypeBadge } from './TypeBadge';
 import { Modal } from './Modal';
 import { ALL_TYPES, GAME_GENERATIONS } from '../types';
-import type { Game, PokemonType } from '../types';
+import type { Game, PokemonType, PokemonData } from '../types';
 import { getDefensiveMultiplier } from '../data/typeChart';
 
 interface BossPrepProps {
@@ -30,37 +30,113 @@ function formatTypeName(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
+// Max base stat across all Pokemon is 255 (Blissey HP / Shuckle Def/SpD), but
+// most mons top out around 180. Normalize to 200 for visual bars so the
+// high-stat mons visibly pop without the bar ever clipping.
+const STAT_BAR_MAX = 200;
+
+function statBarColor(value: number): string {
+  if (value >= 130) return 'bg-emerald-500';
+  if (value >= 100) return 'bg-lime-500';
+  if (value >= 70) return 'bg-yellow-500';
+  if (value >= 50) return 'bg-orange-500';
+  return 'bg-red-500';
+}
+
+function StatBar({ label, value }: { label: string; value: number }) {
+  const pct = Math.min(100, (value / STAT_BAR_MAX) * 100);
+  return (
+    <div className="flex items-center gap-1.5 text-[10px]">
+      <span className="w-6 text-zinc-400 uppercase tracking-wide">{label}</span>
+      <span className="w-7 text-right font-mono text-zinc-300">{value}</span>
+      <div className="flex-1 h-1.5 bg-zinc-800 rounded overflow-hidden">
+        <div
+          className={`h-full ${statBarColor(value)}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function BossPokemonRow({ mon, gen }: { mon: BossPokemon; gen: number }) {
   const weaknesses = useMemo(() => getWeaknesses(mon.types, gen), [mon.types, gen]);
+  const [data, setData] = useState<PokemonData | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchPokemonData(mon.id).then((d) => {
+      if (!cancelled) setData(d);
+    });
+    return () => { cancelled = true; };
+  }, [mon.id]);
+
+  // Prefer explicit ability from the boss entry; otherwise show the first
+  // PokeAPI-listed ability (which is always accurate for gen-specific pokemon,
+  // and the Nuzlocke scene generally assumes the most common ability when
+  // no specific one is set in the game).
+  const ability = mon.ability ?? (data?.abilities?.[0] ?? null);
+  const stats = data?.stats ?? null;
 
   return (
-    <div className="flex items-center gap-3 w-full px-3 py-2 border-b border-zinc-700/50 last:border-b-0">
-      <img
-        src={getSpriteUrl(mon.id)}
-        alt={mon.name}
-        className="w-10 h-10 pixelated flex-shrink-0"
-      />
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <span className="capitalize font-medium">{mon.name}</span>
-          <span className="text-xs text-zinc-400">Lv.{mon.level}</span>
+    <div className="flex flex-col gap-2 w-full px-3 py-2.5 border-b border-zinc-700/50 last:border-b-0">
+      <div className="flex items-center gap-3">
+        <img
+          src={getSpriteUrl(mon.id)}
+          alt={mon.name}
+          className="w-10 h-10 pixelated flex-shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="capitalize font-medium">{mon.name}</span>
+            <span className="text-xs text-zinc-400">Lv.{mon.level}</span>
+            {mon.item && (
+              <span className="text-[10px] text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded">
+                @ {mon.item}
+              </span>
+            )}
+          </div>
+          {ability && (
+            <div className="text-[10px] text-purple-300/90 mt-0.5 capitalize">
+              Ability: {ability.replace(/-/g, ' ')}
+            </div>
+          )}
         </div>
-        <div className="flex flex-wrap gap-1 mt-0.5">
-          {mon.moves.map((move) => (
-            <span key={move} className="text-[10px] text-zinc-400">{move}</span>
+        <div className="flex gap-1 flex-shrink-0">
+          {mon.types.map((t) => (
+            <TypeBadge key={t} type={t} small />
           ))}
         </div>
-        {weaknesses.length > 0 && (
-          <div className="text-[10px] text-amber-400/80 mt-0.5">
-            Weak: {weaknesses.map(formatTypeName).join(', ')}
-          </div>
-        )}
       </div>
-      <div className="flex gap-1 flex-shrink-0">
-        {mon.types.map((t) => (
-          <TypeBadge key={t} type={t} small />
-        ))}
-      </div>
+
+      {/* Moves */}
+      {mon.moves.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {mon.moves.map((move) => (
+            <span key={move} className="text-[10px] bg-zinc-800/80 text-zinc-300 px-1.5 py-0.5 rounded">
+              {move}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Base stats -- fills in once PokeAPI resolves */}
+      {stats && (
+        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
+          <StatBar label="HP" value={stats.hp} />
+          <StatBar label="Spe" value={stats.spe} />
+          <StatBar label="Atk" value={stats.atk} />
+          <StatBar label="SpA" value={stats.spa} />
+          <StatBar label="Def" value={stats.def} />
+          <StatBar label="SpD" value={stats.spd} />
+        </div>
+      )}
+
+      {weaknesses.length > 0 && (
+        <div className="text-[10px] text-amber-400/80">
+          Weak to: {weaknesses.map(formatTypeName).join(', ')}
+        </div>
+      )}
     </div>
   );
 }
