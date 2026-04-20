@@ -3778,26 +3778,6 @@ const LEGENDS_ARCEUS_BOSSES: BossEntry[] = [
     segment: 'Pre-Dialga/Palkia',
     pokemon: [
       { name: 'Dialga', id: 483, level: 65, types: ['steel', 'dragon'], moves: ['Roar of Time', 'Flash Cannon', 'Earth Power', 'Dragon Pulse'] },
-
-  {
-    name: 'Volo (Temple of Sinnoh)',
-    segment: 'Pre-Dialga/Palkia',
-    pokemon: [
-      { name: 'Spiritomb', id: 442, level: 68, types: ['ghost', 'dark'], moves: ['Dark Pulse', 'Shadow Ball', 'Hypnosis', 'Nasty Plot'] },
-      { name: 'Roserade', id: 407, level: 68, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Extrasensory', 'Poison Jab'] },
-      { name: 'Togekiss', id: 468, level: 68, types: ['fairy', 'flying'], moves: ['Moonblast', 'Air Slash', 'Thunder Wave', 'Extrasensory'] },
-      { name: 'Lucario', id: 448, level: 68, types: ['fighting', 'steel'], moves: ['Aura Sphere', 'Flash Cannon', 'Bulk Up', 'Crunch'] },
-      { name: 'Arcanine', id: 59, level: 68, types: ['fire', 'rock'], moves: ['Raging Fury', 'Rock Slide', 'Crunch', 'Extreme Speed'] },
-      { name: 'Garchomp', id: 445, level: 68, types: ['dragon', 'ground'], moves: ['Dragon Claw', 'Earth Power', 'Iron Head', 'Swords Dance'] },
-    ],
-  },
-  {
-    name: 'Giratina (After Volo)',
-    segment: 'Pre-Dialga/Palkia',
-    pokemon: [
-      { name: 'Giratina', id: 487, level: 70, types: ['ghost', 'dragon'], moves: ['Shadow Force', 'Dragon Pulse', 'Earth Power', 'Aura Sphere'] },
-    ],
-  },
     ],
   },
   {
