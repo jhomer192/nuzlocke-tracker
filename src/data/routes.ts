@@ -133,12 +133,18 @@ const GOLD_SILVER_ROUTES: GameLocation[] = [
   { key: 'victory-road-gs', name: 'Victory Road', segment: 'Pre-Clair' },
   { key: 'boss-clair', name: 'Clair', segment: 'Pre-Clair' },
   // Pre-Elite Four
+  { key: 'boss-rival-goldenrod-underground', name: 'Rival (Goldenrod Underground)', segment: 'Pre-Clair' },
   { key: 'boss-rival-victory-road', name: 'Rival (Victory Road)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-will', name: 'Elite Four: Will', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-koga', name: 'Elite Four: Koga', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bruno', name: 'Elite Four: Bruno', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-karen', name: 'Elite Four: Karen', segment: 'Pre-Elite Four' },
   { key: 'boss-lance-champion', name: 'Lance (Champion)', segment: 'Pre-Elite Four' },
+  { key: 'boss-rocket-proton', name: 'Rocket Executive Proton', segment: 'Pre-Jasmine' },
+  { key: 'boss-rocket-petrel', name: 'Rocket Executive Petrel', segment: 'Pre-Clair' },
+  { key: 'boss-rocket-ariana', name: 'Rocket Executive Ariana', segment: 'Pre-Clair' },
+  { key: 'mt-silver', name: 'Mt. Silver', segment: 'Post-Game' },
+  { key: 'boss-red-mt-silver', name: 'Red (Mt. Silver)', segment: 'Post-Game' },
 ];
 
 const RUBY_SAPPHIRE_ROUTES: GameLocation[] = [
@@ -171,8 +177,8 @@ const RUBY_SAPPHIRE_ROUTES: GameLocation[] = [
   { key: 'route-113', name: 'Route 113', segment: 'Pre-Flannery' },
   { key: 'route-114', name: 'Route 114', segment: 'Pre-Flannery' },
   { key: 'meteor-falls', name: 'Meteor Falls', segment: 'Pre-Flannery' },
-  { key: 'boss-maxie-mt-chimney-omega-ruby', name: 'Maxie (Mt. Chimney - Omega Ruby)', segment: 'Pre-Flannery' },
-  { key: 'boss-archie-mt-chimney-alpha-sapphire', name: 'Archie (Mt. Chimney - Alpha Sapphire)', segment: 'Pre-Flannery' },
+  { key: 'boss-maxie-mt-chimney-ruby', name: 'Maxie (Mt. Chimney - Ruby)', segment: 'Pre-Flannery' },
+  { key: 'boss-archie-mt-chimney-sapphire', name: 'Archie (Mt. Chimney - Sapphire)', segment: 'Pre-Flannery' },
   { key: 'boss-flannery', name: 'Flannery', segment: 'Pre-Flannery' },
   // Pre-Norman
   { key: 'route-115', name: 'Route 115', segment: 'Pre-Norman' },
@@ -205,6 +211,8 @@ const RUBY_SAPPHIRE_ROUTES: GameLocation[] = [
   { key: 'route-132', name: 'Route 132', segment: 'Pre-Wallace' },
   { key: 'route-133', name: 'Route 133', segment: 'Pre-Wallace' },
   { key: 'route-134', name: 'Route 134', segment: 'Pre-Wallace' },
+  { key: 'boss-maxie-seafloor', name: 'Maxie (Seafloor Cavern - Ruby)', segment: 'Pre-Wallace' },
+  { key: 'boss-archie-seafloor', name: 'Archie (Seafloor Cavern - Sapphire)', segment: 'Pre-Wallace' },
   { key: 'victory-road-rs', name: 'Victory Road', segment: 'Pre-Wallace' },
   { key: 'boss-wallace', name: 'Wallace', segment: 'Pre-Wallace' },
   // Pre-Elite Four
@@ -246,8 +254,7 @@ const EMERALD_ROUTES: GameLocation[] = [
   { key: 'route-113-e', name: 'Route 113', segment: 'Pre-Flannery' },
   { key: 'route-114-e', name: 'Route 114', segment: 'Pre-Flannery' },
   { key: 'meteor-falls-e', name: 'Meteor Falls', segment: 'Pre-Flannery' },
-  { key: 'boss-maxie-mt-chimney-omega-ruby', name: 'Maxie (Mt. Chimney - Omega Ruby)', segment: 'Pre-Flannery' },
-  { key: 'boss-archie-mt-chimney-alpha-sapphire', name: 'Archie (Mt. Chimney - Alpha Sapphire)', segment: 'Pre-Flannery' },
+  { key: 'boss-maxie-mt-chimney', name: 'Maxie (Mt. Chimney)', segment: 'Pre-Flannery' },
   { key: 'boss-flannery', name: 'Flannery', segment: 'Pre-Flannery' },
   // Pre-Norman
   { key: 'route-115-e', name: 'Route 115', segment: 'Pre-Norman' },
@@ -280,6 +287,8 @@ const EMERALD_ROUTES: GameLocation[] = [
   { key: 'route-132-e', name: 'Route 132', segment: 'Pre-Juan' },
   { key: 'route-133-e', name: 'Route 133', segment: 'Pre-Juan' },
   { key: 'route-134-e', name: 'Route 134', segment: 'Pre-Juan' },
+  { key: 'boss-archie-seafloor', name: 'Archie (Seafloor Cavern)', segment: 'Pre-Juan' },
+  { key: 'boss-maxie-magma-hideout', name: 'Maxie (Magma Hideout)', segment: 'Pre-Juan' },
   { key: 'victory-road-e', name: 'Victory Road', segment: 'Pre-Juan' },
   { key: 'boss-juan', name: 'Juan', segment: 'Pre-Juan' },
   // Pre-Elite Four
@@ -292,9 +301,11 @@ const EMERALD_ROUTES: GameLocation[] = [
 
 const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   // Pre-Brock
+  { key: 'boss-rival-oaks-lab', name: "Rival (Oak's Lab)", segment: 'Pre-Brock' },
   { key: 'frlg-route-1', name: 'Route 1', segment: 'Pre-Brock' },
   { key: 'frlg-route-2', name: 'Route 2', segment: 'Pre-Brock' },
   { key: 'frlg-route-22', name: 'Route 22', segment: 'Pre-Brock' },
+  { key: 'boss-rival-route-22', name: 'Rival (Route 22)', segment: 'Pre-Brock' },
   { key: 'frlg-viridian-forest', name: 'Viridian Forest', segment: 'Pre-Brock' },
   { key: 'boss-brock', name: 'Brock', segment: 'Pre-Brock' },
   // Pre-Misty
@@ -305,6 +316,7 @@ const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   { key: 'frlg-route-4', name: 'Route 4', segment: 'Pre-Misty' },
   { key: 'frlg-route-24', name: 'Route 24', segment: 'Pre-Misty' },
   { key: 'frlg-route-25', name: 'Route 25', segment: 'Pre-Misty' },
+  { key: 'boss-rival-cerulean-city', name: 'Rival (Cerulean City)', segment: 'Pre-Misty' },
   { key: 'boss-misty', name: 'Misty', segment: 'Pre-Misty' },
   // Pre-Lt. Surge
   { key: 'frlg-route-5', name: 'Route 5', segment: 'Pre-Lt. Surge' },
@@ -312,6 +324,7 @@ const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   { key: 'frlg-route-11', name: 'Route 11', segment: 'Pre-Lt. Surge' },
   { key: 'frlg-diglett-cave', name: "Diglett's Cave", segment: 'Pre-Lt. Surge' },
   { key: 'frlg-ss-anne', name: 'S.S. Anne', segment: 'Pre-Lt. Surge' },
+  { key: 'boss-rival-ss-anne', name: 'Rival (S.S. Anne)', segment: 'Pre-Lt. Surge' },
   { key: 'boss-lt-surge', name: 'Lt. Surge', segment: 'Pre-Lt. Surge' },
   // Pre-Erika
   { key: 'frlg-route-9', name: 'Route 9', segment: 'Pre-Erika' },
@@ -321,6 +334,7 @@ const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   { key: 'frlg-route-8', name: 'Route 8', segment: 'Pre-Erika' },
   { key: 'frlg-route-7', name: 'Route 7', segment: 'Pre-Erika' },
   { key: 'frlg-pokemon-tower', name: 'Pokemon Tower', segment: 'Pre-Erika' },
+  { key: 'boss-rival-pokemon-tower', name: 'Rival (Pokemon Tower)', segment: 'Pre-Erika' },
   { key: 'boss-erika', name: 'Erika', segment: 'Pre-Erika' },
   // Pre-Koga
   { key: 'frlg-route-12', name: 'Route 12', segment: 'Pre-Koga' },
@@ -339,6 +353,8 @@ const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   { key: 'frlg-power-plant', name: 'Power Plant', segment: 'Pre-Sabrina' },
   { key: 'frlg-seafoam-1f', name: 'Seafoam Islands 1F', segment: 'Pre-Sabrina' },
   { key: 'frlg-seafoam-b1f', name: 'Seafoam Islands B1F', segment: 'Pre-Sabrina' },
+  { key: 'boss-rival-silph-co', name: 'Rival (Silph Co.)', segment: 'Pre-Sabrina' },
+  { key: 'boss-giovanni-silph-co', name: 'Giovanni (Silph Co.)', segment: 'Pre-Sabrina' },
   { key: 'boss-sabrina', name: 'Sabrina', segment: 'Pre-Sabrina' },
   // Pre-Blaine
   { key: 'frlg-route-19', name: 'Route 19', segment: 'Pre-Blaine' },
@@ -354,6 +370,7 @@ const FIRERED_LEAFGREEN_ROUTES: GameLocation[] = [
   { key: 'frlg-victory-road-3f', name: 'Victory Road 3F', segment: 'Pre-Giovanni' },
   { key: 'boss-giovanni', name: 'Giovanni', segment: 'Pre-Giovanni' },
   // Pre-Elite Four
+  { key: 'boss-rival-route-22-rematch', name: 'Rival (Route 22 Rematch)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-lorelei', name: 'Elite Four: Lorelei', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bruno', name: 'Elite Four: Bruno', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-agatha', name: 'Elite Four: Agatha', segment: 'Pre-Elite Four' },
