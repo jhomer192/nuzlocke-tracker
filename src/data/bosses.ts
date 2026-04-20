@@ -3800,6 +3800,25 @@ const LEGENDS_ARCEUS_BOSSES: BossEntry[] = [
   },
     ],
   },
+  {
+    name: 'Volo (Temple of Sinnoh)',
+    segment: 'Pre-Dialga/Palkia',
+    pokemon: [
+      { name: 'Spiritomb', id: 442, level: 68, types: ['ghost', 'dark'], moves: ['Dark Pulse', 'Shadow Ball', 'Hypnosis', 'Nasty Plot'] },
+      { name: 'Roserade', id: 407, level: 68, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Extrasensory', 'Poison Jab'] },
+      { name: 'Togekiss', id: 468, level: 68, types: ['fairy', 'flying'], moves: ['Moonblast', 'Air Slash', 'Thunder Wave', 'Extrasensory'] },
+      { name: 'Lucario', id: 448, level: 68, types: ['fighting', 'steel'], moves: ['Aura Sphere', 'Flash Cannon', 'Bulk Up', 'Crunch'] },
+      { name: 'Arcanine', id: 59, level: 68, types: ['fire', 'rock'], moves: ['Raging Fury', 'Rock Slide', 'Crunch', 'Extreme Speed'] },
+      { name: 'Garchomp', id: 445, level: 68, types: ['dragon', 'ground'], moves: ['Dragon Claw', 'Earth Power', 'Iron Head', 'Swords Dance'] },
+    ],
+  },
+  {
+    name: 'Giratina (After Volo)',
+    segment: 'Pre-Dialga/Palkia',
+    pokemon: [
+      { name: 'Giratina', id: 487, level: 70, types: ['ghost', 'dragon'], moves: ['Shadow Force', 'Dragon Pulse', 'Earth Power', 'Aura Sphere'] },
+    ],
+  },
 ];
 
 // ── Scarlet / Violet ──────────────────────────────────────────────────────
@@ -4153,6 +4172,34 @@ function customBossToBossEntry(cb: CustomBoss): BossEntry {
       moves: [],
     })),
   };
+}
+
+/**
+ * Return the badge index to award when this boss is defeated,
+ * or null if defeating this boss shouldn't grant a badge.
+ * A boss is considered a "badge granter" when its own name appears in
+ * the segment prefix ("Pre-X" where X == boss.name). E.g. defeating "Brock"
+ * whose segment is "Pre-Brock" grants badge 0. Rivals/grunts are skipped.
+ */
+export function getBadgeIndexForBoss(game: Game, bossName: string, customGameId?: string): number | null {
+  let bosses: BossEntry[] | undefined;
+  if (game === 'CUSTOM' && customGameId) {
+    const def = getCustomGame(customGameId);
+    if (!def?.bosses) return null;
+    bosses = def.bosses.map(customBossToBossEntry);
+  } else {
+    bosses = BOSS_DATA[game];
+  }
+  if (!bosses) return null;
+  // Preserve declaration order, dedupe
+  const gymLeaders: string[] = [];
+  for (const b of bosses) {
+    if (b.segment === `Pre-${b.name}` && !gymLeaders.includes(b.name)) {
+      gymLeaders.push(b.name);
+    }
+  }
+  const idx = gymLeaders.indexOf(bossName);
+  return idx >= 0 ? idx : null;
 }
 
 /** Get all bosses for a segment (for E4 segments with multiple bosses) */
