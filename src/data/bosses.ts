@@ -2005,6 +2005,98 @@ const X_Y_BOSSES: BossEntry[] = [
 // ── Omega Ruby / Alpha Sapphire ───────────────────────────────────────────
 
 const ORAS_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Treecko, rival has Torchic line)
+  {
+    name: 'Rival (Route 103)',
+    segment: 'Pre-Roxanne',
+    pokemon: [
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 110)',
+    segment: 'Pre-Wattson',
+    pokemon: [
+      { name: 'Slugma', id: 218, level: 18, types: ['fire'], moves: ['Ember', 'Rock Throw', 'Harden'] },
+      { name: 'Shroomish', id: 285, level: 18, types: ['grass'], moves: ['Mega Drain', 'Headbutt', 'Stun Spore'] },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Ember', 'Double Kick', 'Peck', 'Sand Attack'] },
+    ],
+  },
+  {
+    name: 'Wally (Mauville City)',
+    segment: 'Pre-Wattson',
+    pokemon: [
+      { name: 'Ralts', id: 280, level: 16, types: ['psychic', 'fairy'], moves: ['Confusion', 'Double Team', 'Teleport', 'Disarming Voice'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 119)',
+    segment: 'Pre-Winona',
+    pokemon: [
+      { name: 'Slugma', id: 218, level: 29, types: ['fire'], moves: ['Flamethrower', 'Rock Slide', 'Light Screen'] },
+      { name: 'Shroomish', id: 285, level: 29, types: ['grass'], moves: ['Mega Drain', 'Headbutt', 'Mach Punch'] },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Bulk Up', 'Quick Attack'] },
+    ],
+  },
+  {
+    name: 'Rival (Lilycove City)',
+    segment: 'Pre-Tate & Liza',
+    pokemon: [
+      { name: 'Raichu', id: 26, level: 31, types: ['electric'], moves: ['Thunderbolt', 'Quick Attack', 'Double Team'] },
+      { name: 'Magcargo', id: 219, level: 32, types: ['fire', 'rock'], moves: ['Flamethrower', 'Rock Slide', 'Light Screen'] },
+      { name: 'Breloom', id: 286, level: 32, types: ['grass', 'fighting'], moves: ['Mach Punch', 'Mega Drain', 'Headbutt'] },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Sky Uppercut', 'Bulk Up', 'Quick Attack'] },
+    ],
+  },
+  // Team Magma/Aqua leaders (version-specific)
+  {
+    name: 'Maxie (Mt. Chimney - Omega Ruby)',
+    segment: 'Pre-Flannery',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 25, types: ['dark'], moves: ['Snarl', 'Swagger', 'Scary Face', 'Embargo'] },
+      { name: 'Golbat', id: 42, level: 25, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Wing Attack'] },
+      { name: 'Camerupt', id: 323, level: 27, types: ['fire', 'ground'], moves: ['Rock Slide', 'Flame Burst', 'Magnitude', 'Curse'] },
+    ],
+  },
+  {
+    name: 'Archie (Mt. Chimney - Alpha Sapphire)',
+    segment: 'Pre-Flannery',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 25, types: ['dark'], moves: ['Snarl', 'Swagger', 'Scary Face', 'Embargo'] },
+      { name: 'Golbat', id: 42, level: 25, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Wing Attack'] },
+      { name: 'Sharpedo', id: 319, level: 27, types: ['water', 'dark'], moves: ['Slash', 'Aqua Jet', 'Swagger', 'Ice Fang'] },
+    ],
+  },
+  {
+    name: 'Maxie (Mossdeep Space Center - Omega Ruby)',
+    segment: 'Pre-Tate & Liza',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 43, types: ['dark'], moves: ['Crunch', 'Swagger', 'Scary Face', 'Sucker Punch'] },
+      { name: 'Crobat', id: 169, level: 43, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Air Slash'] },
+      { name: 'Camerupt', id: 323, level: 45, types: ['fire', 'ground'], moves: ['Earth Power', 'Lava Plume', 'Rock Slide', 'Yawn'] },
+    ],
+  },
+  {
+    name: 'Archie (Mossdeep Space Center - Alpha Sapphire)',
+    segment: 'Pre-Tate & Liza',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 43, types: ['dark'], moves: ['Crunch', 'Swagger', 'Scary Face', 'Sucker Punch'] },
+      { name: 'Crobat', id: 169, level: 43, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Air Slash'] },
+      { name: 'Sharpedo', id: 319, level: 45, types: ['water', 'dark'], moves: ['Crunch', 'Aqua Jet', 'Poison Fang', 'Ice Fang'] },
+    ],
+  },
+  // Wally (Victory Road)
+  {
+    name: 'Wally (Victory Road)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Altaria', id: 334, level: 46, types: ['dragon', 'flying'], moves: ['Dragon Pulse', 'Cotton Guard', 'Moonblast', 'Aerial Ace'] },
+      { name: 'Delcatty', id: 301, level: 46, types: ['normal'], moves: ['Sing', 'Charm', 'Feint Attack', 'Play Rough'] },
+      { name: 'Roselia', id: 315, level: 46, types: ['grass', 'poison'], moves: ['Petal Blizzard', 'Sludge Bomb', 'Toxic Spikes', 'Leech Seed'] },
+      { name: 'Magneton', id: 82, level: 46, types: ['electric', 'steel'], moves: ['Thunderbolt', 'Tri Attack', 'Metal Sound', 'Thunder Wave'] },
+      { name: 'Gallade', id: 475, level: 48, types: ['psychic', 'fighting'], moves: ['Close Combat', 'Psycho Cut', 'Night Slash', 'Swords Dance'] },
+    ],
+  },
   {
     name: 'Roxanne',
     segment: 'Pre-Roxanne',
