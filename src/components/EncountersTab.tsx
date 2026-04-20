@@ -364,6 +364,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           isShinyClauseAdd={isShinyClauseAdd}
           soulLink={run.rules.soulLink}
           ownedPokemonIds={ownedPokemonIds}
+          version={run.version}
         />
       )}
     </div>

@@ -1034,18 +1034,22 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
 export const VERSION_EXCLUSIVES: Record<string, Record<string, number[]>> = {
   // Gen 1
   RED_BLUE: {
-    RED: [23, 43, 56, 58, 123, 126],         // Ekans, Oddish, Mankey, Growlithe, Scyther, Magmar
-    BLUE: [27, 37, 52, 69, 127, 125],        // Sandshrew, Vulpix, Meowth, Bellsprout, Pinsir, Electabuzz
+    RED: [23, 24, 43, 44, 45, 56, 57, 58, 59, 123, 125],
+    // Ekans, Arbok, Oddish, Gloom, Vileplume, Mankey, Primeape, Growlithe, Arcanine, Scyther, Electabuzz
+    BLUE: [27, 28, 37, 38, 52, 53, 69, 70, 71, 127, 126],
+    // Sandshrew, Sandslash, Vulpix, Ninetales, Meowth, Persian, Bellsprout, Weepinbell, Victreebel, Pinsir, Magmar
   },
   // Gen 2
   GOLD_SILVER: {
-    GOLD: [56, 58, 167, 207, 226, 250],      // Mankey, Growlithe, Spinarak, Gligar, Mantine, Ho-Oh
-    SILVER: [52, 37, 165, 216, 225, 249],     // Meowth, Vulpix, Ledyba, Teddiursa, Delibird, Lugia
+    GOLD: [56, 57, 58, 59, 167, 168, 207, 216, 217, 226],
+    // Mankey, Primeape, Growlithe, Arcanine, Spinarak, Ariados, Gligar, Teddiursa, Ursaring, Mantine
+    SILVER: [52, 53, 37, 38, 165, 166, 225, 231, 232, 227],
+    // Meowth, Persian, Vulpix, Ninetales, Ledyba, Ledian, Delibird, Phanpy, Donphan, Skarmory
   },
   // Gen 3
   RUBY_SAPPHIRE: {
-    RUBY: [273, 303, 335, 338, 383],         // Seedot, Mawile, Zangoose, Solrock, Groudon
-    SAPPHIRE: [270, 302, 336, 337, 382],     // Lotad, Sableye, Seviper, Lunatone, Kyogre
+    RUBY: [273, 274, 275, 303, 335, 338, 383],  // Seedot, Nuzleaf, Shiftry, Mawile, Zangoose, Solrock, Groudon
+    SAPPHIRE: [270, 271, 272, 302, 336, 337, 382], // Lotad, Lombre, Ludicolo, Sableye, Seviper, Lunatone, Kyogre
   },
   // Gen 4
   DIAMOND_PEARL: {

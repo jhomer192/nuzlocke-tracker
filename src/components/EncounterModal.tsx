@@ -3,7 +3,7 @@ import { Modal } from './Modal';
 import { PokemonSearch } from './PokemonSearch';
 import type { PokemonData, Encounter, Game } from '../types';
 import { generateId } from '../utils/id';
-import { ENCOUNTER_TABLES } from '../data/encounters';
+import { ENCOUNTER_TABLES, VERSION_EXCLUSIVES } from '../data/encounters';
 import { getSpriteUrl, fetchPokemonData, loadPokemonList } from '../utils/pokeapi';
 import { TypeBadge } from './TypeBadge';
 
@@ -18,6 +18,7 @@ interface EncounterModalProps {
   isShinyClauseAdd?: boolean;
   soulLink?: boolean;
   ownedPokemonIds?: Set<number>;
+  version?: string;
 }
 
 export function EncounterModal({
@@ -31,6 +32,7 @@ export function EncounterModal({
   isShinyClauseAdd,
   soulLink,
   ownedPokemonIds,
+  version,
 }: EncounterModalProps) {
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData | null>(null);
   const [nickname, setNickname] = useState(existingEncounter?.nickname ?? '');
@@ -59,7 +61,16 @@ export function EncounterModal({
     }
   }, [existingEncounter?.linkedPokemonId]);
 
-  const routeEncounters = ENCOUNTER_TABLES[game]?.[routeKey] ?? [];
+  const routeEncounters = (ENCOUNTER_TABLES[game]?.[routeKey] ?? []).filter((id) => {
+    if (!version) return true;
+    const gameExclusives = VERSION_EXCLUSIVES[game];
+    if (!gameExclusives) return true;
+    // Remove Pokemon that are exclusive to the OTHER version(s)
+    for (const [vKey, ids] of Object.entries(gameExclusives)) {
+      if (vKey !== version && ids.includes(id)) return false;
+    }
+    return true;
+  });
 
   // Load pokemon names for the encounter list
   useEffect(() => {
