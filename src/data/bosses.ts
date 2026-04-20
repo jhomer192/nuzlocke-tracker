@@ -263,6 +263,17 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Rival (Goldenrod Underground)',
+    segment: 'Pre-Clair',
+    pokemon: [
+      { name: 'Golbat', id: 42, level: 30, types: ['poison', 'flying'], moves: ['Leech Life', 'Bite', 'Confuse Ray', 'Wing Attack'] },
+      { name: 'Magnemite', id: 81, level: 28, types: ['electric', 'steel'], moves: ['Thunderbolt', 'SonicBoom', 'Thunder Wave', 'Supersonic'] },
+      { name: 'Haunter', id: 93, level: 30, types: ['ghost', 'poison'], moves: ['Mean Look', 'Curse', 'Shadow Ball', 'Lick'] },
+      { name: 'Sneasel', id: 215, level: 32, types: ['dark', 'ice'], moves: ['Quick Attack', 'Screech', 'Faint Attack', 'Fury Cutter'] },
+      { name: 'Croconaw', id: 159, level: 32, types: ['water'], moves: ['Rage', 'Water Gun', 'Bite', 'Scary Face'] },
+    ],
+  },
+  {
     name: 'Rival (Victory Road)',
     segment: 'Pre-Elite Four',
     pokemon: [
@@ -561,6 +572,42 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
       { name: 'Milotic', id: 350, level: 43, types: ['water'], moves: ['Water Pulse', 'Twister', 'Recover', 'Ice Beam'], ability: 'Marvel Scale' },
     ],
   },
+  {
+    name: 'Maxie (Mt. Chimney - Ruby)',
+    segment: 'Pre-Flannery',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 24, types: ['dark'], moves: ['Bite', 'Roar', 'Sand Attack', 'Swagger'], ability: 'Intimidate' },
+      { name: 'Zubat', id: 41, level: 24, types: ['poison', 'flying'], moves: ['Bite', 'Astonish', 'Supersonic', 'Leech Life'], ability: 'Inner Focus' },
+      { name: 'Camerupt', id: 323, level: 25, types: ['fire', 'ground'], moves: ['Magnitude', 'Ember', 'Focus Energy', 'Take Down'], ability: 'Magma Armor' },
+    ],
+  },
+  {
+    name: 'Archie (Mt. Chimney - Sapphire)',
+    segment: 'Pre-Flannery',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 24, types: ['dark'], moves: ['Bite', 'Roar', 'Sand Attack', 'Swagger'], ability: 'Intimidate' },
+      { name: 'Golbat', id: 42, level: 24, types: ['poison', 'flying'], moves: ['Bite', 'Astonish', 'Confuse Ray', 'Wing Attack'], ability: 'Inner Focus' },
+      { name: 'Sharpedo', id: 319, level: 25, types: ['water', 'dark'], moves: ['Crunch', 'Swagger', 'Scary Face', 'Slash'], ability: 'Rough Skin' },
+    ],
+  },
+  {
+    name: 'Maxie (Seafloor Cavern - Ruby)',
+    segment: 'Pre-Wallace',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 42, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
+      { name: 'Crobat', id: 169, level: 42, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
+      { name: 'Camerupt', id: 323, level: 43, types: ['fire', 'ground'], moves: ['Earthquake', 'Eruption', 'Rock Slide', 'Take Down'], ability: 'Magma Armor' },
+    ],
+  },
+  {
+    name: 'Archie (Seafloor Cavern - Sapphire)',
+    segment: 'Pre-Wallace',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 42, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
+      { name: 'Crobat', id: 169, level: 42, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
+      { name: 'Sharpedo', id: 319, level: 43, types: ['water', 'dark'], moves: ['Crunch', 'Surf', 'Slash', 'Swagger'], ability: 'Rough Skin' },
+    ],
+  },
   // Elite Four
   {
     name: 'Elite Four: Sidney',
@@ -738,6 +785,33 @@ const EMERALD_BOSSES: BossEntry[] = [
       { name: 'Kingdra', id: 230, level: 46, types: ['water', 'dragon'], moves: ['Water Pulse', 'Dragon Dance', 'Ice Beam', 'Double Team'], ability: 'Swift Swim' },
     ],
   },
+  {
+    name: 'Maxie (Mt. Chimney)',
+    segment: 'Pre-Flannery',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 24, types: ['dark'], moves: ['Bite', 'Roar', 'Sand Attack', 'Swagger'], ability: 'Intimidate' },
+      { name: 'Zubat', id: 41, level: 24, types: ['poison', 'flying'], moves: ['Bite', 'Astonish', 'Supersonic', 'Leech Life'], ability: 'Inner Focus' },
+      { name: 'Camerupt', id: 323, level: 25, types: ['fire', 'ground'], moves: ['Magnitude', 'Ember', 'Focus Energy', 'Take Down'], ability: 'Magma Armor' },
+    ],
+  },
+  {
+    name: 'Archie (Seafloor Cavern)',
+    segment: 'Pre-Juan',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 41, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
+      { name: 'Crobat', id: 169, level: 41, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
+      { name: 'Sharpedo', id: 319, level: 43, types: ['water', 'dark'], moves: ['Crunch', 'Surf', 'Slash', 'Swagger'], ability: 'Rough Skin' },
+    ],
+  },
+  {
+    name: 'Maxie (Magma Hideout)',
+    segment: 'Pre-Juan',
+    pokemon: [
+      { name: 'Mightyena', id: 262, level: 42, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
+      { name: 'Crobat', id: 169, level: 42, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
+      { name: 'Camerupt', id: 323, level: 44, types: ['fire', 'ground'], moves: ['Earthquake', 'Eruption', 'Rock Slide', 'Take Down'], ability: 'Magma Armor' },
+    ],
+  },
   // Elite Four (Emerald has different levels and some different Pokemon from RS)
   {
     name: 'Elite Four: Sidney',
@@ -800,6 +874,86 @@ const EMERALD_BOSSES: BossEntry[] = [
 // ── FireRed / LeafGreen ───────────────────────────────────────────────────
 
 const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Squirtle, so Blue has Bulbasaur line)
+  {
+    name: "Rival (Oak's Lab)",
+    segment: 'Pre-Brock',
+    pokemon: [
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 22)',
+    segment: 'Pre-Brock',
+    pokemon: [
+      { name: 'Pidgey', id: 16, level: 9, types: ['normal', 'flying'], moves: ['Tackle', 'Sand Attack', 'Gust'] },
+      { name: 'Bulbasaur', id: 1, level: 9, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+    ],
+  },
+  {
+    name: 'Rival (Cerulean City)',
+    segment: 'Pre-Misty',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 17, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
+      { name: 'Raticate', id: 20, level: 15, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
+      { name: 'Abra', id: 63, level: 16, types: ['psychic'], moves: ['Teleport'] },
+      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'] },
+    ],
+  },
+  {
+    name: 'Rival (S.S. Anne)',
+    segment: 'Pre-Lt. Surge',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 19, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
+      { name: 'Raticate', id: 20, level: 16, types: ['normal'], moves: ['Quick Attack', 'Hyper Fang', 'Tail Whip', 'Focus Energy'] },
+      { name: 'Kadabra', id: 64, level: 18, types: ['psychic'], moves: ['Confusion', 'Disable'] },
+      { name: 'Ivysaur', id: 2, level: 20, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'] },
+    ],
+  },
+  {
+    name: 'Rival (Pokemon Tower)',
+    segment: 'Pre-Erika',
+    pokemon: [
+      { name: 'Pidgeotto', id: 17, level: 25, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack', 'Whirlwind'] },
+      { name: 'Growlithe', id: 58, level: 23, types: ['fire'], moves: ['Bite', 'Roar', 'Ember', 'Leer'] },
+      { name: 'Exeggcute', id: 102, level: 23, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect', 'Leech Seed'] },
+      { name: 'Kadabra', id: 64, level: 22, types: ['psychic'], moves: ['Confusion', 'Disable', 'Psybeam'] },
+      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Sleep Powder', 'Razor Leaf'] },
+    ],
+  },
+  {
+    name: 'Rival (Silph Co.)',
+    segment: 'Pre-Sabrina',
+    pokemon: [
+      { name: 'Pidgeot', id: 18, level: 37, types: ['normal', 'flying'], moves: ['Wing Attack', 'Quick Attack', 'Whirlwind', 'Feather Dance'] },
+      { name: 'Growlithe', id: 58, level: 35, types: ['fire'], moves: ['Flamethrower', 'Bite', 'Leer', 'Take Down'] },
+      { name: 'Exeggcute', id: 102, level: 35, types: ['grass', 'psychic'], moves: ['Leech Seed', 'Egg Bomb', 'Stun Spore', 'PoisonPowder'] },
+      { name: 'Alakazam', id: 65, level: 35, types: ['psychic'], moves: ['Psychic', 'Calm Mind', 'Future Sight', 'Disable'] },
+      { name: 'Venusaur', id: 3, level: 40, types: ['grass', 'poison'], moves: ['Razor Leaf', 'Sleep Powder', 'Sweet Scent', 'Growth'] },
+    ],
+  },
+  {
+    name: 'Giovanni (Silph Co.)',
+    segment: 'Pre-Sabrina',
+    pokemon: [
+      { name: 'Nidorino', id: 33, level: 37, types: ['poison'], moves: ['Poison Sting', 'Horn Attack', 'Fury Attack', 'Thrash'] },
+      { name: 'Kangaskhan', id: 115, level: 35, types: ['normal'], moves: ['Comet Punch', 'Rage', 'Bite', 'Mega Punch'] },
+      { name: 'Rhyhorn', id: 111, level: 37, types: ['ground', 'rock'], moves: ['Stomp', 'Rock Blast', 'Scary Face', 'Take Down'] },
+      { name: 'Nidoqueen', id: 31, level: 41, types: ['poison', 'ground'], moves: ['Superpower', 'Body Slam', 'Bite', 'Earthquake'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 22 Rematch)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Pidgeot', id: 18, level: 47, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Feather Dance', 'Sand Attack', 'Whirlwind'] },
+      { name: 'Rhyhorn', id: 111, level: 45, types: ['ground', 'rock'], moves: ['Earthquake', 'Take Down', 'Rock Blast', 'Scary Face'] },
+      { name: 'Growlithe', id: 58, level: 45, types: ['fire'], moves: ['Flamethrower', 'Bite', 'Take Down', 'Agility'] },
+      { name: 'Exeggcute', id: 102, level: 45, types: ['grass', 'psychic'], moves: ['Egg Bomb', 'Stun Spore', 'Sleep Powder', 'Leech Seed'] },
+      { name: 'Alakazam', id: 65, level: 47, types: ['psychic'], moves: ['Psychic', 'Calm Mind', 'Future Sight', 'Recover'] },
+      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['SolarBeam', 'Sunny Day', 'Synthesis', 'Growth'] },
+    ],
+  },
   {
     name: 'Brock',
     segment: 'Pre-Brock',
