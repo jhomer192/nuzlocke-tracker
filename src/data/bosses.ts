@@ -2731,6 +2731,62 @@ const ULTRA_SUN_ULTRA_MOON_BOSSES: BossEntry[] = [
 // ── Sword / Shield ────────────────────────────────────────────────────────
 
 const SWORD_SHIELD_BOSSES: BossEntry[] = [
+  // Hop rival battles (assuming player chose Grookey, Hop has Scorbunny line)
+  {
+    name: 'Hop (Route 1)',
+    segment: 'Pre-Milo',
+    pokemon: [
+      { name: 'Wooloo', id: 831, level: 3, types: ['normal'], moves: ['Tackle', 'Growl'] },
+      { name: 'Scorbunny', id: 813, level: 5, types: ['fire'], moves: ['Tackle', 'Growl'] },
+    ],
+  },
+  {
+    name: 'Hop (Wedgehurst)',
+    segment: 'Pre-Milo',
+    pokemon: [
+      { name: 'Wooloo', id: 831, level: 6, types: ['normal'], moves: ['Tackle', 'Growl', 'Defense Curl'] },
+      { name: 'Rookidee', id: 821, level: 5, types: ['flying'], moves: ['Peck', 'Leer'] },
+      { name: 'Scorbunny', id: 813, level: 8, types: ['fire'], moves: ['Tackle', 'Growl', 'Ember'] },
+    ],
+  },
+  {
+    name: 'Hop (Route 3)',
+    segment: 'Pre-Nessa',
+    pokemon: [
+      { name: 'Wooloo', id: 831, level: 11, types: ['normal'], moves: ['Tackle', 'Growl', 'Defense Curl'] },
+      { name: 'Rookidee', id: 821, level: 12, types: ['flying'], moves: ['Peck', 'Leer', 'Power Trip'] },
+      { name: 'Scorbunny', id: 813, level: 14, types: ['fire'], moves: ['Ember', 'Quick Attack', 'Double Kick'] },
+    ],
+  },
+  // Bede
+  {
+    name: 'Bede (Route 5)',
+    segment: 'Pre-Kabu',
+    pokemon: [
+      { name: 'Solosis', id: 577, level: 13, types: ['psychic'], moves: ['Psywave', 'Charm', 'Rollout'] },
+      { name: 'Gothita', id: 574, level: 15, types: ['psychic'], moves: ['Pound', 'Confusion', 'Play Nice'] },
+      { name: 'Hatenna', id: 856, level: 16, types: ['psychic'], moves: ['Confusion', 'Play Nice', 'Life Dew'] },
+    ],
+  },
+  {
+    name: 'Hop (Route 5)',
+    segment: 'Pre-Kabu',
+    pokemon: [
+      { name: 'Wooloo', id: 831, level: 18, types: ['normal'], moves: ['Tackle', 'Defense Curl', 'Headbutt'] },
+      { name: 'Corvisquire', id: 822, level: 19, types: ['flying'], moves: ['Pluck', 'Hone Claws', 'Fury Attack'] },
+      { name: 'Raboot', id: 814, level: 21, types: ['fire'], moves: ['Ember', 'Quick Attack', 'Double Kick', 'Flame Charge'] },
+    ],
+  },
+  // Marnie
+  {
+    name: 'Marnie (Route 5)',
+    segment: 'Pre-Kabu',
+    pokemon: [
+      { name: 'Croagunk', id: 453, level: 19, types: ['poison', 'fighting'], moves: ['Venoshock', 'Sucker Punch', 'Swagger'] },
+      { name: 'Scraggy', id: 559, level: 19, types: ['dark', 'fighting'], moves: ['Headbutt', 'Payback', 'Sand Attack'] },
+      { name: 'Morpeko', id: 877, level: 20, types: ['electric', 'dark'], moves: ['Aura Wheel', 'Bite', 'Spark'] },
+    ],
+  },
   {
     name: 'Milo',
     segment: 'Pre-Milo',
@@ -2758,6 +2814,27 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
+  {
+    name: 'Hop (Stow-on-Side)',
+    segment: 'Pre-Bea/Allister',
+    pokemon: [
+      { name: 'Dubwool', id: 832, level: 29, types: ['normal'], moves: ['Headbutt', 'Defense Curl', 'Zen Headbutt'] },
+      { name: 'Corvisquire', id: 822, level: 30, types: ['flying'], moves: ['Pluck', 'Hone Claws', 'Scary Face'] },
+      { name: 'Trevenant', id: 709, level: 29, types: ['ghost', 'grass'], moves: ['Shadow Claw', 'Mega Drain', 'Will-O-Wisp'] },
+      { name: 'Raboot', id: 814, level: 31, types: ['fire'], moves: ['Flame Charge', 'Double Kick', 'Headbutt'] },
+    ],
+  },
+  {
+    name: 'Bede (Stow-on-Side)',
+    segment: 'Pre-Bea/Allister',
+    pokemon: [
+      { name: 'Duosion', id: 578, level: 32, types: ['psychic'], moves: ['Psybeam', 'Charm'] },
+      { name: 'Gothorita', id: 575, level: 32, types: ['psychic'], moves: ['Psybeam', 'Hypnosis'] },
+      { name: 'Ponyta', id: 77, level: 33, types: ['psychic'], moves: ['Confusion', 'Fairy Wind', 'Stomp'] },
+      { name: 'Hattrem', id: 857, level: 34, types: ['psychic'], moves: ['Dazzling Gleam', 'Psybeam', 'Brutal Swing'] },
+    ],
+  },
+  {
     name: 'Bea/Allister',
     segment: 'Pre-Bea/Allister',
     pokemon: [
@@ -2778,6 +2855,28 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
+  {
+    name: 'Bede (Ballonlea)',
+    segment: 'Pre-Gordie/Melony',
+    pokemon: [
+      { name: 'Mawile', id: 303, level: 36, types: ['steel', 'fairy'], moves: ['Crunch', 'Iron Head', 'Fairy Wind'] },
+      { name: 'Gardevoir', id: 282, level: 36, types: ['psychic', 'fairy'], moves: ['Dazzling Gleam', 'Psychic', 'Calm Mind'] },
+      { name: 'Galarian Rapidash', id: 78, level: 37, types: ['psychic', 'fairy'], moves: ['Psycho Cut', 'Dazzling Gleam', 'Agility'] },
+      { name: 'Hattrem', id: 857, level: 38, types: ['psychic'], moves: ['Dazzling Gleam', 'Psybeam', 'Brutal Swing'] },
+    ],
+  },
+  {
+    name: 'Hop (Circhester)',
+    segment: 'Pre-Gordie/Melony',
+    pokemon: [
+      { name: 'Dubwool', id: 832, level: 37, types: ['normal'], moves: ['Body Slam', 'Zen Headbutt', 'Cotton Guard'] },
+      { name: 'Corviknight', id: 823, level: 38, types: ['flying', 'steel'], moves: ['Steel Wing', 'Drill Peck', 'Scary Face'] },
+      { name: 'Trevenant', id: 709, level: 37, types: ['ghost', 'grass'], moves: ['Shadow Claw', 'Horn Leech', 'Will-O-Wisp'] },
+      { name: 'Snorlax', id: 143, level: 38, types: ['normal'], moves: ['Body Slam', 'Yawn', 'Heavy Slam'] },
+      { name: 'Cinderace', id: 815, level: 40, types: ['fire'], moves: ['Pyro Ball', 'Double Kick', 'Flame Charge', 'Headbutt'] },
+    ],
+  },
+  {
     name: 'Gordie/Melony',
     segment: 'Pre-Gordie/Melony',
     pokemon: [
@@ -2788,6 +2887,17 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
+  {
+    name: 'Marnie (Spikemuth)',
+    segment: 'Pre-Piers',
+    pokemon: [
+      { name: 'Liepard', id: 510, level: 42, types: ['dark'], moves: ['Fake Out', 'Snarl', 'Torment', 'Nasty Plot'] },
+      { name: 'Toxicroak', id: 454, level: 42, types: ['poison', 'fighting'], moves: ['Sucker Punch', 'Poison Jab', 'Venoshock'] },
+      { name: 'Scrafty', id: 560, level: 43, types: ['dark', 'fighting'], moves: ['Crunch', 'Brick Break', 'Swagger'] },
+      { name: 'Morpeko', id: 877, level: 44, types: ['electric', 'dark'], moves: ['Aura Wheel', 'Bite', 'Spark', 'Bullet Seed'] },
+    ],
+  },
+  {
     name: 'Piers',
     segment: 'Pre-Piers',
     pokemon: [
@@ -2795,6 +2905,19 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
       { name: 'Malamar', id: 687, level: 44, types: ['dark', 'psychic'], moves: ['Night Slash', 'Foul Play', 'Psycho Cut'] },
       { name: 'Skuntank', id: 435, level: 45, types: ['poison', 'dark'], moves: ['Sucker Punch', 'Snarl', 'Toxic'] },
       { name: 'Obstagoon', id: 862, level: 46, types: ['dark', 'normal'], moves: ['Night Slash', 'Counter', 'Obstruct', 'Shadow Claw'] },
+    ],
+  },
+  {
+  {
+    name: 'Hop (Route 10)',
+    segment: 'Pre-Raihan',
+    pokemon: [
+      { name: 'Dubwool', id: 832, level: 40, types: ['normal'], moves: ['Body Slam', 'Zen Headbutt', 'Cotton Guard'] },
+      { name: 'Corviknight', id: 823, level: 40, types: ['flying', 'steel'], moves: ['Steel Wing', 'Brave Bird', 'Scary Face'] },
+      { name: 'Trevenant', id: 709, level: 40, types: ['ghost', 'grass'], moves: ['Shadow Claw', 'Horn Leech', 'Will-O-Wisp'] },
+      { name: 'Snorlax', id: 143, level: 40, types: ['normal'], moves: ['Body Slam', 'Yawn', 'Heavy Slam'] },
+      { name: 'Pincurchin', id: 871, level: 39, types: ['electric'], moves: ['Zing Zap', 'Recover', 'Curse'] },
+      { name: 'Cinderace', id: 815, level: 42, types: ['fire'], moves: ['Pyro Ball', 'Bounce', 'Quick Attack'] },
     ],
   },
   {
