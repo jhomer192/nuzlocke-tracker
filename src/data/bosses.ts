@@ -1811,6 +1811,14 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
 // ── X / Y ─────────────────────────────────────────────────────────────────
 
 const X_Y_BOSSES: BossEntry[] = [
+  // Rival battles (assuming player chose Chespin, rival has Fennekin line)
+  {
+    name: 'Rival (Aquacorde Town)',
+    segment: 'Pre-Viola',
+    pokemon: [
+      { name: 'Fennekin', id: 653, level: 5, types: ['fire'], moves: ['Scratch', 'Tail Whip'] },
+    ],
+  },
   {
     name: 'Viola',
     segment: 'Pre-Viola',
@@ -1825,6 +1833,15 @@ const X_Y_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Amaura', id: 698, level: 25, types: ['rock', 'ice'], moves: ['Take Down', 'Aurora Beam', 'Rock Tomb', 'Thunder Wave'] },
       { name: 'Tyrunt', id: 696, level: 25, types: ['rock', 'dragon'], moves: ['Bite', 'Rock Tomb', 'Stomp', 'Strength'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 5)',
+    segment: 'Pre-Korrina',
+    pokemon: [
+      { name: 'Meowstic', id: 678, level: 28, types: ['psychic'], moves: ['Fake Out', 'Disarming Voice', 'Light Screen'] },
+      { name: 'Absol', id: 359, level: 28, types: ['dark'], moves: ['Bite', 'Slash', 'Quick Attack'] },
+      { name: 'Braixen', id: 654, level: 30, types: ['fire'], moves: ['Fire Spin', 'Psybeam', 'Flame Charge'] },
     ],
   },
   {
@@ -1864,6 +1881,15 @@ const X_Y_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Rival (Route 14)',
+    segment: 'Pre-Olympia',
+    pokemon: [
+      { name: 'Meowstic', id: 678, level: 44, types: ['psychic'], moves: ['Psychic', 'Shadow Ball', 'Light Screen', 'Fake Out'] },
+      { name: 'Absol', id: 359, level: 44, types: ['dark'], moves: ['Night Slash', 'Psycho Cut', 'Swords Dance'] },
+      { name: 'Delphox', id: 655, level: 46, types: ['fire', 'psychic'], moves: ['Flamethrower', 'Psychic', 'Shadow Ball', 'Calm Mind'] },
+    ],
+  },
+  {
     name: 'Olympia',
     segment: 'Pre-Olympia',
     pokemon: [
@@ -1883,12 +1909,43 @@ const X_Y_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Lysandre (Team Flare HQ)',
+    segment: 'Pre-Wulfric',
+    pokemon: [
+      { name: 'Mienshao', id: 620, level: 49, types: ['fighting'], moves: ['High Jump Kick', 'Acrobatics', 'U-turn', 'Fake Out'] },
+      { name: 'Honchkrow', id: 430, level: 49, types: ['dark', 'flying'], moves: ['Night Slash', 'Brave Bird', 'Steel Wing', 'Foul Play'] },
+      { name: 'Pyroar', id: 668, level: 51, types: ['fire', 'normal'], moves: ['Flamethrower', 'Hyper Voice', 'Noble Roar', 'Dark Pulse'] },
+      { name: 'Gyarados', id: 130, level: 53, types: ['water', 'flying'], moves: ['Waterfall', 'Iron Head', 'Earthquake', 'Outrage'] },
+    ],
+  },
+  {
     name: 'Wulfric',
     segment: 'Pre-Wulfric',
     pokemon: [
       { name: 'Abomasnow', id: 460, level: 56, types: ['grass', 'ice'], moves: ['Energy Ball', 'Ice Beam', 'Ice Shard', 'Leech Seed'] },
       { name: 'Cryogonal', id: 615, level: 55, types: ['ice'], moves: ['Flash Cannon', 'Ice Beam', 'Confuse Ray', 'Hail'] },
       { name: 'Avalugg', id: 713, level: 59, types: ['ice'], moves: ['Crunch', 'Avalanche', 'Curse', 'Gyro Ball'] },
+    ],
+  },
+  {
+    name: 'Rival (Victory Road)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Meowstic', id: 678, level: 57, types: ['psychic'], moves: ['Psychic', 'Shadow Ball', 'Light Screen', 'Reflect'] },
+      { name: 'Clefable', id: 36, level: 57, types: ['fairy'], moves: ['Moonblast', 'Sing', 'Minimize'] },
+      { name: 'Absol', id: 359, level: 58, types: ['dark'], moves: ['Night Slash', 'Psycho Cut', 'Swords Dance', 'Sucker Punch'] },
+      { name: 'Jolteon', id: 135, level: 57, types: ['electric'], moves: ['Thunderbolt', 'Quick Attack', 'Shadow Ball'] },
+      { name: 'Delphox', id: 655, level: 59, types: ['fire', 'psychic'], moves: ['Flamethrower', 'Psychic', 'Shadow Ball', 'Calm Mind'] },
+    ],
+  },
+  // AZ (post-Elite Four)
+  {
+    name: 'AZ (Post-Champion)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Torkoal', id: 324, level: 60, types: ['fire'], moves: ['Flamethrower', 'Stone Edge', 'Yawn'] },
+      { name: 'Golurk', id: 623, level: 60, types: ['ground', 'ghost'], moves: ['Shadow Punch', 'Earthquake', 'Hammer Arm'] },
+      { name: 'Sigilyph', id: 561, level: 60, types: ['psychic', 'flying'], moves: ['Psychic', 'Air Slash', 'Flash Cannon'] },
     ],
   },
   {
