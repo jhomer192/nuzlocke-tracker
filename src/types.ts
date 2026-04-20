@@ -55,9 +55,11 @@ export interface Encounter {
   caughtAt: string;
   diedAt?: string;
   moves?: string[]; // up to 4 move names
+  previousPokemonId?: number;    // for devolve: what this Pokemon was before evolving
   linkedPokemonId?: number;      // partner's Pokemon national dex ID (soul link)
   linkedNickname?: string;       // partner's nickname for their Pokemon (soul link)
   linkedOnPartnerTeam?: boolean; // is partner's linked Pokemon on their active team? (soul link)
+  linkedPreviousPokemonId?: number; // for devolving partner's Pokemon
 }
 
 // Level caps per gym for each game (ace Pokemon level)
