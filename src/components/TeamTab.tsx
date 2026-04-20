@@ -311,13 +311,27 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
 
   const handleMoveToParty = () => {
     if (!selectedEncounter) return;
-    onUpdate((r) => moveToParty(r, selectedEncounter.id));
+    onUpdate((r) => {
+      let updated = moveToParty(r, selectedEncounter.id);
+      // Soul link: auto-mark partner as on their team
+      if (r.rules.soulLink && selectedEncounter.linkedPokemonId) {
+        updated = updateEncounter(updated, selectedEncounter.id, { linkedOnPartnerTeam: true });
+      }
+      return updated;
+    });
     setSelectedEncounter(null);
   };
 
   const handleMoveToBox = () => {
     if (!selectedEncounter) return;
-    onUpdate((r) => moveToBox(r, selectedEncounter.id));
+    onUpdate((r) => {
+      let updated = moveToBox(r, selectedEncounter.id);
+      // Soul link: auto-mark partner as off their team
+      if (r.rules.soulLink && selectedEncounter.linkedPokemonId) {
+        updated = updateEncounter(updated, selectedEncounter.id, { linkedOnPartnerTeam: false });
+      }
+      return updated;
+    });
     setSelectedEncounter(null);
   };
 
@@ -349,17 +363,34 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
     if (!selectedEncounter) return;
     const evoData = await fetchPokemonData(evoId);
     if (!evoData) return;
-    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { pokemonId: evoId }));
-    setSelectedEncounter({ ...selectedEncounter, pokemonId: evoId });
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { pokemonId: evoId, previousPokemonId: selectedEncounter.pokemonId }));
+    setSelectedEncounter({ ...selectedEncounter, pokemonId: evoId, previousPokemonId: selectedEncounter.pokemonId });
     setDetailData(evoData);
+  };
+
+  const handleDevolve = async () => {
+    if (!selectedEncounter?.previousPokemonId) return;
+    const prevData = await fetchPokemonData(selectedEncounter.previousPokemonId);
+    if (!prevData) return;
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { pokemonId: selectedEncounter.previousPokemonId!, previousPokemonId: undefined }));
+    setSelectedEncounter({ ...selectedEncounter, pokemonId: selectedEncounter.previousPokemonId!, previousPokemonId: undefined });
+    setDetailData(prevData);
   };
 
   const handleEvolveLinked = async (evoId: number) => {
     if (!selectedEncounter) return;
-    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedPokemonId: evoId }));
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedPokemonId: evoId, linkedPreviousPokemonId: selectedEncounter.linkedPokemonId }));
     const evoData = await fetchPokemonData(evoId);
     if (evoData) setLinkedDetailData(evoData);
-    setSelectedEncounter({ ...selectedEncounter, linkedPokemonId: evoId });
+    setSelectedEncounter({ ...selectedEncounter, linkedPokemonId: evoId, linkedPreviousPokemonId: selectedEncounter.linkedPokemonId });
+  };
+
+  const handleDevolveLinked = async () => {
+    if (!selectedEncounter?.linkedPreviousPokemonId) return;
+    const prevData = await fetchPokemonData(selectedEncounter.linkedPreviousPokemonId);
+    if (prevData) setLinkedDetailData(prevData);
+    onUpdate((r) => updateEncounter(r, selectedEncounter.id, { linkedPokemonId: selectedEncounter.linkedPreviousPokemonId!, linkedPreviousPokemonId: undefined }));
+    setSelectedEncounter({ ...selectedEncounter, linkedPokemonId: selectedEncounter.linkedPreviousPokemonId!, linkedPreviousPokemonId: undefined });
   };
 
   const handleMoveInput = (index: number, value: string) => {
@@ -595,6 +626,16 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
               </div>
             )}
 
+            {/* Devolve */}
+            {selectedEncounter.previousPokemonId && (
+              <button
+                onClick={handleDevolve}
+                className="w-full rounded-lg bg-zinc-700 py-2.5 font-medium text-zinc-300 hover:bg-zinc-600 transition-colors text-sm"
+              >
+                Devolve (revert to previous form)
+              </button>
+            )}
+
             {/* Evolution */}
             {detailData?.evolvesTo && detailData.evolvesTo.length > 0 && (
               <div>
@@ -635,6 +676,16 @@ export function TeamTab({ run, onUpdate }: TeamTabProps) {
                   })}
                 </div>
               </div>
+            )}
+
+            {/* Soul Link partner devolve */}
+            {run.rules.soulLink && selectedEncounter.linkedPreviousPokemonId && (
+              <button
+                onClick={handleDevolveLinked}
+                className="w-full rounded-lg bg-purple-500/10 border border-purple-500/20 py-2.5 font-medium text-purple-300 hover:bg-purple-500/20 transition-colors text-sm"
+              >
+                Devolve Partner (revert to previous form)
+              </button>
             )}
 
             {/* Soul Link partner evolution */}

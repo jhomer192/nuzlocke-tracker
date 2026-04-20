@@ -40,6 +40,7 @@ export interface Run {
   box: string[];
   graveyard: string[];
   defeatedBosses?: string[];
+  version?: string;
 }
 
 export interface Encounter {
@@ -55,9 +56,11 @@ export interface Encounter {
   caughtAt: string;
   diedAt?: string;
   moves?: string[]; // up to 4 move names
+  previousPokemonId?: number;    // for devolve: what this Pokemon was before evolving
   linkedPokemonId?: number;      // partner's Pokemon national dex ID (soul link)
   linkedNickname?: string;       // partner's nickname for their Pokemon (soul link)
   linkedOnPartnerTeam?: boolean; // is partner's linked Pokemon on their active team? (soul link)
+  linkedPreviousPokemonId?: number; // for devolving partner's Pokemon
 }
 
 // Level caps per gym for each game (ace Pokemon level)
@@ -365,3 +368,71 @@ export const ALL_TYPES = [
 ] as const;
 
 export type PokemonType = typeof ALL_TYPES[number];
+
+/**
+ * For paired games, maps a Game to its two version names.
+ * Used for version-exclusive encounter filtering.
+ */
+export interface GameVersionPair {
+  version1: { key: string; name: string };
+  version2: { key: string; name: string };
+}
+
+export const GAME_VERSIONS: Partial<Record<Game, GameVersionPair>> = {
+  RED_BLUE: {
+    version1: { key: 'RED', name: 'Red' },
+    version2: { key: 'BLUE', name: 'Blue' },
+  },
+  GOLD_SILVER: {
+    version1: { key: 'GOLD', name: 'Gold' },
+    version2: { key: 'SILVER', name: 'Silver' },
+  },
+  RUBY_SAPPHIRE: {
+    version1: { key: 'RUBY', name: 'Ruby' },
+    version2: { key: 'SAPPHIRE', name: 'Sapphire' },
+  },
+  DIAMOND_PEARL: {
+    version1: { key: 'DIAMOND', name: 'Diamond' },
+    version2: { key: 'PEARL', name: 'Pearl' },
+  },
+  HEARTGOLD_SOULSILVER: {
+    version1: { key: 'HEARTGOLD', name: 'HeartGold' },
+    version2: { key: 'SOULSILVER', name: 'SoulSilver' },
+  },
+  BLACK_WHITE: {
+    version1: { key: 'BLACK', name: 'Black' },
+    version2: { key: 'WHITE', name: 'White' },
+  },
+  BLACK2_WHITE2: {
+    version1: { key: 'BLACK2', name: 'Black 2' },
+    version2: { key: 'WHITE2', name: 'White 2' },
+  },
+  X_Y: {
+    version1: { key: 'X', name: 'X' },
+    version2: { key: 'Y', name: 'Y' },
+  },
+  OMEGA_RUBY_ALPHA_SAPPHIRE: {
+    version1: { key: 'OMEGA_RUBY', name: 'Omega Ruby' },
+    version2: { key: 'ALPHA_SAPPHIRE', name: 'Alpha Sapphire' },
+  },
+  SUN_MOON: {
+    version1: { key: 'SUN', name: 'Sun' },
+    version2: { key: 'MOON', name: 'Moon' },
+  },
+  ULTRA_SUN_ULTRA_MOON: {
+    version1: { key: 'ULTRA_SUN', name: 'Ultra Sun' },
+    version2: { key: 'ULTRA_MOON', name: 'Ultra Moon' },
+  },
+  SWORD_SHIELD: {
+    version1: { key: 'SWORD', name: 'Sword' },
+    version2: { key: 'SHIELD', name: 'Shield' },
+  },
+  BRILLIANT_DIAMOND_SHINING_PEARL: {
+    version1: { key: 'BRILLIANT_DIAMOND', name: 'Brilliant Diamond' },
+    version2: { key: 'SHINING_PEARL', name: 'Shining Pearl' },
+  },
+  SCARLET_VIOLET: {
+    version1: { key: 'SCARLET', name: 'Scarlet' },
+    version2: { key: 'VIOLET', name: 'Violet' },
+  },
+};

@@ -1,10 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
 import type { Run, GameLocation, Encounter } from '../types';
-import { LEVEL_CAPS } from '../types';
+import { LEVEL_CAPS, GAME_GENERATIONS } from '../types';
 import { GAME_ROUTES } from '../data/routes';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { EncounterModal } from './EncounterModal';
-import { BossPrepButton } from './BossPrep';
+import { InlineBossRow } from './BossPrep';
+import { getBossesForSegment, getBadgeIndexForBoss } from '../data/bosses';
 import { getCustomGame, loadCustomGames, saveCustomGames } from '../utils/storage';
 import { generateId } from '../utils/id';
 
@@ -122,6 +123,17 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
 
       if (existingIdx >= 0) {
         encounters = r.encounters.map((e) => (e.id === encounter.id ? encounter : e));
+        // If status changed away from 'alive', remove from team/box so the
+        // pokemon doesn't linger in the party UI after being marked missed.
+        if (encounter.status !== 'alive') {
+          team = team.filter((id) => id !== encounter.id);
+          box = box.filter((id) => id !== encounter.id);
+        } else {
+          // Status went back to alive but encounter isn't currently tracked:
+          // put it in the box so it's visible again.
+          const tracked = team.includes(encounter.id) || box.includes(encounter.id);
+          if (!tracked) box = [...box, encounter.id];
+        }
       } else {
         encounters = [...r.encounters, encounter];
         if (encounter.status === 'alive') {
@@ -149,37 +161,57 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
             <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-wider">
               {segment}
             </h3>
-            <div className="flex items-center gap-2">
-              <BossPrepButton
-                game={run.game}
-                segment={segment}
-                defeatedBosses={run.defeatedBosses}
-                customGameId={run.customGameId}
-                onDefeat={(bossName) => {
-                  onUpdate((r) => ({
-                    ...r,
-                    defeatedBosses: [...(r.defeatedBosses ?? []), bossName],
-                  }));
-                }}
-              />
-              {run.rules.levelCap && (() => {
-                let cap: number | undefined;
-                if (isCustom && customDef?.bosses) {
-                  const boss = customDef.bosses.find((b) => b.segment === segment);
-                  cap = boss?.levelCap;
-                } else {
-                  cap = LEVEL_CAPS[run.game]?.[segment];
-                }
-                return cap ? (
-                  <span className="text-xs font-bold text-amber-400/80">
-                    Cap: Lv.{cap}
-                  </span>
-                ) : null;
-              })()}
-            </div>
+            {run.rules.levelCap && (() => {
+              let cap: number | undefined;
+              if (isCustom && customDef?.bosses) {
+                const boss = customDef.bosses.find((b) => b.segment === segment);
+                cap = boss?.levelCap;
+              } else {
+                cap = LEVEL_CAPS[run.game]?.[segment];
+              }
+              return cap ? (
+                <span className="text-xs font-bold text-amber-400/80">
+                  Cap: Lv.{cap}
+                </span>
+              ) : null;
+            })()}
           </div>
           <div className="divide-y divide-zinc-800/50">
             {segRoutes.map((route) => {
+              // Boss row - render inline using InlineBossRow
+              if (route.key.startsWith('boss-')) {
+                const segBosses = getBossesForSegment(run.game, segment, run.customGameId);
+                const boss = segBosses.find(b => b.name === route.name);
+                if (boss) {
+                  const defeated = run.defeatedBosses ?? [];
+                  const gen = isCustom
+                    ? (customDef?.generation ?? 6)
+                    : GAME_GENERATIONS[run.game];
+                  return (
+                    <InlineBossRow
+                      key={route.key}
+                      boss={boss}
+                      gen={gen}
+                      isDefeated={defeated.includes(boss.name)}
+                      onDefeat={onDefeat => {
+                        onUpdate((r) => {
+                          const defeatedBosses = [...(r.defeatedBosses ?? []), onDefeat];
+                          const badgeIdx = getBadgeIndexForBoss(r.game, onDefeat, r.customGameId);
+                          let badges = r.badges;
+                          if (badgeIdx !== null && !r.badges[badgeIdx]) {
+                            badges = [...r.badges];
+                            badges[badgeIdx] = true;
+                          }
+                          return { ...r, defeatedBosses, badges };
+                        });
+                      }}
+                    />
+                  );
+                }
+                return null;
+              }
+
+              // Normal encounter row
               const enc = encounterByRoute.get(route.key);
               const routeEncs = allEncountersByRoute.get(route.key) ?? [];
               const shinyEnc = routeEncs.find((e) => e.isShiny && e.id !== enc?.id);
@@ -349,6 +381,7 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
           isShinyClauseAdd={isShinyClauseAdd}
           soulLink={run.rules.soulLink}
           ownedPokemonIds={ownedPokemonIds}
+          version={run.version}
         />
       )}
     </div>

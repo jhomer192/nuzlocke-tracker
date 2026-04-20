@@ -13,7 +13,7 @@ export function useRuns() {
   }, []);
 
   const createRun = useCallback(
-    (name: string, game: Game, rules: RuleSet, customGameId?: string): Run => {
+    (name: string, game: Game, rules: RuleSet, customGameId?: string, version?: string): Run => {
       let badgeCount: number;
       if (game === 'CUSTOM' && customGameId) {
         const customDef = getCustomGame(customGameId);
@@ -26,6 +26,7 @@ export function useRuns() {
         name,
         game,
         customGameId,
+        version,
         rules,
         status: 'active',
         startedAt: new Date().toISOString(),

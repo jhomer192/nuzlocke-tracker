@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Game, RuleSet, Run, CustomGameDef, CustomBoss, GameLocation } from '../types';
-import { GAME_NAMES, GAME_GENERATIONS } from '../types';
+import { GAME_NAMES, GAME_GENERATIONS, GAME_VERSIONS } from '../types';
 import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { loadCustomGames, saveCustomGames } from '../utils/storage';
@@ -10,7 +10,7 @@ import { ThemePicker } from '../components/ThemePicker';
 
 interface RunListProps {
   runs: Run[];
-  onCreateRun: (name: string, game: Game, rules: RuleSet, customGameId?: string) => Run;
+  onCreateRun: (name: string, game: Game, rules: RuleSet, customGameId?: string, version?: string) => Run;
   onDeleteRun: (id: string) => void;
 }
 
@@ -46,6 +46,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
   const [game, setGame] = useState<Game>('RED_BLUE');
+  const [version, setVersion] = useState<string | undefined>(undefined);
   const [rules, setRules] = useState<RuleSet>({
     duplicateClause: true,
     shinyClause: false,
@@ -180,7 +181,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
   const handleCreate = () => {
     if (!name.trim()) return;
-    const run = onCreateRun(name.trim(), game, rules, selectedCustomGameId ?? undefined);
+    const run = onCreateRun(name.trim(), game, rules, selectedCustomGameId ?? undefined, version);
     setShowModal(false);
     setName('');
     navigate(`/run/${run.id}`);
@@ -381,7 +382,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                       {games.filter((g) => g !== 'CUSTOM').map((g) => (
                         <button
                           key={g}
-                          onClick={() => { setGame(g); setSelectedCustomGameId(null); }}
+                          onClick={() => { setGame(g); setSelectedCustomGameId(null); setVersion(undefined); }}
                           className={`w-full rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
                             game === g && !selectedCustomGameId
                               ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
@@ -420,7 +421,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                       <div key={cg.id}>
                         <div className="flex gap-1">
                           <button
-                            onClick={() => { setGame('CUSTOM'); setSelectedCustomGameId(cg.id); setJustSavedGameId(null); }}
+                            onClick={() => { setGame('CUSTOM'); setSelectedCustomGameId(cg.id); setJustSavedGameId(null); setVersion(undefined); }}
                             className={`flex-1 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all ${
                               game === 'CUSTOM' && selectedCustomGameId === cg.id
                                 ? 'bg-purple-600/20 border-2 border-purple-500 text-purple-400'
@@ -473,6 +474,29 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
               </div>
             </div>
           </div>
+
+          {/* Version picker for paired games */}
+          {GAME_VERSIONS[game] && (
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Version</label>
+              <div className="flex gap-2">
+                {[GAME_VERSIONS[game]!.version1, GAME_VERSIONS[game]!.version2].map((v) => (
+                  <button
+                    key={v.key}
+                    onClick={() => setVersion(version === v.key ? undefined : v.key)}
+                    className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+                      version === v.key
+                        ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
+                        : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
+                    }`}
+                  >
+                    {v.name}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-zinc-500 mt-1">Optional: filters version-exclusive encounters</p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-2">Rules</label>
