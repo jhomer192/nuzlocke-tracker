@@ -22,6 +22,13 @@ export interface BossEntry {
 const RED_BLUE_BOSSES: BossEntry[] = [
   // Rival battles (assuming player chose Squirtle, so Blue has Bulbasaur line)
   {
+    name: "Rival (Oak's Lab)",
+    segment: 'Pre-Brock',
+    pokemon: [
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+    ],
+  },
+  {
     name: 'Rival (Route 22)',
     segment: 'Pre-Brock',
     pokemon: [
@@ -68,6 +75,27 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Exeggcute', id: 102, level: 38, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect', 'Leech Seed'] },
       { name: 'Alakazam', id: 65, level: 35, types: ['psychic'], moves: ['Psybeam', 'Recover', 'Psychic', 'Reflect'] },
       { name: 'Venusaur', id: 3, level: 37, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'Growth'] },
+    ],
+  },
+  {
+    name: 'Giovanni (Silph Co.)',
+    segment: 'Pre-Sabrina',
+    pokemon: [
+      { name: 'Nidorino', id: 33, level: 37, types: ['poison'], moves: ['Poison Sting', 'Horn Attack', 'Fury Attack', 'Thrash'] },
+      { name: 'Kangaskhan', id: 115, level: 35, types: ['normal'], moves: ['Comet Punch', 'Rage', 'Bite', 'Mega Punch'] },
+      { name: 'Rhyhorn', id: 111, level: 37, types: ['ground', 'rock'], moves: ['Stomp', 'Tail Whip', 'Fury Attack', 'Horn Drill'] },
+      { name: 'Nidoqueen', id: 31, level: 41, types: ['poison', 'ground'], moves: ['Scratch', 'Tail Whip', 'Body Slam', 'Earthquake'] },
+    ],
+  },
+  {
+    name: 'Rival (Route 22 Rematch)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Pidgeot', id: 18, level: 47, types: ['normal', 'flying'], moves: ['Wing Attack', 'Mirror Move', 'Sky Attack', 'Whirlwind'] },
+      { name: 'Growlithe', id: 58, level: 45, types: ['fire'], moves: ['Ember', 'Leer', 'Take Down', 'Agility'] },
+      { name: 'Exeggcute', id: 102, level: 47, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Stomp', 'Leech Seed'] },
+      { name: 'Alakazam', id: 65, level: 45, types: ['psychic'], moves: ['Psybeam', 'Recover', 'Psychic', 'Reflect'] },
+      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'SolarBeam'] },
     ],
   },
   {
@@ -868,6 +896,22 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
 // ── Diamond / Pearl ───────────────────────────────────────────────────────
 
 const DIAMOND_PEARL_BOSSES: BossEntry[] = [
+  // Rival battles (Barry — assuming player chose Turtwig, so Barry has Chimchar line)
+  {
+    name: 'Barry (Lake Verity)',
+    segment: 'Pre-Roark',
+    pokemon: [
+      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'] },
+    ],
+  },
+  {
+    name: 'Barry (Route 203)',
+    segment: 'Pre-Roark',
+    pokemon: [
+      { name: 'Starly', id: 396, level: 7, types: ['normal', 'flying'], moves: ['Tackle', 'Growl', 'Quick Attack'] },
+      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'] },
+    ],
+  },
   {
     name: 'Roark',
     segment: 'Pre-Roark',
@@ -875,6 +919,16 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Geodude', id: 74, level: 12, types: ['rock', 'ground'], moves: ['Stealth Rock', 'Rock Throw', 'Mud Sport'] },
       { name: 'Onix', id: 95, level: 12, types: ['rock', 'ground'], moves: ['Stealth Rock', 'Rock Throw', 'Screech', 'Bind'] },
       { name: 'Cranidos', id: 408, level: 14, types: ['rock'], moves: ['Headbutt', 'Leer', 'Pursuit'] },
+    ],
+  },
+  {
+    name: 'Barry (Hearthome City)',
+    segment: 'Pre-Maylene',
+    pokemon: [
+      { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
+      { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
+      { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
     ],
   },
   {
@@ -927,6 +981,16 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Duskull', id: 355, level: 24, types: ['ghost'], moves: ['Will-O-Wisp', 'Pursuit', 'Shadow Sneak', 'Future Sight'] },
       { name: 'Haunter', id: 93, level: 24, types: ['ghost', 'poison'], moves: ['Shadow Claw', 'Confuse Ray', 'Hypnosis', 'Sucker Punch'] },
       { name: 'Mismagius', id: 429, level: 26, types: ['ghost'], moves: ['Shadow Ball', 'Psybeam', 'Confuse Ray', 'Magical Leaf'] },
+    ],
+  },
+  {
+    name: 'Barry (Canalave City)',
+    segment: 'Pre-Byron',
+    pokemon: [
+      { name: 'Staraptor', id: 398, level: 31, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Double Team', 'Endeavor', 'Close Combat'] },
+      { name: 'Buizel', id: 418, level: 30, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
+      { name: 'Roselia', id: 315, level: 30, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Toxic Spikes'] },
+      { name: 'Monferno', id: 391, level: 33, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
     ],
   },
   {
@@ -1007,6 +1071,18 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Barry (Route 224)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Staraptor', id: 398, level: 48, types: ['normal', 'flying'], moves: ['Close Combat', 'Brave Bird', 'Double Team', 'Quick Attack'] },
+      { name: 'Heracross', id: 214, level: 48, types: ['bug', 'fighting'], moves: ['Megahorn', 'Close Combat', 'Night Slash', 'Stone Edge'] },
+      { name: 'Floatzel', id: 419, level: 49, types: ['water'], moves: ['Aqua Jet', 'Ice Fang', 'Crunch', 'Brine'] },
+      { name: 'Roserade', id: 407, level: 49, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Shadow Ball', 'Stun Spore'] },
+      { name: 'Snorlax', id: 143, level: 51, types: ['normal'], moves: ['Body Slam', 'Crunch', 'Earthquake', 'Rest'] },
+      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'] },
+    ],
+  },
+  {
     name: 'Elite Four: Aaron',
     segment: 'Pre-Elite Four',
     pokemon: [
@@ -1067,6 +1143,22 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
 // ── Platinum ──────────────────────────────────────────────────────────────
 
 const PLATINUM_BOSSES: BossEntry[] = [
+  // Rival battles (Barry — assuming player chose Turtwig, so Barry has Chimchar line)
+  {
+    name: 'Barry (Lake Verity)',
+    segment: 'Pre-Roark',
+    pokemon: [
+      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'] },
+    ],
+  },
+  {
+    name: 'Barry (Route 203)',
+    segment: 'Pre-Roark',
+    pokemon: [
+      { name: 'Starly', id: 396, level: 7, types: ['normal', 'flying'], moves: ['Tackle', 'Growl', 'Quick Attack'] },
+      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'] },
+    ],
+  },
   {
     name: 'Roark',
     segment: 'Pre-Roark',
@@ -1102,6 +1194,16 @@ const PLATINUM_BOSSES: BossEntry[] = [
     ],
   },
   {
+    name: 'Barry (Hearthome City)',
+    segment: 'Pre-Fantina',
+    pokemon: [
+      { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
+      { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
+      { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
+    ],
+  },
+  {
     name: 'Fantina',
     segment: 'Pre-Fantina',
     pokemon: [
@@ -1126,6 +1228,16 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Gyarados', id: 130, level: 33, types: ['water', 'flying'], moves: ['Waterfall', 'Bite', 'Twister', 'Brine'] },
       { name: 'Quagsire', id: 195, level: 34, types: ['water', 'ground'], moves: ['Mud Shot', 'Water Pulse', 'Mud Bomb', 'Rock Tomb'] },
       { name: 'Floatzel', id: 419, level: 37, types: ['water'], moves: ['Aqua Jet', 'Pursuit', 'Brine', 'Ice Fang'] },
+    ],
+  },
+  {
+    name: 'Barry (Canalave City)',
+    segment: 'Pre-Byron',
+    pokemon: [
+      { name: 'Staraptor', id: 398, level: 36, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Double Team', 'Endeavor', 'Close Combat'] },
+      { name: 'Buizel', id: 418, level: 34, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
+      { name: 'Roselia', id: 315, level: 34, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Toxic Spikes'] },
+      { name: 'Monferno', id: 391, level: 38, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
     ],
   },
   {
@@ -1203,6 +1315,18 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Crobat', id: 169, level: 46, types: ['poison', 'flying'], moves: ['Cross Poison', 'Air Slash', 'Confuse Ray', 'Bite'] },
       { name: 'Honchkrow', id: 430, level: 47, types: ['dark', 'flying'], moves: ['Night Slash', 'Drill Peck', 'Heat Wave', 'Swagger'] },
       { name: 'Weavile', id: 461, level: 48, types: ['dark', 'ice'], moves: ['Night Slash', 'Ice Punch', 'Brick Break', 'X-Scissor'] },
+    ],
+  },
+  {
+    name: 'Barry (Route 224)',
+    segment: 'Pre-Elite Four',
+    pokemon: [
+      { name: 'Staraptor', id: 398, level: 48, types: ['normal', 'flying'], moves: ['Close Combat', 'Brave Bird', 'Double Team', 'Quick Attack'] },
+      { name: 'Heracross', id: 214, level: 48, types: ['bug', 'fighting'], moves: ['Megahorn', 'Close Combat', 'Night Slash', 'Stone Edge'] },
+      { name: 'Floatzel', id: 419, level: 49, types: ['water'], moves: ['Aqua Jet', 'Ice Fang', 'Crunch', 'Brine'] },
+      { name: 'Roserade', id: 407, level: 49, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Shadow Ball', 'Stun Spore'] },
+      { name: 'Snorlax', id: 143, level: 51, types: ['normal'], moves: ['Body Slam', 'Crunch', 'Earthquake', 'Rest'] },
+      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'] },
     ],
   },
   {

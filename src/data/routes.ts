@@ -2,6 +2,7 @@ import type { Game, GameLocation } from '../types';
 
 const RED_BLUE_ROUTES: GameLocation[] = [
   // Pre-Brock
+  { key: 'boss-rival-oaks-lab', name: "Rival (Oak's Lab)", segment: 'Pre-Brock' },
   { key: 'route-1', name: 'Route 1', segment: 'Pre-Brock' },
   { key: 'route-2', name: 'Route 2', segment: 'Pre-Brock' },
   { key: 'boss-rival-route-22', name: 'Rival (Route 22)', segment: 'Pre-Brock' },
@@ -54,6 +55,7 @@ const RED_BLUE_ROUTES: GameLocation[] = [
   { key: 'seafoam-islands-1f', name: 'Seafoam Islands 1F', segment: 'Pre-Sabrina' },
   { key: 'seafoam-islands-b1f', name: 'Seafoam Islands B1F', segment: 'Pre-Sabrina' },
   { key: 'boss-rival-silph-co', name: 'Rival (Silph Co.)', segment: 'Pre-Sabrina' },
+  { key: 'boss-giovanni-silph-co', name: 'Giovanni (Silph Co.)', segment: 'Pre-Sabrina' },
   { key: 'boss-sabrina', name: 'Sabrina', segment: 'Pre-Sabrina' },
   // Pre-Blaine
   { key: 'route-19', name: 'Route 19', segment: 'Pre-Blaine' },
@@ -69,6 +71,7 @@ const RED_BLUE_ROUTES: GameLocation[] = [
   { key: 'victory-road-3f', name: 'Victory Road 3F', segment: 'Pre-Giovanni' },
   { key: 'boss-giovanni', name: 'Giovanni', segment: 'Pre-Giovanni' },
   // Pre-Elite Four
+  { key: 'boss-rival-route-22-rematch', name: 'Rival (Route 22 Rematch)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-lorelei', name: 'Elite Four: Lorelei', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bruno', name: 'Elite Four: Bruno', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-agatha', name: 'Elite Four: Agatha', segment: 'Pre-Elite Four' },
