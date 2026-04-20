@@ -368,6 +368,8 @@ const DIAMOND_PEARL_ROUTES: GameLocation[] = [
   { key: 'dp-route-203', name: 'Route 203', segment: 'Pre-Roark' },
   { key: 'dp-oreburgh-gate', name: 'Oreburgh Gate', segment: 'Pre-Roark' },
   { key: 'dp-oreburgh-mine', name: 'Oreburgh Mine', segment: 'Pre-Roark' },
+  { key: 'boss-barry-lake-verity', name: 'Barry (Lake Verity)', segment: 'Pre-Roark' },
+  { key: 'boss-barry-route-203', name: 'Barry (Route 203)', segment: 'Pre-Roark' },
   { key: 'boss-roark', name: 'Roark', segment: 'Pre-Roark' },
   // Pre-Gardenia
   { key: 'dp-route-204', name: 'Route 204', segment: 'Pre-Gardenia' },
@@ -397,7 +399,7 @@ const DIAMOND_PEARL_ROUTES: GameLocation[] = [
   { key: 'dp-route-213', name: 'Route 213', segment: 'Pre-Fantina' },
   { key: 'dp-route-214', name: 'Route 214', segment: 'Pre-Fantina' },
   { key: 'dp-valor-lakefront', name: 'Valor Lakefront', segment: 'Pre-Fantina' },
-  { key: 'boss-barry-pastoria-city', name: 'Barry (Pastoria City)', segment: 'Pre-Fantina' },
+  { key: 'boss-barry-hearthome-city', name: 'Barry (Hearthome City)', segment: 'Pre-Maylene' },
   { key: 'boss-fantina', name: 'Fantina', segment: 'Pre-Fantina' },
   // Pre-Byron
   { key: 'dp-route-218', name: 'Route 218', segment: 'Pre-Byron' },
@@ -426,7 +428,7 @@ const DIAMOND_PEARL_ROUTES: GameLocation[] = [
   { key: 'dp-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
   { key: 'dp-route-224', name: 'Route 224', segment: 'Pre-Elite Four' },
   { key: 'boss-cyrus-spear-pillar', name: 'Cyrus (Spear Pillar)', segment: 'Pre-Elite Four' },
-  { key: 'boss-barry-pokemon-league', name: 'Barry (Pokemon League)', segment: 'Pre-Elite Four' },
+  { key: 'boss-barry-route-224', name: 'Barry (Route 224)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-aaron', name: 'Elite Four: Aaron', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bertha', name: 'Elite Four: Bertha', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-flint', name: 'Elite Four: Flint', segment: 'Pre-Elite Four' },
@@ -441,6 +443,8 @@ const PLATINUM_ROUTES: GameLocation[] = [
   { key: 'pt-route-203', name: 'Route 203', segment: 'Pre-Roark' },
   { key: 'pt-oreburgh-gate', name: 'Oreburgh Gate', segment: 'Pre-Roark' },
   { key: 'pt-oreburgh-mine', name: 'Oreburgh Mine', segment: 'Pre-Roark' },
+  { key: 'boss-barry-lake-verity', name: 'Barry (Lake Verity)', segment: 'Pre-Roark' },
+  { key: 'boss-barry-route-203', name: 'Barry (Route 203)', segment: 'Pre-Roark' },
   { key: 'boss-roark', name: 'Roark', segment: 'Pre-Roark' },
   // Pre-Gardenia
   { key: 'pt-route-204', name: 'Route 204', segment: 'Pre-Gardenia' },
@@ -457,7 +461,7 @@ const PLATINUM_ROUTES: GameLocation[] = [
   { key: 'pt-route-207', name: 'Route 207', segment: 'Pre-Fantina' },
   { key: 'pt-mt-coronet-south', name: 'Mt. Coronet (South)', segment: 'Pre-Fantina' },
   { key: 'pt-route-208', name: 'Route 208', segment: 'Pre-Fantina' },
-  { key: 'boss-barry-pastoria-city', name: 'Barry (Pastoria City)', segment: 'Pre-Fantina' },
+  { key: 'boss-barry-hearthome-city', name: 'Barry (Hearthome City)', segment: 'Pre-Maylene' },
   { key: 'boss-fantina', name: 'Fantina', segment: 'Pre-Fantina' },
   // Pre-Maylene
   { key: 'pt-route-209', name: 'Route 209', segment: 'Pre-Maylene' },
@@ -495,6 +499,7 @@ const PLATINUM_ROUTES: GameLocation[] = [
   { key: 'pt-route-223', name: 'Route 223', segment: 'Pre-Elite Four' },
   { key: 'pt-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
   { key: 'boss-cyrus-distortion-world', name: 'Cyrus (Distortion World)', segment: 'Pre-Elite Four' },
+  { key: 'boss-barry-route-224', name: 'Barry (Route 224)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-aaron', name: 'Elite Four: Aaron', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-bertha', name: 'Elite Four: Bertha', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-flint', name: 'Elite Four: Flint', segment: 'Pre-Elite Four' },
@@ -509,6 +514,7 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   { key: 'hgss-route-31', name: 'Route 31', segment: 'Pre-Falkner' },
   { key: 'hgss-dark-cave', name: 'Dark Cave', segment: 'Pre-Falkner' },
   { key: 'hgss-sprout-tower', name: 'Sprout Tower', segment: 'Pre-Falkner' },
+  { key: 'boss-silver-cherrygrove', name: 'Silver (Cherrygrove City)', segment: 'Pre-Falkner' },
   { key: 'boss-falkner', name: 'Falkner', segment: 'Pre-Falkner' },
   // Pre-Bugsy
   { key: 'hgss-route-32', name: 'Route 32', segment: 'Pre-Bugsy' },
@@ -518,6 +524,8 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   { key: 'hgss-route-33', name: 'Route 33', segment: 'Pre-Bugsy' },
   { key: 'hgss-slowpoke-well', name: 'Slowpoke Well', segment: 'Pre-Bugsy' },
   { key: 'hgss-ilex-forest', name: 'Ilex Forest', segment: 'Pre-Bugsy' },
+  { key: 'boss-proton-slowpoke-well', name: 'Proton (Slowpoke Well)', segment: 'Pre-Bugsy' },
+  { key: 'boss-silver-azalea', name: 'Silver (Azalea Town)', segment: 'Pre-Bugsy' },
   { key: 'boss-bugsy', name: 'Bugsy', segment: 'Pre-Bugsy' },
   // Pre-Whitney
   { key: 'hgss-route-34', name: 'Route 34', segment: 'Pre-Whitney' },
@@ -530,11 +538,13 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   { key: 'hgss-route-38', name: 'Route 38', segment: 'Pre-Morty' },
   { key: 'hgss-route-39', name: 'Route 39', segment: 'Pre-Morty' },
   { key: 'hgss-burned-tower', name: 'Burned Tower', segment: 'Pre-Morty' },
+  { key: 'boss-silver-burned-tower', name: 'Silver (Burned Tower)', segment: 'Pre-Morty' },
   { key: 'boss-morty', name: 'Morty', segment: 'Pre-Morty' },
   // Pre-Chuck
   { key: 'hgss-route-40', name: 'Route 40', segment: 'Pre-Chuck' },
   { key: 'hgss-route-41', name: 'Route 41', segment: 'Pre-Chuck' },
   { key: 'boss-chuck', name: 'Chuck', segment: 'Pre-Chuck' },
+  { key: 'boss-silver-cianwood', name: 'Silver (Cianwood City)', segment: 'Pre-Chuck' },
   // Pre-Jasmine
   { key: 'hgss-route-42', name: 'Route 42', segment: 'Pre-Jasmine' },
   { key: 'hgss-mt-mortar', name: 'Mt. Mortar', segment: 'Pre-Jasmine' },
@@ -544,6 +554,10 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   // Pre-Pryce
   { key: 'hgss-route-44', name: 'Route 44', segment: 'Pre-Pryce' },
   { key: 'hgss-ice-path', name: 'Ice Path', segment: 'Pre-Pryce' },
+  { key: 'boss-petrel-radio-tower', name: 'Petrel (Goldenrod Radio Tower)', segment: 'Pre-Pryce' },
+  { key: 'boss-proton-radio-tower', name: 'Proton (Goldenrod Radio Tower)', segment: 'Pre-Pryce' },
+  { key: 'boss-ariana-radio-tower', name: 'Ariana (Goldenrod Radio Tower)', segment: 'Pre-Pryce' },
+  { key: 'boss-archer-radio-tower', name: 'Archer (Goldenrod Radio Tower)', segment: 'Pre-Pryce' },
   { key: 'boss-pryce', name: 'Pryce', segment: 'Pre-Pryce' },
   // Pre-Clair
   { key: 'hgss-route-45', name: 'Route 45', segment: 'Pre-Clair' },
@@ -552,6 +566,7 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   { key: 'hgss-route-26', name: 'Route 26', segment: 'Pre-Clair' },
   { key: 'hgss-route-27', name: 'Route 27', segment: 'Pre-Clair' },
   { key: 'hgss-victory-road', name: 'Victory Road', segment: 'Pre-Clair' },
+  { key: 'boss-silver-victory-road', name: 'Silver (Victory Road)', segment: 'Pre-Clair' },
   { key: 'boss-clair', name: 'Clair', segment: 'Pre-Clair' },
   // Pre-Elite Four
   { key: 'boss-elite-four-will', name: 'Elite Four: Will', segment: 'Pre-Elite Four' },
@@ -559,6 +574,7 @@ const HEARTGOLD_SOULSILVER_ROUTES: GameLocation[] = [
   { key: 'boss-elite-four-bruno', name: 'Elite Four: Bruno', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-karen', name: 'Elite Four: Karen', segment: 'Pre-Elite Four' },
   { key: 'boss-lance-champion', name: 'Lance (Champion)', segment: 'Pre-Elite Four' },
+  { key: 'boss-red-mt-silver', name: 'Red (Mt. Silver)', segment: 'Pre-Elite Four' },
 ];
 
 const BLACK_WHITE_ROUTES: GameLocation[] = [
@@ -566,41 +582,56 @@ const BLACK_WHITE_ROUTES: GameLocation[] = [
   { key: 'bw-route-1', name: 'Route 1', segment: 'Pre-Cilan/Chili/Cress' },
   { key: 'bw-route-2', name: 'Route 2', segment: 'Pre-Cilan/Chili/Cress' },
   { key: 'bw-dreamyard', name: 'Dreamyard', segment: 'Pre-Cilan/Chili/Cress' },
+  { key: 'boss-bianca-nuvema', name: 'Bianca (Nuvema Town)', segment: 'Pre-Cilan/Chili/Cress' },
+  { key: 'boss-cheren-nuvema', name: 'Cheren (Nuvema Town)', segment: 'Pre-Cilan/Chili/Cress' },
+  { key: 'boss-n-accumula', name: 'N (Accumula Town)', segment: 'Pre-Cilan/Chili/Cress' },
   { key: 'boss-cilan-chili-cress', name: 'Cilan/Chili/Cress', segment: 'Pre-Cilan/Chili/Cress' },
   // Pre-Lenora
   { key: 'bw-route-3', name: 'Route 3', segment: 'Pre-Lenora' },
   { key: 'bw-wellspring-cave', name: 'Wellspring Cave', segment: 'Pre-Lenora' },
   { key: 'bw-pinwheel-forest', name: 'Pinwheel Forest', segment: 'Pre-Lenora' },
+  { key: 'boss-cheren-route3', name: 'Cheren (Route 3)', segment: 'Pre-Lenora' },
+  { key: 'boss-bianca-route2', name: 'Bianca (Route 2)', segment: 'Pre-Lenora' },
+  { key: 'boss-n-nacrene', name: 'N (Nacrene City)', segment: 'Pre-Lenora' },
   { key: 'boss-lenora', name: 'Lenora', segment: 'Pre-Lenora' },
   // Pre-Burgh
   { key: 'bw-route-4', name: 'Route 4', segment: 'Pre-Burgh' },
   { key: 'bw-desert-resort', name: 'Desert Resort', segment: 'Pre-Burgh' },
   { key: 'bw-relic-castle', name: 'Relic Castle', segment: 'Pre-Burgh' },
+  { key: 'boss-bianca-pinwheel', name: 'Bianca (Pinwheel Forest)', segment: 'Pre-Burgh' },
   { key: 'boss-burgh', name: 'Burgh', segment: 'Pre-Burgh' },
   // Pre-Elesa
   { key: 'bw-route-5', name: 'Route 5', segment: 'Pre-Elesa' },
   { key: 'bw-cold-storage', name: 'Cold Storage', segment: 'Pre-Elesa' },
   { key: 'bw-route-16', name: 'Route 16', segment: 'Pre-Elesa' },
   { key: 'bw-lostlorn-forest', name: 'Lostlorn Forest', segment: 'Pre-Elesa' },
+  { key: 'boss-bianca-route4', name: 'Bianca (Route 4)', segment: 'Pre-Elesa' },
+  { key: 'boss-cheren-route5', name: 'Cheren (Route 5)', segment: 'Pre-Elesa' },
+  { key: 'boss-n-nimbasa', name: 'N (Nimbasa City)', segment: 'Pre-Elesa' },
   { key: 'boss-elesa', name: 'Elesa', segment: 'Pre-Elesa' },
   // Pre-Clay
   { key: 'bw-route-6', name: 'Route 6', segment: 'Pre-Clay' },
   { key: 'bw-chargestone-cave', name: 'Chargestone Cave', segment: 'Pre-Clay' },
+  { key: 'boss-bianca-driftveil', name: 'Bianca (Driftveil City)', segment: 'Pre-Clay' },
+  { key: 'boss-n-chargestone', name: 'N (Chargestone Cave)', segment: 'Pre-Clay' },
   { key: 'boss-clay', name: 'Clay', segment: 'Pre-Clay' },
   // Pre-Skyla
   { key: 'bw-route-7', name: 'Route 7', segment: 'Pre-Skyla' },
   { key: 'bw-celestial-tower', name: 'Celestial Tower', segment: 'Pre-Skyla' },
   { key: 'bw-twist-mountain', name: 'Twist Mountain', segment: 'Pre-Skyla' },
+  { key: 'boss-cheren-twist-mountain', name: 'Cheren (Twist Mountain)', segment: 'Pre-Skyla' },
   { key: 'boss-skyla', name: 'Skyla', segment: 'Pre-Skyla' },
   // Pre-Brycen
   { key: 'bw-route-8', name: 'Route 8', segment: 'Pre-Brycen' },
   { key: 'bw-icirrus-city', name: 'Icirrus City', segment: 'Pre-Brycen' },
   { key: 'bw-dragonspiral-tower', name: 'Dragonspiral Tower', segment: 'Pre-Brycen' },
+  { key: 'boss-bianca-route8', name: 'Bianca (Route 8)', segment: 'Pre-Brycen' },
   { key: 'boss-brycen', name: 'Brycen', segment: 'Pre-Brycen' },
   // Pre-Drayden/Iris
   { key: 'bw-route-9', name: 'Route 9', segment: 'Pre-Drayden/Iris' },
   { key: 'bw-route-10', name: 'Route 10', segment: 'Pre-Drayden/Iris' },
   { key: 'bw-victory-road', name: 'Victory Road', segment: 'Pre-Drayden/Iris' },
+  { key: 'boss-cheren-route10', name: 'Cheren (Route 10)', segment: 'Pre-Drayden/Iris' },
   { key: 'boss-drayden-iris', name: 'Drayden/Iris', segment: 'Pre-Drayden/Iris' },
   // Pre-Elite Four
   { key: 'boss-elite-four-shauntal', name: 'Elite Four: Shauntal', segment: 'Pre-Elite Four' },
@@ -616,6 +647,7 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'b2w2-route-19', name: 'Route 19', segment: 'Pre-Cheren' },
   { key: 'b2w2-route-20', name: 'Route 20', segment: 'Pre-Cheren' },
   { key: 'b2w2-floccesy-ranch', name: 'Floccesy Ranch', segment: 'Pre-Cheren' },
+  { key: 'boss-hugh-floccesy', name: 'Hugh (Floccesy Town)', segment: 'Pre-Cheren' },
   { key: 'boss-cheren', name: 'Cheren', segment: 'Pre-Cheren' },
   // Pre-Roxie
   { key: 'b2w2-virbank-complex', name: 'Virbank Complex', segment: 'Pre-Roxie' },
@@ -625,6 +657,8 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'b2w2-desert-resort', name: 'Desert Resort', segment: 'Pre-Burgh' },
   { key: 'b2w2-relic-castle', name: 'Relic Castle', segment: 'Pre-Burgh' },
   { key: 'b2w2-castelia-sewers', name: 'Castelia Sewers', segment: 'Pre-Burgh' },
+  { key: 'boss-hugh-route4', name: 'Hugh (Route 4)', segment: 'Pre-Burgh' },
+  { key: 'boss-colress-route4', name: 'Colress (Route 4)', segment: 'Pre-Burgh' },
   { key: 'boss-burgh', name: 'Burgh', segment: 'Pre-Burgh' },
   // Pre-Elesa
   { key: 'b2w2-route-5', name: 'Route 5', segment: 'Pre-Elesa' },
@@ -635,6 +669,7 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'b2w2-route-6', name: 'Route 6', segment: 'Pre-Clay' },
   { key: 'b2w2-chargestone-cave', name: 'Chargestone Cave', segment: 'Pre-Clay' },
   { key: 'b2w2-mistralton-cave', name: 'Mistralton Cave', segment: 'Pre-Clay' },
+  { key: 'boss-hugh-driftveil', name: 'Hugh (Driftveil City)', segment: 'Pre-Clay' },
   { key: 'boss-clay', name: 'Clay', segment: 'Pre-Clay' },
   // Pre-Skyla
   { key: 'b2w2-route-7', name: 'Route 7', segment: 'Pre-Skyla' },
@@ -646,6 +681,7 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   { key: 'b2w2-route-9', name: 'Route 9', segment: 'Pre-Drayden' },
   { key: 'b2w2-reversal-mountain', name: 'Reversal Mountain', segment: 'Pre-Drayden' },
   { key: 'b2w2-strange-house', name: 'Strange House', segment: 'Pre-Drayden' },
+  { key: 'boss-hugh-reversal-mountain', name: 'Hugh (Reversal Mountain)', segment: 'Pre-Drayden' },
   { key: 'boss-colress-plasma-frigate', name: 'Colress (Plasma Frigate)', segment: 'Pre-Drayden' },
   { key: 'boss-drayden', name: 'Drayden', segment: 'Pre-Drayden' },
   // Pre-Marlon
@@ -656,6 +692,8 @@ const BLACK2_WHITE2_ROUTES: GameLocation[] = [
   // Pre-Elite Four
   { key: 'b2w2-route-23', name: 'Route 23', segment: 'Pre-Elite Four' },
   { key: 'b2w2-victory-road', name: 'Victory Road', segment: 'Pre-Elite Four' },
+  { key: 'boss-hugh-victory-road', name: 'Hugh (Victory Road)', segment: 'Pre-Elite Four' },
+  { key: 'boss-n-victory-road', name: 'N (Victory Road)', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-shauntal', name: 'Elite Four: Shauntal', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-grimsley', name: 'Elite Four: Grimsley', segment: 'Pre-Elite Four' },
   { key: 'boss-elite-four-caitlin', name: 'Elite Four: Caitlin', segment: 'Pre-Elite Four' },
