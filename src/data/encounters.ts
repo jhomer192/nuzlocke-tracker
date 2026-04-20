@@ -1025,3 +1025,72 @@ export const ENCOUNTER_TABLES: Record<string, Record<string, number[]>> = {
     'sv-area-zero': [329, 330, 443, 444, 704, 705, 782, 885], // Vibrava, Flygon(rare), Gible, Gabite, Goomy, Sliggoo, Jangmo-o, Dreepy
   },
 };
+
+/**
+ * Version-exclusive Pokemon for paired games.
+ * Maps game key -> version key -> array of national dex IDs exclusive to that version.
+ * Used to filter encounter tables when the player selects a specific version.
+ */
+export const VERSION_EXCLUSIVES: Record<string, Record<string, number[]>> = {
+  // Gen 1
+  RED_BLUE: {
+    RED: [23, 43, 56, 58, 123, 126],         // Ekans, Oddish, Mankey, Growlithe, Scyther, Magmar
+    BLUE: [27, 37, 52, 69, 127, 125],        // Sandshrew, Vulpix, Meowth, Bellsprout, Pinsir, Electabuzz
+  },
+  // Gen 2
+  GOLD_SILVER: {
+    GOLD: [56, 58, 167, 207, 226, 250],      // Mankey, Growlithe, Spinarak, Gligar, Mantine, Ho-Oh
+    SILVER: [52, 37, 165, 216, 225, 249],     // Meowth, Vulpix, Ledyba, Teddiursa, Delibird, Lugia
+  },
+  // Gen 3
+  RUBY_SAPPHIRE: {
+    RUBY: [273, 303, 335, 338, 383],         // Seedot, Mawile, Zangoose, Solrock, Groudon
+    SAPPHIRE: [270, 302, 336, 337, 382],     // Lotad, Sableye, Seviper, Lunatone, Kyogre
+  },
+  // Gen 4
+  DIAMOND_PEARL: {
+    DIAMOND: [198, 434, 408, 483],            // Murkrow, Stunky, Cranidos, Dialga
+    PEARL: [200, 431, 410, 484],              // Misdreavus, Glameow, Shieldon, Palkia
+  },
+  HEARTGOLD_SOULSILVER: {
+    HEARTGOLD: [56, 58, 167, 207, 226, 250], // Mankey, Growlithe, Spinarak, Gligar, Mantine, Ho-Oh
+    SOULSILVER: [52, 37, 165, 216, 225, 249], // Meowth, Vulpix, Ledyba, Teddiursa, Delibird, Lugia
+  },
+  // Gen 5
+  BLACK_WHITE: {
+    BLACK: [546, 574, 629, 641, 643],        // Cottonee, Gothita, Vullaby, Tornadus, Reshiram
+    WHITE: [548, 577, 627, 642, 644],        // Petilil, Solosis, Rufflet, Thundurus, Zekrom
+  },
+  BLACK2_WHITE2: {
+    BLACK2: [240, 427, 574, 629],             // Magby, Buneary, Gothita, Vullaby
+    WHITE2: [239, 300, 577, 627],             // Elekid, Skitty, Solosis, Rufflet
+  },
+  // Gen 6
+  X_Y: {
+    X: [692, 684, 716],                       // Clauncher, Swirlix, Xerneas
+    Y: [690, 682, 717],                       // Skrelp, Spritzee, Yveltal
+  },
+  OMEGA_RUBY_ALPHA_SAPPHIRE: {
+    OMEGA_RUBY: [273, 303, 335, 338, 383, 250, 381],  // Seedot, Mawile, Zangoose, Solrock, Groudon, Ho-Oh, Latios
+    ALPHA_SAPPHIRE: [270, 302, 336, 337, 382, 249, 380], // Lotad, Sableye, Seviper, Lunatone, Kyogre, Lugia, Latias
+  },
+  // Gen 7
+  SUN_MOON: {
+    SUN: [37, 744, 766, 776, 791],           // Vulpix-A, Rockruff (Own Tempo), Passimian, Turtonator, Solgaleo
+    MOON: [27, 765, 780, 792],               // Sandshrew-A, Oranguru, Drampa, Lunala
+  },
+  // Gen 8
+  SWORD_SHIELD: {
+    SWORD: [83, 865, 574, 575, 576, 633, 634, 635, 782, 783, 784, 888],
+    // Farfetch'd-G, Sirfetch'd, Gothita, Gothorita, Gothitelle, Deino, Zweilous, Hydreigon, Jangmo-o, Hakamo-o, Kommo-o, Zacian
+    SHIELD: [77, 78, 577, 578, 579, 246, 247, 248, 704, 705, 706, 889],
+    // Ponyta-G, Rapidash-G, Solosis, Duosion, Reuniclus, Larvitar, Pupitar, Tyranitar, Goomy, Sliggoo, Goodra, Zamazenta
+  },
+  // Gen 9
+  SCARLET_VIOLET: {
+    SCARLET: [246, 874, 936, 1007, 984, 985, 986, 987, 988, 989, 1005],
+    // Larvitar, Stonjourner, Armarouge, Koraidon, Great Tusk, Scream Tail, Brute Bonnet, Flutter Mane, Slither Wing, Sandy Shocks, Roaring Moon
+    VIOLET: [371, 875, 937, 1008, 990, 991, 992, 993, 994, 995, 1006],
+    // Bagon, Eiscue, Ceruledge, Miraidon, Iron Treads, Iron Bundle, Iron Hands, Iron Jugulis, Iron Moth, Iron Thorns, Iron Valiant
+  },
+};
