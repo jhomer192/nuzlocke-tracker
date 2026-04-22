@@ -9,6 +9,13 @@ export interface BossPokemon {
   moves: string[];
   ability?: string;
   item?: string;
+  /**
+   * Legacy tag from the first pass of starter-swap work: marks this
+   * Pokemon as the rival's starter at the type present in the hardcoded
+   * data. No longer required — applyStarterSwap auto-detects starter
+   * species by id — but kept so existing tags don't break the shape.
+   */
+  starterSlot?: StarterType;
 }
 
 export interface BossEntry {
@@ -30,6 +37,429 @@ export interface BossEntry {
   versions?: string[];
 }
 
+/** One stage of a starter evolution line. */
+interface StarterStage {
+  name: string;
+  id: number;
+  types: string[];
+}
+
+/**
+ * Starter evolution lines per game (three stages each). Used at filter
+ * time to swap the rival's starter species when the run has a chosen
+ * starter and the boss entry has a `starterSlot`-marked Pokemon.
+ */
+const STARTER_LINES: Partial<Record<Game, Record<StarterType, [StarterStage, StarterStage, StarterStage]>>> = {
+  RED_BLUE: {
+    grass: [
+      { name: 'Bulbasaur', id: 1, types: ['grass', 'poison'] },
+      { name: 'Ivysaur', id: 2, types: ['grass', 'poison'] },
+      { name: 'Venusaur', id: 3, types: ['grass', 'poison'] },
+    ],
+    fire: [
+      { name: 'Charmander', id: 4, types: ['fire'] },
+      { name: 'Charmeleon', id: 5, types: ['fire'] },
+      { name: 'Charizard', id: 6, types: ['fire', 'flying'] },
+    ],
+    water: [
+      { name: 'Squirtle', id: 7, types: ['water'] },
+      { name: 'Wartortle', id: 8, types: ['water'] },
+      { name: 'Blastoise', id: 9, types: ['water'] },
+    ],
+  },
+  FIRERED_LEAFGREEN: {
+    grass: [
+      { name: 'Bulbasaur', id: 1, types: ['grass', 'poison'] },
+      { name: 'Ivysaur', id: 2, types: ['grass', 'poison'] },
+      { name: 'Venusaur', id: 3, types: ['grass', 'poison'] },
+    ],
+    fire: [
+      { name: 'Charmander', id: 4, types: ['fire'] },
+      { name: 'Charmeleon', id: 5, types: ['fire'] },
+      { name: 'Charizard', id: 6, types: ['fire', 'flying'] },
+    ],
+    water: [
+      { name: 'Squirtle', id: 7, types: ['water'] },
+      { name: 'Wartortle', id: 8, types: ['water'] },
+      { name: 'Blastoise', id: 9, types: ['water'] },
+    ],
+  },
+  GOLD_SILVER: {
+    grass: [
+      { name: 'Chikorita', id: 152, types: ['grass'] },
+      { name: 'Bayleef', id: 153, types: ['grass'] },
+      { name: 'Meganium', id: 154, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Cyndaquil', id: 155, types: ['fire'] },
+      { name: 'Quilava', id: 156, types: ['fire'] },
+      { name: 'Typhlosion', id: 157, types: ['fire'] },
+    ],
+    water: [
+      { name: 'Totodile', id: 158, types: ['water'] },
+      { name: 'Croconaw', id: 159, types: ['water'] },
+      { name: 'Feraligatr', id: 160, types: ['water'] },
+    ],
+  },
+  HEARTGOLD_SOULSILVER: {
+    grass: [
+      { name: 'Chikorita', id: 152, types: ['grass'] },
+      { name: 'Bayleef', id: 153, types: ['grass'] },
+      { name: 'Meganium', id: 154, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Cyndaquil', id: 155, types: ['fire'] },
+      { name: 'Quilava', id: 156, types: ['fire'] },
+      { name: 'Typhlosion', id: 157, types: ['fire'] },
+    ],
+    water: [
+      { name: 'Totodile', id: 158, types: ['water'] },
+      { name: 'Croconaw', id: 159, types: ['water'] },
+      { name: 'Feraligatr', id: 160, types: ['water'] },
+    ],
+  },
+  RUBY_SAPPHIRE: {
+    grass: [
+      { name: 'Treecko', id: 252, types: ['grass'] },
+      { name: 'Grovyle', id: 253, types: ['grass'] },
+      { name: 'Sceptile', id: 254, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Torchic', id: 255, types: ['fire'] },
+      { name: 'Combusken', id: 256, types: ['fire', 'fighting'] },
+      { name: 'Blaziken', id: 257, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Mudkip', id: 258, types: ['water'] },
+      { name: 'Marshtomp', id: 259, types: ['water', 'ground'] },
+      { name: 'Swampert', id: 260, types: ['water', 'ground'] },
+    ],
+  },
+  EMERALD: {
+    grass: [
+      { name: 'Treecko', id: 252, types: ['grass'] },
+      { name: 'Grovyle', id: 253, types: ['grass'] },
+      { name: 'Sceptile', id: 254, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Torchic', id: 255, types: ['fire'] },
+      { name: 'Combusken', id: 256, types: ['fire', 'fighting'] },
+      { name: 'Blaziken', id: 257, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Mudkip', id: 258, types: ['water'] },
+      { name: 'Marshtomp', id: 259, types: ['water', 'ground'] },
+      { name: 'Swampert', id: 260, types: ['water', 'ground'] },
+    ],
+  },
+  OMEGA_RUBY_ALPHA_SAPPHIRE: {
+    grass: [
+      { name: 'Treecko', id: 252, types: ['grass'] },
+      { name: 'Grovyle', id: 253, types: ['grass'] },
+      { name: 'Sceptile', id: 254, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Torchic', id: 255, types: ['fire'] },
+      { name: 'Combusken', id: 256, types: ['fire', 'fighting'] },
+      { name: 'Blaziken', id: 257, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Mudkip', id: 258, types: ['water'] },
+      { name: 'Marshtomp', id: 259, types: ['water', 'ground'] },
+      { name: 'Swampert', id: 260, types: ['water', 'ground'] },
+    ],
+  },
+  DIAMOND_PEARL: {
+    grass: [
+      { name: 'Turtwig', id: 387, types: ['grass'] },
+      { name: 'Grotle', id: 388, types: ['grass'] },
+      { name: 'Torterra', id: 389, types: ['grass', 'ground'] },
+    ],
+    fire: [
+      { name: 'Chimchar', id: 390, types: ['fire'] },
+      { name: 'Monferno', id: 391, types: ['fire', 'fighting'] },
+      { name: 'Infernape', id: 392, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Piplup', id: 393, types: ['water'] },
+      { name: 'Prinplup', id: 394, types: ['water'] },
+      { name: 'Empoleon', id: 395, types: ['water', 'steel'] },
+    ],
+  },
+  PLATINUM: {
+    grass: [
+      { name: 'Turtwig', id: 387, types: ['grass'] },
+      { name: 'Grotle', id: 388, types: ['grass'] },
+      { name: 'Torterra', id: 389, types: ['grass', 'ground'] },
+    ],
+    fire: [
+      { name: 'Chimchar', id: 390, types: ['fire'] },
+      { name: 'Monferno', id: 391, types: ['fire', 'fighting'] },
+      { name: 'Infernape', id: 392, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Piplup', id: 393, types: ['water'] },
+      { name: 'Prinplup', id: 394, types: ['water'] },
+      { name: 'Empoleon', id: 395, types: ['water', 'steel'] },
+    ],
+  },
+  BRILLIANT_DIAMOND_SHINING_PEARL: {
+    grass: [
+      { name: 'Turtwig', id: 387, types: ['grass'] },
+      { name: 'Grotle', id: 388, types: ['grass'] },
+      { name: 'Torterra', id: 389, types: ['grass', 'ground'] },
+    ],
+    fire: [
+      { name: 'Chimchar', id: 390, types: ['fire'] },
+      { name: 'Monferno', id: 391, types: ['fire', 'fighting'] },
+      { name: 'Infernape', id: 392, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Piplup', id: 393, types: ['water'] },
+      { name: 'Prinplup', id: 394, types: ['water'] },
+      { name: 'Empoleon', id: 395, types: ['water', 'steel'] },
+    ],
+  },
+  BLACK_WHITE: {
+    grass: [
+      { name: 'Snivy', id: 495, types: ['grass'] },
+      { name: 'Servine', id: 496, types: ['grass'] },
+      { name: 'Serperior', id: 497, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Tepig', id: 498, types: ['fire'] },
+      { name: 'Pignite', id: 499, types: ['fire', 'fighting'] },
+      { name: 'Emboar', id: 500, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Oshawott', id: 501, types: ['water'] },
+      { name: 'Dewott', id: 502, types: ['water'] },
+      { name: 'Samurott', id: 503, types: ['water'] },
+    ],
+  },
+  BLACK2_WHITE2: {
+    grass: [
+      { name: 'Snivy', id: 495, types: ['grass'] },
+      { name: 'Servine', id: 496, types: ['grass'] },
+      { name: 'Serperior', id: 497, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Tepig', id: 498, types: ['fire'] },
+      { name: 'Pignite', id: 499, types: ['fire', 'fighting'] },
+      { name: 'Emboar', id: 500, types: ['fire', 'fighting'] },
+    ],
+    water: [
+      { name: 'Oshawott', id: 501, types: ['water'] },
+      { name: 'Dewott', id: 502, types: ['water'] },
+      { name: 'Samurott', id: 503, types: ['water'] },
+    ],
+  },
+  X_Y: {
+    grass: [
+      { name: 'Chespin', id: 650, types: ['grass'] },
+      { name: 'Quilladin', id: 651, types: ['grass'] },
+      { name: 'Chesnaught', id: 652, types: ['grass', 'fighting'] },
+    ],
+    fire: [
+      { name: 'Fennekin', id: 653, types: ['fire'] },
+      { name: 'Braixen', id: 654, types: ['fire'] },
+      { name: 'Delphox', id: 655, types: ['fire', 'psychic'] },
+    ],
+    water: [
+      { name: 'Froakie', id: 656, types: ['water'] },
+      { name: 'Frogadier', id: 657, types: ['water'] },
+      { name: 'Greninja', id: 658, types: ['water', 'dark'] },
+    ],
+  },
+  SUN_MOON: {
+    grass: [
+      { name: 'Rowlet', id: 722, types: ['grass', 'flying'] },
+      { name: 'Dartrix', id: 723, types: ['grass', 'flying'] },
+      { name: 'Decidueye', id: 724, types: ['grass', 'ghost'] },
+    ],
+    fire: [
+      { name: 'Litten', id: 725, types: ['fire'] },
+      { name: 'Torracat', id: 726, types: ['fire'] },
+      { name: 'Incineroar', id: 727, types: ['fire', 'dark'] },
+    ],
+    water: [
+      { name: 'Popplio', id: 728, types: ['water'] },
+      { name: 'Brionne', id: 729, types: ['water'] },
+      { name: 'Primarina', id: 730, types: ['water', 'fairy'] },
+    ],
+  },
+  ULTRA_SUN_ULTRA_MOON: {
+    grass: [
+      { name: 'Rowlet', id: 722, types: ['grass', 'flying'] },
+      { name: 'Dartrix', id: 723, types: ['grass', 'flying'] },
+      { name: 'Decidueye', id: 724, types: ['grass', 'ghost'] },
+    ],
+    fire: [
+      { name: 'Litten', id: 725, types: ['fire'] },
+      { name: 'Torracat', id: 726, types: ['fire'] },
+      { name: 'Incineroar', id: 727, types: ['fire', 'dark'] },
+    ],
+    water: [
+      { name: 'Popplio', id: 728, types: ['water'] },
+      { name: 'Brionne', id: 729, types: ['water'] },
+      { name: 'Primarina', id: 730, types: ['water', 'fairy'] },
+    ],
+  },
+  SWORD_SHIELD: {
+    grass: [
+      { name: 'Grookey', id: 810, types: ['grass'] },
+      { name: 'Thwackey', id: 811, types: ['grass'] },
+      { name: 'Rillaboom', id: 812, types: ['grass'] },
+    ],
+    fire: [
+      { name: 'Scorbunny', id: 813, types: ['fire'] },
+      { name: 'Raboot', id: 814, types: ['fire'] },
+      { name: 'Cinderace', id: 815, types: ['fire'] },
+    ],
+    water: [
+      { name: 'Sobble', id: 816, types: ['water'] },
+      { name: 'Drizzile', id: 817, types: ['water'] },
+      { name: 'Inteleon', id: 818, types: ['water'] },
+    ],
+  },
+  SCARLET_VIOLET: {
+    grass: [
+      { name: 'Sprigatito', id: 906, types: ['grass'] },
+      { name: 'Floragato', id: 907, types: ['grass'] },
+      { name: 'Meowscarada', id: 908, types: ['grass', 'dark'] },
+    ],
+    fire: [
+      { name: 'Fuecoco', id: 909, types: ['fire'] },
+      { name: 'Crocalor', id: 910, types: ['fire'] },
+      { name: 'Skeledirge', id: 911, types: ['fire', 'ghost'] },
+    ],
+    water: [
+      { name: 'Quaxly', id: 912, types: ['water'] },
+      { name: 'Quaxwell', id: 913, types: ['water'] },
+      { name: 'Quaquaval', id: 914, types: ['water', 'fighting'] },
+    ],
+  },
+};
+
+/**
+ * How the rival picks their starter relative to the player's choice.
+ * - 'counter': rival picks the starter type-advantaged against the player
+ *   (e.g., Gen 1 Blue picks Bulbasaur if you pick Squirtle). Used in
+ *   Gen 1-2 and remakes.
+ * - 'weak': rival picks the starter the player has type-advantage over
+ *   (e.g., Gen 3 May picks Torchic if you pick Mudkip). Used in Gen 3+.
+ */
+const RIVAL_STARTER_RULE: Partial<Record<Game, 'counter' | 'weak'>> = {
+  RED_BLUE: 'counter',
+  FIRERED_LEAFGREEN: 'counter',
+  GOLD_SILVER: 'counter',
+  HEARTGOLD_SOULSILVER: 'counter',
+  RUBY_SAPPHIRE: 'weak',
+  EMERALD: 'weak',
+  OMEGA_RUBY_ALPHA_SAPPHIRE: 'weak',
+  DIAMOND_PEARL: 'weak',
+  PLATINUM: 'weak',
+  BRILLIANT_DIAMOND_SHINING_PEARL: 'weak',
+  BLACK_WHITE: 'weak',
+  BLACK2_WHITE2: 'weak',
+  X_Y: 'weak',
+  SUN_MOON: 'weak',
+  ULTRA_SUN_ULTRA_MOON: 'weak',
+  SWORD_SHIELD: 'weak',
+  SCARLET_VIOLET: 'weak',
+};
+
+/**
+ * Given the player's starter, what type does the rival pick in this game?
+ * Follows the type cycle grass > water > fire > grass.
+ */
+function rivalStarterType(game: Game, playerStarter: StarterType): StarterType {
+  const rule = RIVAL_STARTER_RULE[game];
+  if (rule === 'counter') {
+    // Rival picks starter strong against player's (Gen 1/2)
+    if (playerStarter === 'grass') return 'fire';
+    if (playerStarter === 'fire') return 'water';
+    return 'grass';
+  }
+  // 'weak' or undefined: rival picks starter weak to player's (Gen 3+)
+  if (playerStarter === 'grass') return 'water';
+  if (playerStarter === 'fire') return 'grass';
+  return 'fire';
+}
+
+/**
+ * Names/patterns that mark a BossEntry as a rival/friend fight (where
+ * the trainer picks a starter relative to the player). We only swap
+ * starter Pokemon inside these entries; leaders/E4/grunts pass through
+ * unchanged even if they happen to use a species that shares an id
+ * with a starter (e.g., Red's Venusaur in HGSS).
+ */
+const RIVAL_ENTRY_PATTERNS: Partial<Record<Game, RegExp>> = {
+  RED_BLUE: /^Rival \(/,
+  FIRERED_LEAFGREEN: /^Rival \(/,
+  GOLD_SILVER: /^Rival \(/,
+  HEARTGOLD_SOULSILVER: /^Silver \(/,
+  RUBY_SAPPHIRE: /^Rival \(/,
+  EMERALD: /^Rival \(/,
+  OMEGA_RUBY_ALPHA_SAPPHIRE: /^Rival \(/,
+  DIAMOND_PEARL: /^Barry \(/,
+  PLATINUM: /^Barry \(/,
+  BRILLIANT_DIAMOND_SHINING_PEARL: /^Barry \(/,
+  // BW / B2W2: multiple rivals (Cheren/Bianca, Hugh/N) each pick different
+  // starters from a shared pool. The single-swap model can't represent
+  // that correctly — we leave the hardcoded data in place for those games.
+  X_Y: /^Rival \(/,
+  SUN_MOON: /^Hau \(/,
+  ULTRA_SUN_ULTRA_MOON: /^Hau \(/,
+  SWORD_SHIELD: /^Hop \(/,
+  SCARLET_VIOLET: /^(Nemona|Arven) \(/,
+};
+
+/**
+ * Swap starter-line Pokemon in rival boss entries to match the rival's
+ * starter pick given the player's choice. Detection is automatic: any
+ * Pokemon whose id matches one of the three starter lines for the game
+ * inside a rival-named BossEntry gets swapped (stage preserved). Level
+ * and moves are preserved — approximate but accurate for type-matchup
+ * planning, which is what matters for nuzlocke prep.
+ */
+function applyStarterSwap(
+  entries: BossEntry[],
+  game: Game,
+  playerStarter: StarterType
+): BossEntry[] {
+  const lines = STARTER_LINES[game];
+  if (!lines) return entries;
+  const rivalPattern = RIVAL_ENTRY_PATTERNS[game];
+  if (!rivalPattern) return entries;
+  const rivalType = rivalStarterType(game, playerStarter);
+  const targetLine = lines[rivalType];
+  // Build id → {type, stage} lookup for this game's starters
+  const starterIndex = new Map<number, { type: StarterType; stage: number }>();
+  (['grass', 'fire', 'water'] as const).forEach((t) => {
+    lines[t].forEach((stage, i) => {
+      starterIndex.set(stage.id, { type: t, stage: i });
+    });
+  });
+  return entries.map((b) => {
+    if (!rivalPattern.test(b.name)) return b;
+    let swapped = false;
+    const newPokemon = b.pokemon.map((p) => {
+      const hit = starterIndex.get(p.id);
+      if (!hit || hit.type === rivalType) return p;
+      const replacement = targetLine[hit.stage];
+      swapped = true;
+      return {
+        ...p,
+        name: replacement.name,
+        id: replacement.id,
+        types: replacement.types,
+      };
+    });
+    return swapped ? { ...b, pokemon: newPokemon } : b;
+  });
+}
+
 // ── Red / Blue ─────────────────────────────────────────────────────────────
 
 const RED_BLUE_BOSSES: BossEntry[] = [
@@ -38,14 +468,14 @@ const RED_BLUE_BOSSES: BossEntry[] = [
     name: "Rival (Oak's Lab)",
     segment: 'Pre-Brock',
     pokemon: [
-      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'], starterSlot: 'grass' },
     ],
   },
   {
     name: 'Rival (Route 22)',
     segment: 'Pre-Brock',
     pokemon: [
-      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'], starterSlot: 'grass' },
     ],
   },
   {
@@ -55,7 +485,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Pidgeotto', id: 17, level: 17, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
       { name: 'Raticate', id: 20, level: 15, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
       { name: 'Abra', id: 63, level: 16, types: ['psychic'], moves: ['Teleport'] },
-      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'] },
+      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'], starterSlot: 'grass' },
     ],
   },
   {
@@ -65,7 +495,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Pidgeotto', id: 17, level: 19, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
       { name: 'Raticate', id: 20, level: 18, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
       { name: 'Kadabra', id: 64, level: 20, types: ['psychic'], moves: ['Confusion', 'Disable'] },
-      { name: 'Ivysaur', id: 2, level: 22, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'] },
+      { name: 'Ivysaur', id: 2, level: 22, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'], starterSlot: 'grass' },
     ],
   },
   {
@@ -76,7 +506,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 22, types: ['fire'], moves: ['Bite', 'Roar', 'Ember', 'Leer'] },
       { name: 'Exeggcute', id: 102, level: 22, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect'] },
       { name: 'Kadabra', id: 64, level: 20, types: ['psychic'], moves: ['Confusion', 'Disable', 'Psybeam'] },
-      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Razor Leaf', 'Leech Seed'] },
+      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Razor Leaf', 'Leech Seed'], starterSlot: 'grass' },
     ],
   },
   {
@@ -87,7 +517,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 35, types: ['fire'], moves: ['Ember', 'Leer', 'Take Down', 'Agility'] },
       { name: 'Exeggcute', id: 102, level: 38, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect', 'Leech Seed'] },
       { name: 'Alakazam', id: 65, level: 35, types: ['psychic'], moves: ['Psybeam', 'Recover', 'Psychic', 'Reflect'] },
-      { name: 'Venusaur', id: 3, level: 37, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'Growth'] },
+      { name: 'Venusaur', id: 3, level: 37, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'Growth'], starterSlot: 'grass' },
     ],
   },
   {
@@ -108,7 +538,7 @@ const RED_BLUE_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 45, types: ['fire'], moves: ['Ember', 'Leer', 'Take Down', 'Agility'] },
       { name: 'Exeggcute', id: 102, level: 47, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Stomp', 'Leech Seed'] },
       { name: 'Alakazam', id: 65, level: 45, types: ['psychic'], moves: ['Psybeam', 'Recover', 'Psychic', 'Reflect'] },
-      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'SolarBeam'] },
+      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['Razor Leaf', 'PoisonPowder', 'Sleep Powder', 'SolarBeam'], starterSlot: 'grass' },
     ],
   },
   {
@@ -253,7 +683,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     name: 'Rival (Cherrygrove City)',
     segment: 'Pre-Falkner',
     pokemon: [
-      { name: 'Totodile', id: 158, level: 5, types: ['water'], moves: ['Scratch', 'Leer'] },
+      { name: 'Totodile', id: 158, level: 5, types: ['water'], moves: ['Scratch', 'Leer'], starterSlot: 'water' },
     ],
   },
   {
@@ -262,7 +692,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Gastly', id: 92, level: 14, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Hypnosis', 'Mean Look'] },
       { name: 'Zubat', id: 41, level: 14, types: ['poison', 'flying'], moves: ['Leech Life', 'Supersonic', 'Bite'] },
-      { name: 'Croconaw', id: 159, level: 16, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'] },
+      { name: 'Croconaw', id: 159, level: 16, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'], starterSlot: 'water' },
     ],
   },
   {
@@ -272,7 +702,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
       { name: 'Haunter', id: 93, level: 20, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Mean Look', 'Curse'] },
       { name: 'Zubat', id: 41, level: 22, types: ['poison', 'flying'], moves: ['Leech Life', 'Supersonic', 'Bite', 'Confuse Ray'] },
       { name: 'Magnemite', id: 81, level: 18, types: ['electric', 'steel'], moves: ['Tackle', 'ThunderShock', 'SonicBoom', 'Thunder Wave'] },
-      { name: 'Croconaw', id: 159, level: 22, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'] },
+      { name: 'Croconaw', id: 159, level: 22, types: ['water'], moves: ['Scratch', 'Leer', 'Rage', 'Water Gun'], starterSlot: 'water' },
     ],
   },
   {
@@ -283,7 +713,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
       { name: 'Magnemite', id: 81, level: 28, types: ['electric', 'steel'], moves: ['Thunderbolt', 'SonicBoom', 'Thunder Wave', 'Supersonic'] },
       { name: 'Haunter', id: 93, level: 30, types: ['ghost', 'poison'], moves: ['Mean Look', 'Curse', 'Shadow Ball', 'Lick'] },
       { name: 'Sneasel', id: 215, level: 32, types: ['dark', 'ice'], moves: ['Quick Attack', 'Screech', 'Faint Attack', 'Fury Cutter'] },
-      { name: 'Croconaw', id: 159, level: 32, types: ['water'], moves: ['Rage', 'Water Gun', 'Bite', 'Scary Face'] },
+      { name: 'Croconaw', id: 159, level: 32, types: ['water'], moves: ['Rage', 'Water Gun', 'Bite', 'Scary Face'], starterSlot: 'water' },
     ],
   },
   {
@@ -295,7 +725,7 @@ const GOLD_SILVER_BOSSES: BossEntry[] = [
       { name: 'Magneton', id: 82, level: 35, types: ['electric', 'steel'], moves: ['Thunder Wave', 'SonicBoom', 'Thunderbolt', 'Swift'] },
       { name: 'Golbat', id: 42, level: 36, types: ['poison', 'flying'], moves: ['Leech Life', 'Bite', 'Confuse Ray', 'Wing Attack'] },
       { name: 'Kadabra', id: 64, level: 35, types: ['psychic'], moves: ['Disable', 'Psybeam', 'Recover', 'Future Sight'] },
-      { name: 'Feraligatr', id: 160, level: 38, types: ['water'], moves: ['Rage', 'Water Gun', 'Slash', 'Surf'] },
+      { name: 'Feraligatr', id: 160, level: 38, types: ['water'], moves: ['Rage', 'Water Gun', 'Slash', 'Surf'], starterSlot: 'water' },
     ],
   },
   {
@@ -476,7 +906,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     name: 'Rival (Route 103)',
     segment: 'Pre-Roxanne',
     pokemon: [
-      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze' },
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -485,7 +915,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Wingull', id: 278, level: 18, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack'], ability: 'Keen Eye' },
       { name: 'Lombre', id: 271, level: 18, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
-      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze' },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -494,7 +924,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Pelipper', id: 279, level: 29, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
       { name: 'Lombre', id: 271, level: 29, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
-      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze' },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -503,7 +933,7 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Pelipper', id: 279, level: 31, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
       { name: 'Ludicolo', id: 272, level: 32, types: ['water', 'grass'], moves: ['Nature Power', 'Fake Out', 'Surf', 'Giga Drain'], ability: 'Swift Swim' },
-      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze' },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -692,7 +1122,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     name: 'Rival (Route 103)',
     segment: 'Pre-Roxanne',
     pokemon: [
-      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze' },
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -701,7 +1131,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Wingull', id: 278, level: 18, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack'], ability: 'Keen Eye' },
       { name: 'Lombre', id: 271, level: 18, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
-      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze' },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Peck', 'Focus Energy', 'Ember', 'Double Kick'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -710,7 +1140,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Pelipper', id: 279, level: 29, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
       { name: 'Lombre', id: 271, level: 29, types: ['water', 'grass'], moves: ['Absorb', 'Nature Power', 'Fake Out', 'Fury Swipes'], ability: 'Swift Swim' },
-      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze' },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Peck', 'Double Kick', 'Ember', 'Bulk Up'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -719,7 +1149,7 @@ const EMERALD_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Pelipper', id: 279, level: 31, types: ['water', 'flying'], moves: ['Water Gun', 'Supersonic', 'Wing Attack', 'Protect'], ability: 'Keen Eye' },
       { name: 'Ludicolo', id: 272, level: 32, types: ['water', 'grass'], moves: ['Nature Power', 'Fake Out', 'Surf', 'Giga Drain'], ability: 'Swift Swim' },
-      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze' },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Peck', 'Bulk Up'], ability: 'Blaze', starterSlot: 'fire' },
     ],
   },
   {
@@ -896,7 +1326,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
     name: "Rival (Oak's Lab)",
     segment: 'Pre-Brock',
     pokemon: [
-      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+      { name: 'Bulbasaur', id: 1, level: 5, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'], starterSlot: 'grass' },
     ],
   },
   {
@@ -904,7 +1334,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
     segment: 'Pre-Brock',
     pokemon: [
       { name: 'Pidgey', id: 16, level: 9, types: ['normal', 'flying'], moves: ['Tackle', 'Sand Attack', 'Gust'] },
-      { name: 'Bulbasaur', id: 1, level: 9, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'] },
+      { name: 'Bulbasaur', id: 1, level: 9, types: ['grass', 'poison'], moves: ['Tackle', 'Growl'], starterSlot: 'grass' },
     ],
   },
   {
@@ -914,7 +1344,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
       { name: 'Pidgeotto', id: 17, level: 17, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
       { name: 'Raticate', id: 20, level: 15, types: ['normal'], moves: ['Tackle', 'Tail Whip', 'Quick Attack', 'Hyper Fang'] },
       { name: 'Abra', id: 63, level: 16, types: ['psychic'], moves: ['Teleport'] },
-      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'] },
+      { name: 'Ivysaur', id: 2, level: 18, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip'], starterSlot: 'grass' },
     ],
   },
   {
@@ -924,7 +1354,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
       { name: 'Pidgeotto', id: 17, level: 19, types: ['normal', 'flying'], moves: ['Gust', 'Sand Attack', 'Quick Attack'] },
       { name: 'Raticate', id: 20, level: 16, types: ['normal'], moves: ['Quick Attack', 'Hyper Fang', 'Tail Whip', 'Focus Energy'] },
       { name: 'Kadabra', id: 64, level: 18, types: ['psychic'], moves: ['Confusion', 'Disable'] },
-      { name: 'Ivysaur', id: 2, level: 20, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'] },
+      { name: 'Ivysaur', id: 2, level: 20, types: ['grass', 'poison'], moves: ['Tackle', 'Leech Seed', 'Vine Whip', 'PoisonPowder'], starterSlot: 'grass' },
     ],
   },
   {
@@ -935,7 +1365,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 23, types: ['fire'], moves: ['Bite', 'Roar', 'Ember', 'Leer'] },
       { name: 'Exeggcute', id: 102, level: 23, types: ['grass', 'psychic'], moves: ['Barrage', 'Hypnosis', 'Reflect', 'Leech Seed'] },
       { name: 'Kadabra', id: 64, level: 22, types: ['psychic'], moves: ['Confusion', 'Disable', 'Psybeam'] },
-      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Sleep Powder', 'Razor Leaf'] },
+      { name: 'Ivysaur', id: 2, level: 25, types: ['grass', 'poison'], moves: ['Vine Whip', 'PoisonPowder', 'Sleep Powder', 'Razor Leaf'], starterSlot: 'grass' },
     ],
   },
   {
@@ -946,7 +1376,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 35, types: ['fire'], moves: ['Flamethrower', 'Bite', 'Leer', 'Take Down'] },
       { name: 'Exeggcute', id: 102, level: 35, types: ['grass', 'psychic'], moves: ['Leech Seed', 'Egg Bomb', 'Stun Spore', 'PoisonPowder'] },
       { name: 'Alakazam', id: 65, level: 35, types: ['psychic'], moves: ['Psychic', 'Calm Mind', 'Future Sight', 'Disable'] },
-      { name: 'Venusaur', id: 3, level: 40, types: ['grass', 'poison'], moves: ['Razor Leaf', 'Sleep Powder', 'Sweet Scent', 'Growth'] },
+      { name: 'Venusaur', id: 3, level: 40, types: ['grass', 'poison'], moves: ['Razor Leaf', 'Sleep Powder', 'Sweet Scent', 'Growth'], starterSlot: 'grass' },
     ],
   },
   {
@@ -968,7 +1398,7 @@ const FIRERED_LEAFGREEN_BOSSES: BossEntry[] = [
       { name: 'Growlithe', id: 58, level: 45, types: ['fire'], moves: ['Flamethrower', 'Bite', 'Take Down', 'Agility'] },
       { name: 'Exeggcute', id: 102, level: 45, types: ['grass', 'psychic'], moves: ['Egg Bomb', 'Stun Spore', 'Sleep Powder', 'Leech Seed'] },
       { name: 'Alakazam', id: 65, level: 47, types: ['psychic'], moves: ['Psychic', 'Calm Mind', 'Future Sight', 'Recover'] },
-      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['SolarBeam', 'Sunny Day', 'Synthesis', 'Growth'] },
+      { name: 'Venusaur', id: 3, level: 53, types: ['grass', 'poison'], moves: ['SolarBeam', 'Sunny Day', 'Synthesis', 'Growth'], starterSlot: 'grass' },
     ],
   },
   {
@@ -1112,7 +1542,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     name: 'Barry (Lake Verity)',
     segment: 'Pre-Roark',
     pokemon: [
-      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'] },
+      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1120,7 +1550,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
     segment: 'Pre-Roark',
     pokemon: [
       { name: 'Starly', id: 396, level: 7, types: ['normal', 'flying'], moves: ['Tackle', 'Growl', 'Quick Attack'] },
-      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'] },
+      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1139,7 +1569,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
       { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
-      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1174,7 +1604,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
       { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
-      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1211,7 +1641,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Staraptor', id: 398, level: 31, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Double Team', 'Endeavor', 'Close Combat'] },
       { name: 'Buizel', id: 418, level: 30, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 30, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Toxic Spikes'] },
-      { name: 'Monferno', id: 391, level: 33, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
+      { name: 'Monferno', id: 391, level: 33, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1300,7 +1730,7 @@ const DIAMOND_PEARL_BOSSES: BossEntry[] = [
       { name: 'Floatzel', id: 419, level: 49, types: ['water'], moves: ['Aqua Jet', 'Ice Fang', 'Crunch', 'Brine'] },
       { name: 'Roserade', id: 407, level: 49, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Shadow Ball', 'Stun Spore'] },
       { name: 'Snorlax', id: 143, level: 51, types: ['normal'], moves: ['Body Slam', 'Crunch', 'Earthquake', 'Rest'] },
-      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'] },
+      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1369,7 +1799,7 @@ const PLATINUM_BOSSES: BossEntry[] = [
     name: 'Barry (Lake Verity)',
     segment: 'Pre-Roark',
     pokemon: [
-      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'] },
+      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1377,7 +1807,7 @@ const PLATINUM_BOSSES: BossEntry[] = [
     segment: 'Pre-Roark',
     pokemon: [
       { name: 'Starly', id: 396, level: 7, types: ['normal', 'flying'], moves: ['Tackle', 'Growl', 'Quick Attack'] },
-      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'] },
+      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1421,7 +1851,7 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
       { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
-      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1458,7 +1888,7 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Staraptor', id: 398, level: 36, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Double Team', 'Endeavor', 'Close Combat'] },
       { name: 'Buizel', id: 418, level: 34, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 34, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Toxic Spikes'] },
-      { name: 'Monferno', id: 391, level: 38, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
+      { name: 'Monferno', id: 391, level: 38, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1547,7 +1977,7 @@ const PLATINUM_BOSSES: BossEntry[] = [
       { name: 'Floatzel', id: 419, level: 49, types: ['water'], moves: ['Aqua Jet', 'Ice Fang', 'Crunch', 'Brine'] },
       { name: 'Roserade', id: 407, level: 49, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Shadow Ball', 'Stun Spore'] },
       { name: 'Snorlax', id: 143, level: 51, types: ['normal'], moves: ['Body Slam', 'Crunch', 'Earthquake', 'Rest'] },
-      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'] },
+      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1616,7 +2046,7 @@ const HEARTGOLD_SOULSILVER_BOSSES: BossEntry[] = [
     name: 'Silver (Cherrygrove City)',
     segment: 'Pre-Falkner',
     pokemon: [
-      { name: 'Totodile', id: 158, level: 5, types: ['water'], moves: ['Scratch', 'Leer'] },
+      { name: 'Totodile', id: 158, level: 5, types: ['water'], moves: ['Scratch', 'Leer'], starterSlot: 'water' },
     ],
   },
   {
@@ -1641,7 +2071,7 @@ const HEARTGOLD_SOULSILVER_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Gastly', id: 92, level: 12, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Mean Look', 'Curse'] },
       { name: 'Zubat', id: 41, level: 14, types: ['poison', 'flying'], moves: ['Leech Life', 'Supersonic', 'Bite'] },
-      { name: 'Croconaw', id: 159, level: 16, types: ['water'], moves: ['Rage', 'Water Gun', 'Bite', 'Scary Face'] },
+      { name: 'Croconaw', id: 159, level: 16, types: ['water'], moves: ['Rage', 'Water Gun', 'Bite', 'Scary Face'], starterSlot: 'water' },
     ],
   },
   {
@@ -1668,7 +2098,7 @@ const HEARTGOLD_SOULSILVER_BOSSES: BossEntry[] = [
       { name: 'Haunter', id: 93, level: 20, types: ['ghost', 'poison'], moves: ['Lick', 'Spite', 'Mean Look', 'Curse'] },
       { name: 'Magnemite', id: 81, level: 18, types: ['electric', 'steel'], moves: ['ThunderShock', 'Supersonic', 'SonicBoom'] },
       { name: 'Zubat', id: 41, level: 20, types: ['poison', 'flying'], moves: ['Bite', 'Leech Life', 'Supersonic', 'Confuse Ray'] },
-      { name: 'Croconaw', id: 159, level: 22, types: ['water'], moves: ['Water Gun', 'Bite', 'Scary Face', 'Ice Fang'] },
+      { name: 'Croconaw', id: 159, level: 22, types: ['water'], moves: ['Water Gun', 'Bite', 'Scary Face', 'Ice Fang'], starterSlot: 'water' },
     ],
   },
   {
@@ -1697,7 +2127,7 @@ const HEARTGOLD_SOULSILVER_BOSSES: BossEntry[] = [
       { name: 'Magnemite', id: 81, level: 28, types: ['electric', 'steel'], moves: ['Thunderbolt', 'SonicBoom', 'Thunder Wave', 'Supersonic'] },
       { name: 'Haunter', id: 93, level: 30, types: ['ghost', 'poison'], moves: ['Shadow Ball', 'Curse', 'Mean Look', 'Spite'] },
       { name: 'Sneasel', id: 215, level: 32, types: ['dark', 'ice'], moves: ['Faint Attack', 'Icy Wind', 'Quick Attack', 'Slash'] },
-      { name: 'Feraligatr', id: 160, level: 32, types: ['water'], moves: ['Water Gun', 'Bite', 'Ice Fang', 'Slash'] },
+      { name: 'Feraligatr', id: 160, level: 32, types: ['water'], moves: ['Water Gun', 'Bite', 'Ice Fang', 'Slash'], starterSlot: 'water' },
     ],
   },
   {
@@ -1764,7 +2194,7 @@ const HEARTGOLD_SOULSILVER_BOSSES: BossEntry[] = [
       { name: 'Magneton', id: 82, level: 35, types: ['electric', 'steel'], moves: ['Thunderbolt', 'Tri Attack', 'Thunder Wave', 'Metal Sound'] },
       { name: 'Haunter', id: 93, level: 35, types: ['ghost', 'poison'], moves: ['Shadow Ball', 'Curse', 'Mean Look', 'Sucker Punch'] },
       { name: 'Kadabra', id: 64, level: 35, types: ['psychic'], moves: ['Psychic', 'Reflect', 'Future Sight', 'Disable'] },
-      { name: 'Feraligatr', id: 160, level: 38, types: ['water'], moves: ['Waterfall', 'Ice Fang', 'Slash', 'Crunch'] },
+      { name: 'Feraligatr', id: 160, level: 38, types: ['water'], moves: ['Waterfall', 'Ice Fang', 'Slash', 'Crunch'], starterSlot: 'water' },
     ],
   },
   {
@@ -1855,14 +2285,14 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     name: 'Bianca (Nuvema Town)',
     segment: 'Pre-Cilan/Chili/Cress',
     pokemon: [
-      { name: 'Tepig', id: 498, level: 5, types: ['fire'], moves: ['Tackle', 'Tail Whip'] },
+      { name: 'Tepig', id: 498, level: 5, types: ['fire'], moves: ['Tackle', 'Tail Whip'], starterSlot: 'fire' },
     ],
   },
   {
     name: 'Cheren (Nuvema Town)',
     segment: 'Pre-Cilan/Chili/Cress',
     pokemon: [
-      { name: 'Oshawott', id: 501, level: 5, types: ['water'], moves: ['Tackle', 'Tail Whip'] },
+      { name: 'Oshawott', id: 501, level: 5, types: ['water'], moves: ['Tackle', 'Tail Whip'], starterSlot: 'water' },
     ],
   },
   {
@@ -1876,7 +2306,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     name: 'Cheren (Route 3)',
     segment: 'Pre-Lenora',
     pokemon: [
-      { name: 'Snivy', id: 495, level: 14, types: ['grass'], moves: ['Vine Whip', 'Wrap', 'Leer', 'Growth'] },
+      { name: 'Snivy', id: 495, level: 14, types: ['grass'], moves: ['Vine Whip', 'Wrap', 'Leer', 'Growth'], starterSlot: 'grass' },
       { name: 'Purrloin', id: 509, level: 12, types: ['dark'], moves: ['Scratch', 'Fury Swipes', 'Pursuit', 'Sand Attack'] },
     ],
   },
@@ -1885,7 +2315,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     segment: 'Pre-Lenora',
     pokemon: [
       { name: 'Lillipup', id: 506, level: 13, types: ['normal'], moves: ['Tackle', 'Bite', 'Leer', 'Odor Sleuth'] },
-      { name: 'Tepig', id: 498, level: 13, types: ['fire'], moves: ['Ember', 'Tackle', 'Tail Whip', 'Odor Sleuth'] },
+      { name: 'Tepig', id: 498, level: 13, types: ['fire'], moves: ['Ember', 'Tackle', 'Tail Whip', 'Odor Sleuth'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1919,7 +2349,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Herdier', id: 507, level: 18, types: ['normal'], moves: ['Bite', 'Take Down', 'Leer', 'Helping Hand'] },
       { name: 'Munna', id: 517, level: 18, types: ['psychic'], moves: ['Psybeam', 'Yawn', 'Defense Curl', 'Moonlight'] },
-      { name: 'Pignite', id: 499, level: 20, types: ['fire', 'fighting'], moves: ['Flame Charge', 'Arm Thrust', 'Smog', 'Rollout'] },
+      { name: 'Pignite', id: 499, level: 20, types: ['fire', 'fighting'], moves: ['Flame Charge', 'Arm Thrust', 'Smog', 'Rollout'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1937,7 +2367,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Herdier', id: 507, level: 24, types: ['normal'], moves: ['Bite', 'Take Down', 'Retaliate', 'Helping Hand'] },
       { name: 'Musharna', id: 518, level: 24, types: ['psychic'], moves: ['Psybeam', 'Yawn', 'Hypnosis', 'Defense Curl'] },
-      { name: 'Pignite', id: 499, level: 26, types: ['fire', 'fighting'], moves: ['Flame Charge', 'Arm Thrust', 'Rollout', 'Take Down'] },
+      { name: 'Pignite', id: 499, level: 26, types: ['fire', 'fighting'], moves: ['Flame Charge', 'Arm Thrust', 'Rollout', 'Take Down'], starterSlot: 'fire' },
     ],
   },
   {
@@ -1946,7 +2376,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Liepard', id: 510, level: 24, types: ['dark'], moves: ['Fury Swipes', 'Pursuit', 'Torment', 'Fake Out'] },
       { name: 'Tranquill', id: 520, level: 24, types: ['normal', 'flying'], moves: ['Air Cutter', 'Detect', 'Taunt', 'Quick Attack'] },
-      { name: 'Servine', id: 496, level: 26, types: ['grass'], moves: ['Leaf Tornado', 'Mega Drain', 'Slam', 'Leech Seed'] },
+      { name: 'Servine', id: 496, level: 26, types: ['grass'], moves: ['Leaf Tornado', 'Mega Drain', 'Slam', 'Leech Seed'], starterSlot: 'grass' },
     ],
   },
   {
@@ -1974,7 +2404,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Stoutland', id: 508, level: 30, types: ['normal'], moves: ['Crunch', 'Take Down', 'Retaliate', 'Helping Hand'] },
       { name: 'Musharna', id: 518, level: 30, types: ['psychic'], moves: ['Psybeam', 'Yawn', 'Hypnosis', 'Moonlight'] },
-      { name: 'Emboar', id: 500, level: 32, types: ['fire', 'fighting'], moves: ['Heat Crash', 'Arm Thrust', 'Rollout', 'Take Down'] },
+      { name: 'Emboar', id: 500, level: 32, types: ['fire', 'fighting'], moves: ['Heat Crash', 'Arm Thrust', 'Rollout', 'Take Down'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2003,7 +2433,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
       { name: 'Unfezant', id: 521, level: 33, types: ['normal', 'flying'], moves: ['Air Slash', 'Razor Wind', 'Detect', 'Quick Attack'] },
       { name: 'Liepard', id: 510, level: 33, types: ['dark'], moves: ['Night Slash', 'Pursuit', 'Fake Out', 'Torment'] },
       { name: 'Simisage', id: 512, level: 33, types: ['grass'], moves: ['Seed Bomb', 'Bite', 'Leer', 'Fury Swipes'] },
-      { name: 'Serperior', id: 497, level: 35, types: ['grass'], moves: ['Leaf Blade', 'Slam', 'Mega Drain', 'Leech Seed'] },
+      { name: 'Serperior', id: 497, level: 35, types: ['grass'], moves: ['Leaf Blade', 'Slam', 'Mega Drain', 'Leech Seed'], starterSlot: 'grass' },
     ],
   },
   {
@@ -2022,7 +2452,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
       { name: 'Stoutland', id: 508, level: 36, types: ['normal'], moves: ['Crunch', 'Retaliate', 'Giga Impact', 'Work Up'] },
       { name: 'Musharna', id: 518, level: 36, types: ['psychic'], moves: ['Psychic', 'Yawn', 'Hypnosis', 'Dream Eater'] },
       { name: 'Mienshao', id: 620, level: 36, types: ['fighting'], moves: ['Drain Punch', 'U-turn', 'Swift', 'Detect'] },
-      { name: 'Emboar', id: 500, level: 38, types: ['fire', 'fighting'], moves: ['Heat Crash', 'Arm Thrust', 'Assurance', 'Take Down'] },
+      { name: 'Emboar', id: 500, level: 38, types: ['fire', 'fighting'], moves: ['Heat Crash', 'Arm Thrust', 'Assurance', 'Take Down'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2041,7 +2471,7 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
       { name: 'Unfezant', id: 521, level: 39, types: ['normal', 'flying'], moves: ['Air Slash', 'Razor Wind', 'Detect', 'Quick Attack'] },
       { name: 'Liepard', id: 510, level: 39, types: ['dark'], moves: ['Night Slash', 'Pursuit', 'Fake Out', 'Aerial Ace'] },
       { name: 'Simisage', id: 512, level: 39, types: ['grass'], moves: ['Seed Bomb', 'Crunch', 'Fury Swipes', 'Lick'] },
-      { name: 'Serperior', id: 497, level: 41, types: ['grass'], moves: ['Leaf Blade', 'Coil', 'Mega Drain', 'Slam'] },
+      { name: 'Serperior', id: 497, level: 41, types: ['grass'], moves: ['Leaf Blade', 'Coil', 'Mega Drain', 'Slam'], starterSlot: 'grass' },
     ],
   },
   {
@@ -2152,7 +2582,7 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
     name: 'Hugh (Floccesy Town)',
     segment: 'Pre-Cheren',
     pokemon: [
-      { name: 'Oshawott', id: 501, level: 5, types: ['water'], moves: ['Tackle', 'Tail Whip'] },
+      { name: 'Oshawott', id: 501, level: 5, types: ['water'], moves: ['Tackle', 'Tail Whip'], starterSlot: 'water' },
     ],
   },
   {
@@ -2175,7 +2605,7 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
     name: 'Hugh (Route 4)',
     segment: 'Pre-Burgh',
     pokemon: [
-      { name: 'Dewott', id: 502, level: 20, types: ['water'], moves: ['Water Pulse', 'Fury Cutter', 'Razor Shell', 'Focus Energy'] },
+      { name: 'Dewott', id: 502, level: 20, types: ['water'], moves: ['Water Pulse', 'Fury Cutter', 'Razor Shell', 'Focus Energy'], starterSlot: 'water' },
       { name: 'Pidove', id: 519, level: 18, types: ['normal', 'flying'], moves: ['Air Cutter', 'Quick Attack', 'Leer', 'Roost'] },
     ],
   },
@@ -2211,7 +2641,7 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Unfezant', id: 521, level: 29, types: ['normal', 'flying'], moves: ['Air Slash', 'Quick Attack', 'Detect', 'Roost'] },
       { name: 'Simipour', id: 516, level: 29, types: ['water'], moves: ['Scald', 'Bite', 'Acrobatics', 'Lick'] },
-      { name: 'Samurott', id: 503, level: 31, types: ['water'], moves: ['Razor Shell', 'Slash', 'Fury Cutter', 'Water Pulse'] },
+      { name: 'Samurott', id: 503, level: 31, types: ['water'], moves: ['Razor Shell', 'Slash', 'Fury Cutter', 'Water Pulse'], starterSlot: 'water' },
     ],
   },
   {
@@ -2239,7 +2669,7 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
       { name: 'Unfezant', id: 521, level: 39, types: ['normal', 'flying'], moves: ['Air Slash', 'Razor Wind', 'Detect', 'Quick Attack'] },
       { name: 'Simipour', id: 516, level: 39, types: ['water'], moves: ['Scald', 'Bite', 'Acrobatics', 'Lick'] },
       { name: 'Bouffalant', id: 626, level: 39, types: ['normal'], moves: ['Head Charge', 'Pursuit', 'Revenge', 'Scary Face'] },
-      { name: 'Samurott', id: 503, level: 41, types: ['water'], moves: ['Razor Shell', 'Slash', 'Aqua Jet', 'Revenge'] },
+      { name: 'Samurott', id: 503, level: 41, types: ['water'], moves: ['Razor Shell', 'Slash', 'Aqua Jet', 'Revenge'], starterSlot: 'water' },
     ],
   },
   {
@@ -2278,7 +2708,7 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
       { name: 'Unfezant', id: 521, level: 55, types: ['normal', 'flying'], moves: ['Air Slash', 'Sky Attack', 'Detect', 'U-turn'] },
       { name: 'Bouffalant', id: 626, level: 55, types: ['normal'], moves: ['Head Charge', 'Megahorn', 'Earthquake', 'Swords Dance'] },
       { name: 'Simipour', id: 516, level: 55, types: ['water'], moves: ['Scald', 'Ice Beam', 'Acrobatics', 'Work Up'] },
-      { name: 'Samurott', id: 503, level: 57, types: ['water'], moves: ['Aqua Tail', 'Megahorn', 'Slash', 'Ice Beam'] },
+      { name: 'Samurott', id: 503, level: 57, types: ['water'], moves: ['Aqua Tail', 'Megahorn', 'Slash', 'Ice Beam'], starterSlot: 'water' },
     ],
   },
   {
@@ -2371,7 +2801,7 @@ const X_Y_BOSSES: BossEntry[] = [
     name: 'Rival (Aquacorde Town)',
     segment: 'Pre-Viola',
     pokemon: [
-      { name: 'Fennekin', id: 653, level: 5, types: ['fire'], moves: ['Scratch', 'Tail Whip'] },
+      { name: 'Fennekin', id: 653, level: 5, types: ['fire'], moves: ['Scratch', 'Tail Whip'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2396,7 +2826,7 @@ const X_Y_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Meowstic', id: 678, level: 28, types: ['psychic'], moves: ['Fake Out', 'Disarming Voice', 'Light Screen'] },
       { name: 'Absol', id: 359, level: 28, types: ['dark'], moves: ['Bite', 'Slash', 'Quick Attack'] },
-      { name: 'Braixen', id: 654, level: 30, types: ['fire'], moves: ['Fire Spin', 'Psybeam', 'Flame Charge'] },
+      { name: 'Braixen', id: 654, level: 30, types: ['fire'], moves: ['Fire Spin', 'Psybeam', 'Flame Charge'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2441,7 +2871,7 @@ const X_Y_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Meowstic', id: 678, level: 44, types: ['psychic'], moves: ['Psychic', 'Shadow Ball', 'Light Screen', 'Fake Out'] },
       { name: 'Absol', id: 359, level: 44, types: ['dark'], moves: ['Night Slash', 'Psycho Cut', 'Swords Dance'] },
-      { name: 'Delphox', id: 655, level: 46, types: ['fire', 'psychic'], moves: ['Flamethrower', 'Psychic', 'Shadow Ball', 'Calm Mind'] },
+      { name: 'Delphox', id: 655, level: 46, types: ['fire', 'psychic'], moves: ['Flamethrower', 'Psychic', 'Shadow Ball', 'Calm Mind'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2565,7 +2995,7 @@ const ORAS_BOSSES: BossEntry[] = [
     name: 'Rival (Route 103)',
     segment: 'Pre-Roxanne',
     pokemon: [
-      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'] },
+      { name: 'Torchic', id: 255, level: 5, types: ['fire'], moves: ['Scratch', 'Growl'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2574,7 +3004,7 @@ const ORAS_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Slugma', id: 218, level: 18, types: ['fire'], moves: ['Ember', 'Rock Throw', 'Harden'] },
       { name: 'Shroomish', id: 285, level: 18, types: ['grass'], moves: ['Mega Drain', 'Headbutt', 'Stun Spore'] },
-      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Ember', 'Double Kick', 'Peck', 'Sand Attack'] },
+      { name: 'Combusken', id: 256, level: 20, types: ['fire', 'fighting'], moves: ['Ember', 'Double Kick', 'Peck', 'Sand Attack'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2590,7 +3020,7 @@ const ORAS_BOSSES: BossEntry[] = [
     pokemon: [
       { name: 'Slugma', id: 218, level: 29, types: ['fire'], moves: ['Flamethrower', 'Rock Slide', 'Light Screen'] },
       { name: 'Shroomish', id: 285, level: 29, types: ['grass'], moves: ['Mega Drain', 'Headbutt', 'Mach Punch'] },
-      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Bulk Up', 'Quick Attack'] },
+      { name: 'Combusken', id: 256, level: 31, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Double Kick', 'Bulk Up', 'Quick Attack'], starterSlot: 'fire' },
     ],
   },
   {
@@ -2600,7 +3030,7 @@ const ORAS_BOSSES: BossEntry[] = [
       { name: 'Raichu', id: 26, level: 31, types: ['electric'], moves: ['Thunderbolt', 'Quick Attack', 'Double Team'] },
       { name: 'Magcargo', id: 219, level: 32, types: ['fire', 'rock'], moves: ['Flamethrower', 'Rock Slide', 'Light Screen'] },
       { name: 'Breloom', id: 286, level: 32, types: ['grass', 'fighting'], moves: ['Mach Punch', 'Mega Drain', 'Headbutt'] },
-      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Sky Uppercut', 'Bulk Up', 'Quick Attack'] },
+      { name: 'Blaziken', id: 257, level: 34, types: ['fire', 'fighting'], moves: ['Blaze Kick', 'Sky Uppercut', 'Bulk Up', 'Quick Attack'], starterSlot: 'fire' },
     ],
   },
   // Team Magma/Aqua leaders (version-specific)
@@ -3565,7 +3995,7 @@ const BDSP_BOSSES: BossEntry[] = [
     name: 'Barry (Lake Verity)',
     segment: 'Pre-Roark',
     pokemon: [
-      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'] },
+      { name: 'Chimchar', id: 390, level: 5, types: ['fire'], moves: ['Scratch', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -3573,7 +4003,7 @@ const BDSP_BOSSES: BossEntry[] = [
     segment: 'Pre-Roark',
     pokemon: [
       { name: 'Starly', id: 396, level: 7, types: ['normal', 'flying'], moves: ['Tackle', 'Growl', 'Quick Attack'] },
-      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'] },
+      { name: 'Chimchar', id: 390, level: 9, types: ['fire'], moves: ['Scratch', 'Leer', 'Ember'], starterSlot: 'fire' },
     ],
   },
   {
@@ -3617,7 +4047,7 @@ const BDSP_BOSSES: BossEntry[] = [
       { name: 'Staravia', id: 397, level: 25, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
       { name: 'Buizel', id: 418, level: 23, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 23, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
-      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'] },
+      { name: 'Monferno', id: 391, level: 27, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Leer'], starterSlot: 'fire' },
     ],
   },
   {
@@ -3645,7 +4075,7 @@ const BDSP_BOSSES: BossEntry[] = [
       { name: 'Staravia', id: 397, level: 28, types: ['normal', 'flying'], moves: ['Wing Attack', 'Double Team', 'Endeavor', 'Quick Attack'] },
       { name: 'Buizel', id: 418, level: 26, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 26, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Leech Seed'] },
-      { name: 'Monferno', id: 391, level: 30, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
+      { name: 'Monferno', id: 391, level: 30, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'], starterSlot: 'fire' },
     ],
   },
   {
@@ -3664,7 +4094,7 @@ const BDSP_BOSSES: BossEntry[] = [
       { name: 'Staraptor', id: 398, level: 36, types: ['normal', 'flying'], moves: ['Aerial Ace', 'Double Team', 'Endeavor', 'Close Combat'] },
       { name: 'Buizel', id: 418, level: 34, types: ['water'], moves: ['Water Gun', 'Pursuit', 'Swift', 'Aqua Jet'] },
       { name: 'Roselia', id: 315, level: 34, types: ['grass', 'poison'], moves: ['Grass Knot', 'Stun Spore', 'Mega Drain', 'Toxic Spikes'] },
-      { name: 'Monferno', id: 391, level: 38, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'] },
+      { name: 'Monferno', id: 391, level: 38, types: ['fire', 'fighting'], moves: ['Flame Wheel', 'Mach Punch', 'Fury Swipes', 'Rock Tomb'], starterSlot: 'fire' },
     ],
   },
   {
@@ -3753,7 +4183,7 @@ const BDSP_BOSSES: BossEntry[] = [
       { name: 'Floatzel', id: 419, level: 49, types: ['water'], moves: ['Aqua Jet', 'Ice Fang', 'Crunch', 'Brine'] },
       { name: 'Roserade', id: 407, level: 49, types: ['grass', 'poison'], moves: ['Energy Ball', 'Sludge Bomb', 'Shadow Ball', 'Stun Spore'] },
       { name: 'Snorlax', id: 143, level: 51, types: ['normal'], moves: ['Body Slam', 'Crunch', 'Earthquake', 'Rest'] },
-      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'] },
+      { name: 'Infernape', id: 392, level: 53, types: ['fire', 'fighting'], moves: ['Flare Blitz', 'Close Combat', 'Thunder Punch', 'Mach Punch'], starterSlot: 'fire' },
     ],
   },
   {
@@ -4232,10 +4662,11 @@ export function getBossForSegment(game: Game, segment: string): BossEntry | unde
  *   rival per fight (matches the old hardcoded behavior).
  */
 function applyRunFilters(
+  game: Game,
   entries: BossEntry[],
   opts?: { version?: string; starter?: StarterType }
 ): BossEntry[] {
-  return entries.filter((b) => {
+  const filtered = entries.filter((b) => {
     if (b.versions && b.versions.length > 0 && opts?.version) {
       if (!b.versions.includes(opts.version)) return false;
     }
@@ -4249,6 +4680,12 @@ function applyRunFilters(
     }
     return true;
   });
+  // If the run has a chosen starter, swap rival starter-line Pokemon
+  // to match what the rival would pick given the game's rule.
+  if (opts?.starter) {
+    return applyStarterSwap(filtered, game, opts.starter);
+  }
+  return filtered;
 }
 
 /** Convert a CustomBoss to BossEntry format */
@@ -4286,7 +4723,7 @@ export function getBadgeIndexForBoss(
     bosses = def.bosses.map(customBossToBossEntry);
   } else {
     bosses = BOSS_DATA[game];
-    if (bosses) bosses = applyRunFilters(bosses, opts);
+    if (bosses) bosses = applyRunFilters(game, bosses, opts);
   }
   if (!bosses) return null;
   // Preserve declaration order, dedupe
@@ -4321,5 +4758,5 @@ export function getBossesForSegment(
   const bosses = BOSS_DATA[game];
   if (!bosses) return [];
   const segBosses = bosses.filter((b) => b.segment === segment);
-  return applyRunFilters(segBosses, opts);
+  return applyRunFilters(game, segBosses, opts);
 }
