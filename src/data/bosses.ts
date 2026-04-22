@@ -342,6 +342,372 @@ const STARTER_LINES: Partial<Record<Game, Record<StarterType, [StarterStage, Sta
 };
 
 /**
+ * Canonical level-ordered learnsets per starter line per game. Used by
+ * applyStarterSwap to give the swapped-in starter a moveset appropriate
+ * to its level, rather than inheriting the wrong-type moves from the
+ * hardcoded rival data. Each entry: [levelLearned, moveName]. Order
+ * doesn't matter — applyStarterSwap picks the 4 most recent moves whose
+ * level is <= the target pokemon's level.
+ *
+ * Movesets follow the canonical in-game learnset for each line. Where
+ * the line has multiple stages, learnset here covers the whole line
+ * (base -> middle -> final) since the rival's stage is determined by
+ * level anyway.
+ */
+const STARTER_LEARNSETS: Partial<Record<Game, Record<StarterType, Array<[number, string]>>>> = {
+  // ── Gen 1: Red / Blue ──
+  RED_BLUE: {
+    grass: [
+      [1, 'Tackle'], [1, 'Growl'], [7, 'Leech Seed'], [13, 'Vine Whip'],
+      [20, 'PoisonPowder'], [27, 'Razor Leaf'], [34, 'Growth'],
+      [41, 'Sleep Powder'], [48, 'SolarBeam'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Growl'], [9, 'Ember'], [15, 'Leer'],
+      [22, 'Rage'], [30, 'Slash'], [38, 'Flamethrower'], [46, 'Fire Spin'],
+    ],
+    water: [
+      [1, 'Tackle'], [1, 'Tail Whip'], [8, 'Bubble'], [15, 'Water Gun'],
+      [22, 'Bite'], [28, 'Withdraw'], [35, 'Skull Bash'], [42, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 3 Kanto remake: FireRed / LeafGreen ──
+  FIRERED_LEAFGREEN: {
+    grass: [
+      [1, 'Tackle'], [1, 'Growl'], [7, 'Leech Seed'], [10, 'Vine Whip'],
+      [15, 'PoisonPowder'], [15, 'Sleep Powder'], [20, 'Take Down'],
+      [25, 'Razor Leaf'], [32, 'Sweet Scent'], [39, 'Growth'],
+      [46, 'Synthesis'], [53, 'SolarBeam'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Growl'], [7, 'Ember'], [13, 'Leer'],
+      [19, 'Rage'], [25, 'Slash'], [31, 'Flamethrower'], [37, 'Fire Spin'],
+      [43, 'Dragon Rage'], [49, 'Fire Blast'],
+    ],
+    water: [
+      [1, 'Tackle'], [1, 'Tail Whip'], [7, 'Bubble'], [10, 'Withdraw'],
+      [13, 'Water Gun'], [19, 'Bite'], [22, 'Rapid Spin'],
+      [28, 'Protect'], [31, 'Rain Dance'], [37, 'Skull Bash'],
+      [40, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 2: Gold / Silver ──
+  GOLD_SILVER: {
+    grass: [
+      [1, 'Tackle'], [1, 'Growl'], [8, 'Razor Leaf'], [12, 'Reflect'],
+      [15, 'PoisonPowder'], [22, 'Synthesis'], [29, 'Body Slam'],
+      [36, 'Light Screen'], [43, 'SolarBeam'],
+    ],
+    fire: [
+      [1, 'Tackle'], [1, 'Leer'], [6, 'SmokeScreen'], [12, 'Ember'],
+      [19, 'Quick Attack'], [27, 'Flame Wheel'], [36, 'Swift'],
+      [46, 'Fire Blast'],
+    ],
+    water: [
+      [1, 'Scratch'], [1, 'Leer'], [7, 'Water Gun'], [13, 'Rage'],
+      [20, 'Bite'], [27, 'Scary Face'], [35, 'Slash'],
+      [43, 'Screech'], [52, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 4 Johto remake: HeartGold / SoulSilver ──
+  HEARTGOLD_SOULSILVER: {
+    grass: [
+      [1, 'Tackle'], [1, 'Growl'], [6, 'Razor Leaf'], [9, 'Poisonpowder'],
+      [12, 'Synthesis'], [17, 'Reflect'], [20, 'Magical Leaf'],
+      [23, 'Natural Gift'], [28, 'Petal Dance'], [31, 'Sweet Scent'],
+      [34, 'Light Screen'], [39, 'Body Slam'], [42, 'Safeguard'],
+      [45, 'Aromatherapy'], [50, 'SolarBeam'],
+    ],
+    fire: [
+      [1, 'Tackle'], [1, 'Leer'], [6, 'SmokeScreen'], [10, 'Ember'],
+      [13, 'Quick Attack'], [19, 'Flame Wheel'], [22, 'Defense Curl'],
+      [27, 'Swift'], [30, 'Flame Charge'], [35, 'Lava Plume'],
+      [42, 'Rollout'], [45, 'Double-Edge'], [50, 'Burn Up'],
+      [53, 'Eruption'],
+    ],
+    water: [
+      [1, 'Scratch'], [1, 'Leer'], [6, 'Water Gun'], [8, 'Rage'],
+      [13, 'Bite'], [15, 'Scary Face'], [20, 'Ice Fang'],
+      [22, 'Flail'], [27, 'Crunch'], [30, 'Chip Away'],
+      [35, 'Slash'], [38, 'Screech'], [43, 'Thrash'],
+      [46, 'Aqua Tail'], [50, 'Superpower'], [55, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 3: Ruby / Sapphire / Emerald ──
+  RUBY_SAPPHIRE: {
+    grass: [
+      [1, 'Pound'], [6, 'Absorb'], [11, 'Quick Attack'], [16, 'Pursuit'],
+      [21, 'Screech'], [26, 'Leaf Blade'], [31, 'Agility'],
+      [36, 'Slam'], [41, 'Detect'], [46, 'False Swipe'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Growl'], [7, 'Focus Energy'], [10, 'Ember'],
+      [16, 'Peck'], [17, 'Double Kick'], [25, 'Sand-Attack'],
+      [28, 'Bulk Up'], [36, 'Quick Attack'], [41, 'Blaze Kick'],
+      [46, 'Slash'], [49, 'Mirror Move'], [59, 'Sky Uppercut'],
+    ],
+    water: [
+      [1, 'Tackle'], [1, 'Growl'], [6, 'Mud-Slap'], [10, 'Water Gun'],
+      [15, 'Bide'], [16, 'Mud Shot'], [20, 'Foresight'],
+      [25, 'Take Down'], [31, 'Muddy Water'], [37, 'Protect'],
+      [42, 'Earthquake'], [46, 'Endeavor'], [52, 'Hydro Pump'],
+    ],
+  },
+  EMERALD: {
+    grass: [
+      [1, 'Pound'], [6, 'Absorb'], [11, 'Quick Attack'], [16, 'Pursuit'],
+      [21, 'Screech'], [26, 'Leaf Blade'], [31, 'Agility'],
+      [36, 'Slam'], [41, 'Detect'], [46, 'False Swipe'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Growl'], [7, 'Focus Energy'], [10, 'Ember'],
+      [16, 'Peck'], [17, 'Double Kick'], [25, 'Sand-Attack'],
+      [28, 'Bulk Up'], [36, 'Quick Attack'], [41, 'Blaze Kick'],
+      [46, 'Slash'], [49, 'Mirror Move'], [59, 'Sky Uppercut'],
+    ],
+    water: [
+      [1, 'Tackle'], [1, 'Growl'], [6, 'Mud-Slap'], [10, 'Water Gun'],
+      [15, 'Bide'], [16, 'Mud Shot'], [20, 'Foresight'],
+      [25, 'Take Down'], [31, 'Muddy Water'], [37, 'Protect'],
+      [42, 'Earthquake'], [46, 'Endeavor'], [52, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 6 Hoenn remake: Omega Ruby / Alpha Sapphire ──
+  OMEGA_RUBY_ALPHA_SAPPHIRE: {
+    grass: [
+      [1, 'Pound'], [6, 'Absorb'], [11, 'Quick Attack'], [16, 'Pursuit'],
+      [21, 'Screech'], [26, 'Leaf Blade'], [31, 'Agility'],
+      [36, 'Slam'], [41, 'Detect'], [46, 'False Swipe'],
+      [51, 'Quick Guard'], [56, 'Leaf Storm'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Growl'], [7, 'Focus Energy'], [10, 'Ember'],
+      [16, 'Double Kick'], [20, 'Peck'], [25, 'Sand Attack'],
+      [28, 'Bulk Up'], [32, 'Quick Attack'], [36, 'Slash'],
+      [40, 'Blaze Kick'], [44, 'Mirror Move'], [48, 'Sky Uppercut'],
+      [52, 'Flare Blitz'],
+    ],
+    water: [
+      [1, 'Tackle'], [1, 'Growl'], [5, 'Mud-Slap'], [10, 'Water Gun'],
+      [15, 'Bide'], [16, 'Mud Shot'], [20, 'Foresight'],
+      [25, 'Take Down'], [31, 'Muddy Water'], [37, 'Protect'],
+      [42, 'Earthquake'], [46, 'Endeavor'], [52, 'Hydro Pump'],
+      [58, 'Hammer Arm'],
+    ],
+  },
+  // ── Gen 4: Diamond / Pearl / Platinum ──
+  DIAMOND_PEARL: {
+    grass: [
+      [1, 'Tackle'], [1, 'Withdraw'], [6, 'Absorb'], [10, 'Razor Leaf'],
+      [15, 'Curse'], [19, 'Bite'], [22, 'Mega Drain'],
+      [28, 'Leech Seed'], [32, 'Synthesis'], [38, 'Crunch'],
+      [43, 'Giga Drain'], [51, 'Leaf Storm'], [57, 'Frenzy Plant'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Leer'], [7, 'Ember'], [9, 'Taunt'],
+      [15, 'Mach Punch'], [17, 'Fury Swipes'], [23, 'Flame Wheel'],
+      [25, 'Feint'], [31, 'Torment'], [33, 'Close Combat'],
+      [39, 'Fire Spin'], [41, 'Calm Mind'], [47, 'Flare Blitz'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Growl'], [5, 'Bubble'], [11, 'Water Sport'],
+      [15, 'Peck'], [18, 'Bide'], [22, 'BubbleBeam'],
+      [25, 'Fury Attack'], [29, 'Brine'], [32, 'Mist'],
+      [36, 'Drill Peck'], [39, 'Whirlpool'], [43, 'Mirror Coat'],
+      [46, 'Hydro Pump'],
+    ],
+  },
+  PLATINUM: {
+    grass: [
+      [1, 'Tackle'], [1, 'Withdraw'], [6, 'Absorb'], [10, 'Razor Leaf'],
+      [15, 'Curse'], [19, 'Bite'], [22, 'Mega Drain'],
+      [28, 'Leech Seed'], [32, 'Synthesis'], [38, 'Crunch'],
+      [43, 'Giga Drain'], [51, 'Leaf Storm'], [57, 'Frenzy Plant'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Leer'], [7, 'Ember'], [9, 'Taunt'],
+      [15, 'Mach Punch'], [17, 'Fury Swipes'], [23, 'Flame Wheel'],
+      [25, 'Feint'], [31, 'Torment'], [33, 'Close Combat'],
+      [39, 'Fire Spin'], [41, 'Calm Mind'], [47, 'Flare Blitz'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Growl'], [5, 'Bubble'], [11, 'Water Sport'],
+      [15, 'Peck'], [18, 'Bide'], [22, 'BubbleBeam'],
+      [25, 'Fury Attack'], [29, 'Brine'], [32, 'Mist'],
+      [36, 'Drill Peck'], [39, 'Whirlpool'], [43, 'Mirror Coat'],
+      [46, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 8 Sinnoh remake: Brilliant Diamond / Shining Pearl ──
+  BRILLIANT_DIAMOND_SHINING_PEARL: {
+    grass: [
+      [1, 'Tackle'], [1, 'Withdraw'], [6, 'Absorb'], [10, 'Razor Leaf'],
+      [15, 'Curse'], [19, 'Bite'], [22, 'Mega Drain'],
+      [28, 'Leech Seed'], [32, 'Synthesis'], [38, 'Crunch'],
+      [43, 'Giga Drain'], [51, 'Leaf Storm'], [57, 'Frenzy Plant'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Leer'], [7, 'Ember'], [9, 'Taunt'],
+      [15, 'Mach Punch'], [17, 'Fury Swipes'], [23, 'Flame Wheel'],
+      [25, 'Feint'], [31, 'Torment'], [33, 'Close Combat'],
+      [39, 'Fire Spin'], [41, 'Calm Mind'], [47, 'Flare Blitz'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Growl'], [5, 'Bubble'], [11, 'Water Sport'],
+      [15, 'Peck'], [18, 'Bide'], [22, 'BubbleBeam'],
+      [25, 'Fury Attack'], [29, 'Brine'], [32, 'Mist'],
+      [36, 'Drill Peck'], [39, 'Whirlpool'], [43, 'Mirror Coat'],
+      [46, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 6: X / Y ──
+  X_Y: {
+    grass: [
+      [1, 'Tackle'], [1, 'Growl'], [5, 'Vine Whip'], [8, 'Rollout'],
+      [11, 'Bite'], [15, 'Leech Seed'], [18, 'Pin Missile'],
+      [21, 'Take Down'], [25, 'Seed Bomb'], [28, 'Mud Shot'],
+      [31, 'Bulk Up'], [36, 'Body Slam'], [39, 'Pain Split'],
+      [44, 'Wood Hammer'], [47, 'Hammer Arm'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Tail Whip'], [6, 'Ember'], [9, 'Howl'],
+      [12, 'Flame Charge'], [16, 'Psybeam'], [20, 'Fire Spin'],
+      [25, 'Lucky Chant'], [29, 'Light Screen'], [33, 'Psyshock'],
+      [38, 'Role Play'], [41, 'Future Sight'], [45, 'Flamethrower'],
+      [49, 'Sunny Day'], [53, 'Magic Room'], [57, 'Fire Blast'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Growl'], [5, 'Bubble'], [10, 'Quick Attack'],
+      [15, 'Lick'], [20, 'Water Pulse'], [25, 'Smokescreen'],
+      [30, 'Night Slash'], [33, 'Spikes'], [36, 'Feint Attack'],
+      [38, 'Water Shuriken'], [40, 'Substitute'], [43, 'Extrasensory'],
+      [47, 'Double Team'], [52, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 7: Sun / Moon ──
+  SUN_MOON: {
+    grass: [
+      [1, 'Tackle'], [1, 'Leafage'], [4, 'Growl'], [8, 'Peck'],
+      [13, 'Astonish'], [17, 'Razor Leaf'], [20, 'Pluck'],
+      [24, 'Foresight'], [29, 'Sucker Punch'], [33, 'Synthesis'],
+      [36, 'Feather Dance'], [40, 'Brave Bird'], [45, 'Leaf Blade'],
+      [49, 'Nasty Plot'], [52, 'Spirit Shackle'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Ember'], [4, 'Growl'], [8, 'Lick'],
+      [13, 'Leer'], [17, 'Fire Fang'], [20, 'Roar'],
+      [24, 'Bite'], [29, 'Swagger'], [33, 'Fury Swipes'],
+      [36, 'Flamethrower'], [40, 'Thrash'], [45, 'Scary Face'],
+      [49, 'Outrage'], [52, 'Cross Chop'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Water Gun'], [4, 'Growl'], [8, 'Disarming Voice'],
+      [13, 'Baby-Doll Eyes'], [17, 'Aqua Jet'], [20, 'Encore'],
+      [24, 'BubbleBeam'], [29, 'Sing'], [33, 'Double Slap'],
+      [36, 'Hyper Voice'], [40, 'Moonblast'], [45, 'Captivate'],
+      [49, 'Hydro Pump'], [52, 'Sparkling Aria'],
+    ],
+  },
+  ULTRA_SUN_ULTRA_MOON: {
+    grass: [
+      [1, 'Tackle'], [1, 'Leafage'], [4, 'Growl'], [8, 'Peck'],
+      [13, 'Astonish'], [17, 'Razor Leaf'], [20, 'Pluck'],
+      [24, 'Foresight'], [29, 'Sucker Punch'], [33, 'Synthesis'],
+      [36, 'Feather Dance'], [40, 'Brave Bird'], [45, 'Leaf Blade'],
+      [49, 'Nasty Plot'], [52, 'Spirit Shackle'],
+    ],
+    fire: [
+      [1, 'Scratch'], [1, 'Ember'], [4, 'Growl'], [8, 'Lick'],
+      [13, 'Leer'], [17, 'Fire Fang'], [20, 'Roar'],
+      [24, 'Bite'], [29, 'Swagger'], [33, 'Fury Swipes'],
+      [36, 'Flamethrower'], [40, 'Thrash'], [45, 'Scary Face'],
+      [49, 'Outrage'], [52, 'Cross Chop'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Water Gun'], [4, 'Growl'], [8, 'Disarming Voice'],
+      [13, 'Baby-Doll Eyes'], [17, 'Aqua Jet'], [20, 'Encore'],
+      [24, 'BubbleBeam'], [29, 'Sing'], [33, 'Double Slap'],
+      [36, 'Hyper Voice'], [40, 'Moonblast'], [45, 'Captivate'],
+      [49, 'Hydro Pump'], [52, 'Sparkling Aria'],
+    ],
+  },
+  // ── Gen 8: Sword / Shield ──
+  SWORD_SHIELD: {
+    grass: [
+      [1, 'Scratch'], [1, 'Growl'], [6, 'Branch Poke'], [9, 'Taunt'],
+      [12, 'Razor Leaf'], [15, 'Screech'], [18, 'Knock Off'],
+      [21, 'Slam'], [24, 'Uproar'], [27, 'Endeavor'],
+      [30, 'Wood Hammer'], [36, 'Drum Beating'], [42, 'Boomburst'],
+    ],
+    fire: [
+      [1, 'Tackle'], [1, 'Growl'], [6, 'Ember'], [9, 'Quick Attack'],
+      [12, 'Double Kick'], [15, 'Headbutt'], [18, 'Flame Charge'],
+      [21, 'Agility'], [24, 'Counter'], [27, 'Bounce'],
+      [30, 'Blaze Kick'], [36, 'Pyro Ball'], [42, 'Double-Edge'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Growl'], [6, 'Water Gun'], [9, 'Bind'],
+      [12, 'Water Pulse'], [15, 'Tearful Look'], [18, 'Liquidation'],
+      [21, 'U-turn'], [24, 'Soak'], [27, 'Rain Dance'],
+      [30, 'Sucker Punch'], [36, 'Snipe Shot'], [42, 'Hydro Pump'],
+    ],
+  },
+  // ── Gen 9: Scarlet / Violet ──
+  SCARLET_VIOLET: {
+    grass: [
+      [1, 'Scratch'], [1, 'Leafage'], [6, 'Tail Whip'], [9, 'Bite'],
+      [12, 'Quick Attack'], [16, 'Magical Leaf'], [20, 'Taunt'],
+      [24, 'U-turn'], [28, 'Seed Bomb'], [32, 'Slash'],
+      [36, 'Play Rough'], [40, 'Leaf Storm'], [44, 'Flatter'],
+      [48, 'Night Slash'],
+    ],
+    fire: [
+      [1, 'Tackle'], [1, 'Ember'], [6, 'Leer'], [9, 'Bite'],
+      [12, 'Round'], [16, 'Incinerate'], [20, 'Yawn'],
+      [24, 'Flame Charge'], [28, 'Slack Off'], [32, 'Lava Plume'],
+      [36, 'Torch Song'], [40, 'Hyper Voice'], [44, 'Crunch'],
+      [48, 'Fire Blast'],
+    ],
+    water: [
+      [1, 'Pound'], [1, 'Water Gun'], [6, 'Growl'], [9, 'Work Up'],
+      [12, 'Wing Attack'], [16, 'Water Pulse'], [20, 'Double Hit'],
+      [24, 'Aqua Cutter'], [28, 'Aerial Ace'], [32, 'Featherdance'],
+      [36, 'Aqua Step'], [40, 'Roost'], [44, 'Acrobatics'],
+      [48, 'Hydro Pump'],
+    ],
+  },
+};
+
+/**
+ * Pick the moveset a starter line would know at a given level, using
+ * the canonical learnset. Returns the 4 most recently learned moves
+ * whose level is <= target. Returns null if no learnset is registered
+ * for the game (falls back to keeping the original move list).
+ */
+function movesetAtLevel(
+  game: Game,
+  type: StarterType,
+  level: number
+): string[] | null {
+  const gameLearnsets = STARTER_LEARNSETS[game];
+  if (!gameLearnsets) return null;
+  const learnset = gameLearnsets[type];
+  if (!learnset || learnset.length === 0) return null;
+  const learned = learnset.filter(([l]) => l <= level).map(([, m]) => m);
+  // Deduplicate while keeping latest-learned priority
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (let i = learned.length - 1; i >= 0; i--) {
+    const m = learned[i];
+    if (!seen.has(m)) {
+      seen.add(m);
+      unique.unshift(m);
+    }
+  }
+  return unique.slice(-4);
+}
+
+/**
  * How the rival picks their starter relative to the player's choice.
  * - 'counter': rival picks the starter type-advantaged against the player
  *   (e.g., Gen 1 Blue picks Bulbasaur if you pick Squirtle). Used in
@@ -449,11 +815,13 @@ function applyStarterSwap(
       if (!hit || hit.type === rivalType) return p;
       const replacement = targetLine[hit.stage];
       swapped = true;
+      const newMoves = movesetAtLevel(game, rivalType, p.level);
       return {
         ...p,
         name: replacement.name,
         id: replacement.id,
         types: replacement.types,
+        ...(newMoves && newMoves.length > 0 ? { moves: newMoves } : {}),
       };
     });
     return swapped ? { ...b, pokemon: newPokemon } : b;
