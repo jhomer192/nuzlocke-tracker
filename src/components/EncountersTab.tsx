@@ -180,7 +180,10 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
             {segRoutes.map((route) => {
               // Boss row - render inline using InlineBossRow
               if (route.key.startsWith('boss-')) {
-                const segBosses = getBossesForSegment(run.game, segment, run.customGameId);
+                const segBosses = getBossesForSegment(run.game, segment, run.customGameId, {
+                  version: run.version,
+                  starter: run.starter,
+                });
                 const boss = segBosses.find(b => b.name === route.name);
                 if (boss) {
                   const defeated = run.defeatedBosses ?? [];
@@ -196,7 +199,10 @@ export function EncountersTab({ run, onUpdate }: EncountersTabProps) {
                       onDefeat={onDefeat => {
                         onUpdate((r) => {
                           const defeatedBosses = [...(r.defeatedBosses ?? []), onDefeat];
-                          const badgeIdx = getBadgeIndexForBoss(r.game, onDefeat, r.customGameId);
+                          const badgeIdx = getBadgeIndexForBoss(r.game, onDefeat, r.customGameId, {
+                            version: r.version,
+                            starter: r.starter,
+                          });
                           let badges = r.badges;
                           if (badgeIdx !== null && !r.badges[badgeIdx]) {
                             badges = [...r.badges];

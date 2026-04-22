@@ -26,6 +26,13 @@ export interface RuleSet {
   soulLink: boolean;
 }
 
+/**
+ * The type of the player's chosen starter. Used to select which rival
+ * variant shows in boss fights (rivals pick a starter relative to yours).
+ * All mainline games use grass / fire / water for their three starters.
+ */
+export type StarterType = 'grass' | 'fire' | 'water';
+
 export interface Run {
   id: string;
   name: string;
@@ -41,6 +48,7 @@ export interface Run {
   graveyard: string[];
   defeatedBosses?: string[];
   version?: string;
+  starter?: StarterType;
 }
 
 export interface Encounter {
@@ -377,6 +385,35 @@ export interface GameVersionPair {
   version1: { key: string; name: string };
   version2: { key: string; name: string };
 }
+
+/**
+ * For each mainline game, the starter pokemon the player picks from.
+ * Indexed by starter TYPE (grass/fire/water). Used purely for labeling the
+ * starter picker UI; rival-variant data keys off the StarterType directly.
+ * Games that don't have a traditional grass/fire/water trio (Legends: Arceus
+ * reuses three other starters, Yellow etc.) still map to the trio for
+ * display-picker purposes.
+ */
+export const STARTER_LABELS: Partial<Record<Game, { grass: string; fire: string; water: string }>> = {
+  RED_BLUE: { grass: 'Bulbasaur', fire: 'Charmander', water: 'Squirtle' },
+  GOLD_SILVER: { grass: 'Chikorita', fire: 'Cyndaquil', water: 'Totodile' },
+  RUBY_SAPPHIRE: { grass: 'Treecko', fire: 'Torchic', water: 'Mudkip' },
+  EMERALD: { grass: 'Treecko', fire: 'Torchic', water: 'Mudkip' },
+  FIRERED_LEAFGREEN: { grass: 'Bulbasaur', fire: 'Charmander', water: 'Squirtle' },
+  DIAMOND_PEARL: { grass: 'Turtwig', fire: 'Chimchar', water: 'Piplup' },
+  PLATINUM: { grass: 'Turtwig', fire: 'Chimchar', water: 'Piplup' },
+  HEARTGOLD_SOULSILVER: { grass: 'Chikorita', fire: 'Cyndaquil', water: 'Totodile' },
+  BLACK_WHITE: { grass: 'Snivy', fire: 'Tepig', water: 'Oshawott' },
+  BLACK2_WHITE2: { grass: 'Snivy', fire: 'Tepig', water: 'Oshawott' },
+  X_Y: { grass: 'Chespin', fire: 'Fennekin', water: 'Froakie' },
+  OMEGA_RUBY_ALPHA_SAPPHIRE: { grass: 'Treecko', fire: 'Torchic', water: 'Mudkip' },
+  SUN_MOON: { grass: 'Rowlet', fire: 'Litten', water: 'Popplio' },
+  ULTRA_SUN_ULTRA_MOON: { grass: 'Rowlet', fire: 'Litten', water: 'Popplio' },
+  SWORD_SHIELD: { grass: 'Grookey', fire: 'Scorbunny', water: 'Sobble' },
+  BRILLIANT_DIAMOND_SHINING_PEARL: { grass: 'Turtwig', fire: 'Chimchar', water: 'Piplup' },
+  LEGENDS_ARCEUS: { grass: 'Rowlet', fire: 'Cyndaquil', water: 'Oshawott' },
+  SCARLET_VIOLET: { grass: 'Sprigatito', fire: 'Fuecoco', water: 'Quaxly' },
+};
 
 export const GAME_VERSIONS: Partial<Record<Game, GameVersionPair>> = {
   RED_BLUE: {

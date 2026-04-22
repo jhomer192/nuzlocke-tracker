@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Game, RuleSet, Run, CustomGameDef, CustomBoss, GameLocation } from '../types';
-import { GAME_NAMES, GAME_GENERATIONS, GAME_VERSIONS } from '../types';
+import type { Game, RuleSet, Run, CustomGameDef, CustomBoss, GameLocation, StarterType } from '../types';
+import { GAME_NAMES, GAME_GENERATIONS, GAME_VERSIONS, STARTER_LABELS } from '../types';
 import { Modal } from '../components/Modal';
 import { getSpriteUrl } from '../utils/pokeapi';
 import { loadCustomGames, saveCustomGames } from '../utils/storage';
@@ -10,7 +10,14 @@ import { ThemePicker } from '../components/ThemePicker';
 
 interface RunListProps {
   runs: Run[];
-  onCreateRun: (name: string, game: Game, rules: RuleSet, customGameId?: string, version?: string) => Run;
+  onCreateRun: (
+    name: string,
+    game: Game,
+    rules: RuleSet,
+    customGameId?: string,
+    version?: string,
+    starter?: StarterType
+  ) => Run;
   onDeleteRun: (id: string) => void;
 }
 
@@ -47,6 +54,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
   const [name, setName] = useState('');
   const [game, setGame] = useState<Game>('RED_BLUE');
   const [version, setVersion] = useState<string | undefined>(undefined);
+  const [starter, setStarter] = useState<StarterType | undefined>(undefined);
   const [rules, setRules] = useState<RuleSet>({
     duplicateClause: true,
     shinyClause: false,
@@ -181,7 +189,7 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
 
   const handleCreate = () => {
     if (!name.trim()) return;
-    const run = onCreateRun(name.trim(), game, rules, selectedCustomGameId ?? undefined, version);
+    const run = onCreateRun(name.trim(), game, rules, selectedCustomGameId ?? undefined, version, starter);
     setShowModal(false);
     setName('');
     navigate(`/run/${run.id}`);
@@ -494,7 +502,31 @@ export function RunList({ runs, onCreateRun, onDeleteRun }: RunListProps) {
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-zinc-500 mt-1">Optional: filters version-exclusive encounters</p>
+              <p className="text-xs text-zinc-500 mt-1">Filters version-exclusive bosses and encounters</p>
+            </div>
+          )}
+
+          {/* Starter picker -- drives rival team variants */}
+          {STARTER_LABELS[game] && (
+            <div>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Starter</label>
+              <div className="flex gap-2">
+                {(['grass', 'fire', 'water'] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStarter(starter === s ? undefined : s)}
+                    className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-all flex flex-col items-center gap-0.5 ${
+                      starter === s
+                        ? 'bg-emerald-600/20 border-2 border-emerald-500 text-emerald-400'
+                        : 'bg-zinc-700 border-2 border-transparent text-zinc-300 hover:border-zinc-600'
+                    }`}
+                  >
+                    <span className="capitalize">{s}</span>
+                    <span className="text-[11px] opacity-75">{STARTER_LABELS[game]![s]}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-zinc-500 mt-1">Your rival picks the one that counters yours</p>
             </div>
           )}
 

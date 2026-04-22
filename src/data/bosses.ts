@@ -1,4 +1,4 @@
-import type { Game, CustomBoss } from '../types';
+import type { Game, CustomBoss, StarterType } from '../types';
 import { getCustomGame } from '../utils/storage';
 
 export interface BossPokemon {
@@ -15,6 +15,19 @@ export interface BossEntry {
   name: string;
   segment: string;   // matches route segment like "Pre-Brock"
   pokemon: BossPokemon[];
+  /**
+   * Rival variant: only use this entry when the player picked a starter of
+   * this type. Rivals typically pick the starter type-advantaged against
+   * the player's in Gen 1/2 and type-disadvantaged in later gens (i.e.,
+   * they pick the one weak to yours). Absent = applies regardless of starter.
+   */
+  starter?: StarterType;
+  /**
+   * Version-exclusive boss: only use this entry when run.version is one of
+   * these keys (matching GAME_VERSIONS keys like 'RUBY', 'SAPPHIRE', 'SWORD',
+   * 'SHIELD', etc.). Absent = applies to both versions of a paired game.
+   */
+  versions?: string[];
 }
 
 // ── Red / Blue ─────────────────────────────────────────────────────────────
@@ -573,8 +586,9 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Maxie (Mt. Chimney - Ruby)',
+    name: 'Maxie (Mt. Chimney)',
     segment: 'Pre-Flannery',
+    versions: ['RUBY'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 24, types: ['dark'], moves: ['Bite', 'Roar', 'Sand Attack', 'Swagger'], ability: 'Intimidate' },
       { name: 'Zubat', id: 41, level: 24, types: ['poison', 'flying'], moves: ['Bite', 'Astonish', 'Supersonic', 'Leech Life'], ability: 'Inner Focus' },
@@ -582,8 +596,9 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Archie (Mt. Chimney - Sapphire)',
+    name: 'Archie (Mt. Chimney)',
     segment: 'Pre-Flannery',
+    versions: ['SAPPHIRE'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 24, types: ['dark'], moves: ['Bite', 'Roar', 'Sand Attack', 'Swagger'], ability: 'Intimidate' },
       { name: 'Golbat', id: 42, level: 24, types: ['poison', 'flying'], moves: ['Bite', 'Astonish', 'Confuse Ray', 'Wing Attack'], ability: 'Inner Focus' },
@@ -591,8 +606,9 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Maxie (Seafloor Cavern - Ruby)',
+    name: 'Maxie (Seafloor Cavern)',
     segment: 'Pre-Wallace',
+    versions: ['RUBY'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 42, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
       { name: 'Crobat', id: 169, level: 42, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
@@ -600,8 +616,9 @@ const RUBY_SAPPHIRE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Archie (Seafloor Cavern - Sapphire)',
+    name: 'Archie (Seafloor Cavern)',
     segment: 'Pre-Wallace',
+    versions: ['SAPPHIRE'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 42, types: ['dark'], moves: ['Crunch', 'Swagger', 'Sand Attack', 'Take Down'], ability: 'Intimidate' },
       { name: 'Crobat', id: 169, level: 42, types: ['poison', 'flying'], moves: ['Wing Attack', 'Bite', 'Confuse Ray', 'Air Cutter'], ability: 'Inner Focus' },
@@ -2028,8 +2045,19 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Drayden/Iris',
+    name: 'Drayden',
     segment: 'Pre-Drayden/Iris',
+    versions: ['BLACK'],
+    pokemon: [
+      { name: 'Fraxure', id: 611, level: 41, types: ['dragon'], moves: ['Dragon Tail', 'Dragon Dance', 'Assurance', 'Slash'] },
+      { name: 'Druddigon', id: 621, level: 41, types: ['dragon'], moves: ['Dragon Tail', 'Crunch', 'Revenge', 'Chip Away'] },
+      { name: 'Haxorus', id: 612, level: 43, types: ['dragon'], moves: ['Dragon Tail', 'Dragon Dance', 'Assurance', 'Slash'] },
+    ],
+  },
+  {
+    name: 'Iris',
+    segment: 'Pre-Drayden/Iris',
+    versions: ['WHITE'],
     pokemon: [
       { name: 'Fraxure', id: 611, level: 41, types: ['dragon'], moves: ['Dragon Tail', 'Dragon Dance', 'Assurance', 'Slash'] },
       { name: 'Druddigon', id: 621, level: 41, types: ['dragon'], moves: ['Dragon Tail', 'Crunch', 'Revenge', 'Chip Away'] },
@@ -2079,8 +2107,22 @@ const BLACK_WHITE_BOSSES: BossEntry[] = [
   {
     name: 'N (Final)',
     segment: 'Pre-Elite Four',
+    versions: ['BLACK'],
     pokemon: [
       { name: 'Zekrom', id: 644, level: 52, types: ['dragon', 'electric'], moves: ['Fusion Bolt', 'Dragon Breath', 'Slash', 'Zen Headbutt'] },
+      { name: 'Carracosta', id: 565, level: 50, types: ['water', 'rock'], moves: ['Waterfall', 'Stone Edge', 'Aqua Jet', 'Crunch'] },
+      { name: 'Vanilluxe', id: 584, level: 50, types: ['ice'], moves: ['Blizzard', 'Flash Cannon', 'Hail', 'Frost Breath'] },
+      { name: 'Zoroark', id: 571, level: 50, types: ['dark'], moves: ['Night Slash', 'Flamethrower', 'Focus Blast', 'Retaliate'] },
+      { name: 'Klinklang', id: 601, level: 50, types: ['steel'], moves: ['Flash Cannon', 'Thunderbolt', 'Hyper Beam', 'Metal Sound'] },
+      { name: 'Archeops', id: 567, level: 50, types: ['rock', 'flying'], moves: ['Acrobatics', 'Stone Edge', 'Dragon Claw', 'Crunch'] },
+    ],
+  },
+  {
+    name: 'N (Final)',
+    segment: 'Pre-Elite Four',
+    versions: ['WHITE'],
+    pokemon: [
+      { name: 'Reshiram', id: 643, level: 52, types: ['dragon', 'fire'], moves: ['Fusion Flare', 'Dragon Breath', 'Slash', 'Extrasensory'] },
       { name: 'Carracosta', id: 565, level: 50, types: ['water', 'rock'], moves: ['Waterfall', 'Stone Edge', 'Aqua Jet', 'Crunch'] },
       { name: 'Vanilluxe', id: 584, level: 50, types: ['ice'], moves: ['Blizzard', 'Flash Cannon', 'Hail', 'Frost Breath'] },
       { name: 'Zoroark', id: 571, level: 50, types: ['dark'], moves: ['Night Slash', 'Flamethrower', 'Focus Blast', 'Retaliate'] },
@@ -2242,8 +2284,17 @@ const BLACK2_WHITE2_BOSSES: BossEntry[] = [
   {
     name: 'N (Victory Road)',
     segment: 'Pre-Elite Four',
+    versions: ['WHITE2'],
     pokemon: [
-      { name: 'Zekrom', id: 644, level: 50, types: ['dragon', 'electric'], moves: ['Fusion Bolt', 'Dragon Claw', 'Zen Headbutt', 'Slash'] },
+      { name: 'Zekrom', id: 644, level: 70, types: ['dragon', 'electric'], moves: ['Fusion Bolt', 'Dragon Claw', 'Zen Headbutt', 'Slash'] },
+    ],
+  },
+  {
+    name: 'N (Victory Road)',
+    segment: 'Pre-Elite Four',
+    versions: ['BLACK2'],
+    pokemon: [
+      { name: 'Reshiram', id: 643, level: 70, types: ['dragon', 'fire'], moves: ['Fusion Flare', 'Dragon Pulse', 'Extrasensory', 'Slash'] },
     ],
   },
   {
@@ -2554,8 +2605,9 @@ const ORAS_BOSSES: BossEntry[] = [
   },
   // Team Magma/Aqua leaders (version-specific)
   {
-    name: 'Maxie (Mt. Chimney - Omega Ruby)',
+    name: 'Maxie (Mt. Chimney)',
     segment: 'Pre-Flannery',
+    versions: ['OMEGA_RUBY'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 25, types: ['dark'], moves: ['Snarl', 'Swagger', 'Scary Face', 'Embargo'] },
       { name: 'Golbat', id: 42, level: 25, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Wing Attack'] },
@@ -2563,8 +2615,9 @@ const ORAS_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Archie (Mt. Chimney - Alpha Sapphire)',
+    name: 'Archie (Mt. Chimney)',
     segment: 'Pre-Flannery',
+    versions: ['ALPHA_SAPPHIRE'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 25, types: ['dark'], moves: ['Snarl', 'Swagger', 'Scary Face', 'Embargo'] },
       { name: 'Golbat', id: 42, level: 25, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Wing Attack'] },
@@ -2572,8 +2625,9 @@ const ORAS_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Maxie (Mossdeep Space Center - Omega Ruby)',
+    name: 'Maxie (Mossdeep Space Center)',
     segment: 'Pre-Tate & Liza',
+    versions: ['OMEGA_RUBY'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 43, types: ['dark'], moves: ['Crunch', 'Swagger', 'Scary Face', 'Sucker Punch'] },
       { name: 'Crobat', id: 169, level: 43, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Air Slash'] },
@@ -2581,8 +2635,9 @@ const ORAS_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Archie (Mossdeep Space Center - Alpha Sapphire)',
+    name: 'Archie (Mossdeep Space Center)',
     segment: 'Pre-Tate & Liza',
+    versions: ['ALPHA_SAPPHIRE'],
     pokemon: [
       { name: 'Mightyena', id: 262, level: 43, types: ['dark'], moves: ['Crunch', 'Swagger', 'Scary Face', 'Sucker Punch'] },
       { name: 'Crobat', id: 169, level: 43, types: ['poison', 'flying'], moves: ['Acrobatics', 'Bite', 'Confuse Ray', 'Air Slash'] },
@@ -3328,13 +3383,25 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Bea/Allister',
+    name: 'Bea',
     segment: 'Pre-Bea/Allister',
+    versions: ['SWORD'],
     pokemon: [
       { name: 'Hitmontop', id: 237, level: 34, types: ['fighting'], moves: ['Triple Kick', 'Counter', 'Detect'] },
       { name: 'Pangoro', id: 675, level: 34, types: ['fighting', 'dark'], moves: ['Circle Throw', 'Bullet Punch', 'Crunch'] },
       { name: 'Sirfetch\'d', id: 865, level: 35, types: ['fighting'], moves: ['Detect', 'Brutal Swing', 'Revenge'] },
       { name: 'Machamp', id: 68, level: 36, types: ['fighting'], moves: ['Strength', 'Revenge', 'Knock Off', 'Max Knuckle'] },
+    ],
+  },
+  {
+    name: 'Allister',
+    segment: 'Pre-Bea/Allister',
+    versions: ['SHIELD'],
+    pokemon: [
+      { name: 'Yamask', id: 562, level: 34, types: ['ground', 'ghost'], moves: ['Brutal Swing', 'Hex', 'Night Shade'] },
+      { name: 'Mimikyu', id: 778, level: 35, types: ['ghost', 'fairy'], moves: ['Play Rough', 'Shadow Sneak', 'Slash'] },
+      { name: 'Cursola', id: 864, level: 34, types: ['ghost'], moves: ['Hex', 'Power Gem', 'Strength Sap'] },
+      { name: 'Gengar', id: 94, level: 36, types: ['ghost', 'poison'], moves: ['Hex', 'Shadow Ball', 'Dark Pulse', 'Max Phantasm'] },
     ],
   },
   {
@@ -3369,13 +3436,25 @@ const SWORD_SHIELD_BOSSES: BossEntry[] = [
     ],
   },
   {
-    name: 'Gordie/Melony',
+    name: 'Gordie',
     segment: 'Pre-Gordie/Melony',
+    versions: ['SWORD'],
     pokemon: [
       { name: 'Barbaracle', id: 689, level: 40, types: ['rock', 'water'], moves: ['Shell Smash', 'Rock Tomb', 'Slash'] },
       { name: 'Shuckle', id: 213, level: 40, types: ['bug', 'rock'], moves: ['Rock Tomb', 'Struggle Bug', 'Guard Split'] },
       { name: 'Stonjourner', id: 874, level: 41, types: ['rock'], moves: ['Rock Tomb', 'Body Slam', 'Stealth Rock'] },
       { name: 'Coalossal', id: 839, level: 42, types: ['rock', 'fire'], moves: ['Rock Tomb', 'Heat Crash', 'Tar Shot', 'Max Rockfall'] },
+    ],
+  },
+  {
+    name: 'Melony',
+    segment: 'Pre-Gordie/Melony',
+    versions: ['SHIELD'],
+    pokemon: [
+      { name: 'Frosmoth', id: 873, level: 40, types: ['ice', 'bug'], moves: ['Ice Beam', 'Bug Buzz', 'Aurora Beam'] },
+      { name: 'Darmanitan (Galarian)', id: 555, level: 40, types: ['ice'], moves: ['Icicle Crash', 'Taunt', 'Superpower'] },
+      { name: 'Eiscue', id: 875, level: 41, types: ['ice'], moves: ['Freeze-Dry', 'Belly Drum', 'Headbutt'] },
+      { name: 'Lapras', id: 131, level: 42, types: ['water', 'ice'], moves: ['Ice Beam', 'Water Pulse', 'Body Slam', 'Max Geyser'] },
     ],
   },
   {
@@ -4086,6 +4165,7 @@ const SCARLET_VIOLET_BOSSES: BossEntry[] = [
   {
     name: 'AI Sada (Area Zero)',
     segment: 'Pre-Elite Four',
+    versions: ['SCARLET'],
     pokemon: [
       { name: 'Slither Wing', id: 988, level: 64, types: ['bug', 'fighting'], moves: ['First Impression', 'Close Combat', 'Leech Life', 'Flame Charge'] },
       { name: 'Brute Bonnet', id: 986, level: 64, types: ['grass', 'dark'], moves: ['Sucker Punch', 'Seed Bomb', 'Crunch', 'Stun Spore'] },
@@ -4098,6 +4178,7 @@ const SCARLET_VIOLET_BOSSES: BossEntry[] = [
   {
     name: 'AI Turo (Area Zero)',
     segment: 'Pre-Elite Four',
+    versions: ['VIOLET'],
     pokemon: [
       { name: 'Iron Moth', id: 994, level: 64, types: ['fire', 'poison'], moves: ['Fiery Dance', 'Sludge Wave', 'Psychic', 'Energy Ball'] },
       { name: 'Iron Hands', id: 992, level: 64, types: ['fighting', 'electric'], moves: ['Wild Charge', 'Close Combat', 'Ice Punch', 'Thunder Punch'] },
@@ -4139,6 +4220,37 @@ export function getBossForSegment(game: Game, segment: string): BossEntry | unde
   return bosses.find((b) => b.segment === segment);
 }
 
+/**
+ * Apply version + starter filters to a boss list.
+ * - `versions` filter: if entry declares versions, only keep it when
+ *   opts.version matches one. Entries without a versions tag are always kept.
+ *   If the run has no version chosen, version-tagged entries all stay
+ *   (we'd rather show too many bosses than hide them).
+ * - `starter` filter: if entry declares a starter, only keep it when
+ *   opts.starter matches. If the run has no starter chosen yet, we collapse
+ *   starter-tagged entries to the 'fire' variant so the UI still shows one
+ *   rival per fight (matches the old hardcoded behavior).
+ */
+function applyRunFilters(
+  entries: BossEntry[],
+  opts?: { version?: string; starter?: StarterType }
+): BossEntry[] {
+  return entries.filter((b) => {
+    if (b.versions && b.versions.length > 0 && opts?.version) {
+      if (!b.versions.includes(opts.version)) return false;
+    }
+    if (b.starter) {
+      if (opts?.starter) {
+        if (b.starter !== opts.starter) return false;
+      } else {
+        // No starter chosen -- show only the 'fire' variant as default.
+        if (b.starter !== 'fire') return false;
+      }
+    }
+    return true;
+  });
+}
+
 /** Convert a CustomBoss to BossEntry format */
 function customBossToBossEntry(cb: CustomBoss): BossEntry {
   return {
@@ -4161,7 +4273,12 @@ function customBossToBossEntry(cb: CustomBoss): BossEntry {
  * the segment prefix ("Pre-X" where X == boss.name). E.g. defeating "Brock"
  * whose segment is "Pre-Brock" grants badge 0. Rivals/grunts are skipped.
  */
-export function getBadgeIndexForBoss(game: Game, bossName: string, customGameId?: string): number | null {
+export function getBadgeIndexForBoss(
+  game: Game,
+  bossName: string,
+  customGameId?: string,
+  opts?: { version?: string; starter?: StarterType }
+): number | null {
   let bosses: BossEntry[] | undefined;
   if (game === 'CUSTOM' && customGameId) {
     const def = getCustomGame(customGameId);
@@ -4169,6 +4286,7 @@ export function getBadgeIndexForBoss(game: Game, bossName: string, customGameId?
     bosses = def.bosses.map(customBossToBossEntry);
   } else {
     bosses = BOSS_DATA[game];
+    if (bosses) bosses = applyRunFilters(bosses, opts);
   }
   if (!bosses) return null;
   // Preserve declaration order, dedupe
@@ -4183,7 +4301,12 @@ export function getBadgeIndexForBoss(game: Game, bossName: string, customGameId?
 }
 
 /** Get all bosses for a segment (for E4 segments with multiple bosses) */
-export function getBossesForSegment(game: Game, segment: string, customGameId?: string): BossEntry[] {
+export function getBossesForSegment(
+  game: Game,
+  segment: string,
+  customGameId?: string,
+  opts?: { version?: string; starter?: StarterType }
+): BossEntry[] {
   // For custom games, look up the CustomGameDef bosses
   if (game === 'CUSTOM' && customGameId) {
     const def = getCustomGame(customGameId);
@@ -4197,5 +4320,6 @@ export function getBossesForSegment(game: Game, segment: string, customGameId?: 
 
   const bosses = BOSS_DATA[game];
   if (!bosses) return [];
-  return bosses.filter((b) => b.segment === segment);
+  const segBosses = bosses.filter((b) => b.segment === segment);
+  return applyRunFilters(segBosses, opts);
 }

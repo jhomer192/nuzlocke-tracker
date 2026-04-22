@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { Run } from '../types';
 import { GAME_NAMES, LEVEL_CAPS } from '../types';
 import { BadgeBar } from '../components/BadgeBar';
+import { RunConfigBar } from '../components/RunConfigBar';
 import { EncountersTab } from '../components/EncountersTab';
 import { TeamTab } from '../components/TeamTab';
 import { AnalysisTab } from '../components/AnalysisTab';
@@ -175,6 +176,9 @@ export function RunDashboard({ runs, onUpdate }: RunDashboardProps) {
         onToggle={(i) => handleUpdate((r) => toggleBadge(r, i))}
         customGameId={run.customGameId}
       />
+
+      {/* Version + starter selectors (drive boss/rival filtering) */}
+      <RunConfigBar run={run} onUpdate={handleUpdate} />
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto">
