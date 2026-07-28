@@ -3,6 +3,7 @@ import type { Run, Game, RuleSet, Encounter, StarterType } from '../types';
 import { loadRuns, saveRuns, getCustomGame } from '../utils/storage';
 import { generateId } from '../utils/id';
 import { BADGE_NAMES } from '../data/routes';
+import { track } from '../lib/analytics'
 
 export function useRuns() {
   const [runs, setRuns] = useState<Run[]>(() => loadRuns());
@@ -12,6 +13,7 @@ export function useRuns() {
     saveRuns(updated);
   }, []);
 
+  // A tracker with no run in it has not been used.
   const createRun = useCallback(
     (
       name: string,
@@ -28,6 +30,7 @@ export function useRuns() {
       } else {
         badgeCount = BADGE_NAMES[game].length;
       }
+      track('run-started', { game });
       const run: Run = {
         id: generateId(),
         name,
