@@ -31,3 +31,5 @@ npm run dev
 ## Stack
 
 React 19, TypeScript, Vite, and Tailwind CSS v4. Routing is `react-router-dom` in hash mode, since Pages serves the app from a subpath. State lives in `localStorage`. Sprites, stats, and move data come from [PokéAPI](https://pokeapi.co) and are cached in the browser after the first fetch.
+
+Write-up: https://jackhomer.com/projects/nuzlocke/
