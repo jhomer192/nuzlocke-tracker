@@ -1,73 +1,33 @@
-# React + TypeScript + Vite
+# Nuzlocke Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A run tracker for Pokémon Nuzlocke challenges: route encounters, the active team, the graveyard, badges, and gym leader prep in one place.
 
-Currently, two official plugins are available:
+Live at **https://jackhomer.com/nuzlocke-tracker/**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![The routes view of a FireRed run](https://jackhomer.com/screenshots/nuzlocke-tracker.webp)
 
-## React Compiler
+## What it does
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Start a run against any of the 18 mainline game sets, from Red/Blue to Scarlet/Violet, or define a custom fan game with your own locations, bosses, and badge count. Duplicate clause, shiny clause, level cap, and soul link are per-run toggles.
 
-## Expanding the ESLint configuration
+- Routes: log the one encounter you get per location. The catch list comes from that route's wild encounter table, filtered by game version so exclusives from the other version stay out. Encounters can be caught, missed, or dead, and carry a level, a nickname, and a cause of death.
+- Team: a six-slot party and a box, with sprites, stats, types, and up to four moves per Pokémon. Marking one dead sends it to the graveyard and out of the party in one step. Runs export to JSON by copy or download.
+- Analysis: defensive and offensive type matchups for the current team, computed against the type chart for the run's generation, with types nothing on the team resists called out as gaps.
+- Boss prep: the gym leader or major fight for the current badge segment, with each of their Pokémon's level, moves, types, and weaknesses. Mark bosses defeated as you clear them.
+- Level cap: when the rule is on, the ace level of the next boss is pinned to the top of the run, keyed to how many badges you have.
+- Graveyard and shinies: every loss with its cause, and shiny encounters across all runs.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Runs are stored in the browser. There is no account and no server.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Running it locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+`npm run build` type-checks and writes the static site to `dist/`. Pushing to `main` builds and publishes to GitHub Pages via `.github/workflows/deploy.yml`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Stack
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+React 19, TypeScript, Vite, and Tailwind CSS v4. Routing is `react-router-dom` in hash mode, since Pages serves the app from a subpath. State lives in `localStorage`. Sprites, stats, and move data come from [PokéAPI](https://pokeapi.co) and are cached in the browser after the first fetch.
